@@ -4,17 +4,20 @@ import javax.swing.*;
 
 public class Window {
     private final String title = "Platformer";
-    private final int WIDTH = 800;
-    private final int HEIGHT = 600;
+    public static final int WINDOW_WIDTH = 1300;
+    public static final int WINDOW_HEIGHT = 850;
 
     public Window() {
-        JFrame frame = new JFrame(title);
+        JFrame window = new JFrame(title);
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
+        window.setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
+        window.setResizable(false);
+        window.setLayout(null);
+        window.setLocationRelativeTo(null);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        window.add(new TitleScreen());
 
-
-        frame.setLocationRelativeTo(null);
+        window.setVisible(true);
     }
 }
