@@ -1,15 +1,24 @@
 package org.example;
 
 import javax.swing.*;
+import javax.tools.Tool;
+import java.awt.*;
 
 public class Window {
-    public static final int WIDTH = 1300;
-    public static final int HEIGHT = 850;
+    public static int WIDTH = 0;
+    public static int HEIGHT = 0;
     public static final JFrame window = new JFrame("Platformer");
 
     public Window() {
-        window.setSize(WIDTH, HEIGHT);
-        window.setResizable(false);
+        window.setResizable(true);
+        window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        Dimension screanSize = Toolkit.getDefaultToolkit().getScreenSize();
+        window.setSize(screanSize);
+        WIDTH = window.getWidth();
+        HEIGHT = window.getHeight();
+
+        System.out.println(WIDTH + "" + HEIGHT);
+
         window.setLocationRelativeTo(null);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
