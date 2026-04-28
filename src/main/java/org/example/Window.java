@@ -12,7 +12,6 @@ public class Window {
 
         window.setSize(WIDTH, HEIGHT);
         window.setResizable(false);
-        window.setLayout(null);
         window.setLocationRelativeTo(null);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -20,10 +19,25 @@ public class Window {
         window.add(ts);
 
         LevelSelector levelSelector = new LevelSelector();
+        HowTo howTo = new HowTo();
+
+        howTo.setOnBackButtonClicked(() -> {
+            window.remove(howTo);
+            window.add(ts);
+            window.revalidate();
+            window.repaint();
+        });
 
         ts.setOnStartGameClicked(() -> {
             window.remove(ts);
             window.add(levelSelector);
+            window.revalidate();
+            window.repaint();
+        });
+
+        ts.setOnHowToClicked(() -> {
+            window.remove(ts);
+            window.add(howTo);
             window.revalidate();
             window.repaint();
         });
