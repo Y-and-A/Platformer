@@ -6,6 +6,6 @@ public class Pistol extends Gun {
         this.bulletRange = 500;
         this.bulletSpread = 0;
         this.magSize = 6;
-        this.reladSpeed = 2000;
+        this.reloadSpeed = 2000;
     }
 }

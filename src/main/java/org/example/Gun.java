@@ -7,7 +7,7 @@ public abstract class Gun {
     protected int bulletRange; // px
     protected int bulletSpread; // degrees
     protected int magSize;
-    protected int reladSpeed; // ms
+    protected int reloadSpeed; // ms
 
     protected Image image;
 }
