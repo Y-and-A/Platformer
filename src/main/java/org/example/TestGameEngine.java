@@ -15,11 +15,8 @@ public class TestGameEngine {
     }
 
     public void update(boolean[] keys) {
+        collidesWithTile(player);
         this.player.update(keys);
-        if (onFloor(player)) {
-            player.onFloor = true;
-        }
-        else player.onFloor = false;
     }
 
     public void draw(Graphics g) {
@@ -39,38 +36,33 @@ public class TestGameEngine {
         this.player.draw(g);
     }
 
-    public boolean onFloor(TestEntity entity) {
+    public void collidesWithTile(TestEntity entity) {
         Rectangle entityRect = entity.getRect();
         Rectangle tileRect;
+        entity.onFloor = false;
+        entity.rightCollision = false;
+        entity.leftCollision  =false;
         for (int row = 0; row < map.length; row++) {
             for (int col = 0; col < map[0].length; col++) {
                 if (map[row][col] == 1) {
                     tileRect = new Rectangle(col * TILE_WIDTH, row * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+                    entityRect = new Rectangle(entity.x+entity.width/2,entity.y+entity.height,1,1);
                     if (entityRect.intersects(tileRect)) {
-                        return true;
+                        entity.onFloor = true ;
+                    }
+
+
+                    entityRect = new Rectangle(entity.x,entity.y,1,entity.height-2);
+                    if (entityRect.intersects(tileRect)) {
+                        entity.leftCollision=true;
+                    }
+                    entityRect = new Rectangle(entity.x+entity.width,entity.y,1,entity.height-2);
+                    if (entityRect.intersects(tileRect)) {
+                        entity.rightCollision = true;
                     }
                 }
             }
         }
-        return false;
-    }
-
-
-
-    public boolean collidesWithTile(TestEntity entity) {
-        Rectangle entityRect = entity.getRect();
-        Rectangle tileRect;
-        for (int row = 0; row < map.length; row++) {
-            for (int col = 0; col < map[0].length; col++) {
-                if (map[row][col] == 1) {
-                    tileRect = new Rectangle(col * TILE_WIDTH, row * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
-                    if (entityRect.intersects(tileRect)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
 }

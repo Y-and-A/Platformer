@@ -26,7 +26,7 @@ public class TestGamePanel extends JPanel {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,},
+                {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,},
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,}
 
@@ -38,13 +38,13 @@ public class TestGamePanel extends JPanel {
         addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyPressed(java.awt.event.KeyEvent e) {
-                System.out.println("Key pressed");
+//                System.out.println("Key pressed");
                 if (e.getKeyCode() < 256) keys[e.getKeyCode()] = true;
             }
 
             @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
-                System.out.println("Key released");
+//                System.out.println("Key released");
                 if (e.getKeyCode() < 256) keys[e.getKeyCode()] = false;
             }
         });
