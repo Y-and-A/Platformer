@@ -1,7 +1,6 @@
 package org.example;
 
 import javax.swing.*;
-import javax.tools.Tool;
 import java.awt.*;
 
 public class Window {
@@ -10,10 +9,10 @@ public class Window {
     public static final JFrame window = new JFrame("Platformer");
 
     public Window() {
-        window.setResizable(true);
+        window.setResizable(false);
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        Dimension screanSize = Toolkit.getDefaultToolkit().getScreenSize();
-        window.setSize(screanSize);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        window.setSize(screenSize);
         WIDTH = window.getWidth();
         HEIGHT = window.getHeight();
 
