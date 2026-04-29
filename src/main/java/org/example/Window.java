@@ -4,14 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Window {
-    public static int WIDTH = 0;
-    public static int HEIGHT = 0;
+    public static int WIDTH;
+    public static int HEIGHT;
     public static final JFrame window = new JFrame("Platformer");
 
     public Window() {
         window.setResizable(false);
-        window.setExtendedState(JFrame.MAXIMIZED_BOTH);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//        WIDTH = screenSize.width;
+//        HEIGHT  =screenSize.height;
         window.setSize(screenSize);
         WIDTH = window.getWidth();
         HEIGHT = window.getHeight();

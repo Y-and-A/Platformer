@@ -5,19 +5,26 @@ import java.awt.*;
 
 public class TestWindow {
     public final JFrame window = new JFrame("Platformer");
+    public static int WIDTH;
+    public static int HEIGHT;
 
     public final CardLayout cardLayout = new CardLayout();
     public final JPanel mainPanel = new JPanel();
 
     private final TestGamePanel gamePanel;
 
-    private final String titleScreenName = "TITLE";
+    private final String titleScreenName = "Title screen";
     private final String levelSelectorName = "LEVEL SELECTOR";
     private final String levelName = "LEVEL";
+    public static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     public TestWindow() {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        window.setSize(screenSize);
+        WIDTH = window.getWidth();
+        HEIGHT = window.getHeight();
+        window.setResizable(false);
+        System.out.println(WIDTH + "," + HEIGHT);
 
         gamePanel = new TestGamePanel();
 
