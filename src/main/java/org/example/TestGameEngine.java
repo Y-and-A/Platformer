@@ -46,23 +46,32 @@ public class TestGameEngine {
             for (int col = 0; col < map[0].length; col++) {
                 if (map[row][col] == 1) {
                     tileRect = new Rectangle(col * TILE_WIDTH, row * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
-                    entityRect = new Rectangle(entity.x+entity.width/2,entity.y+entity.height,1,1);
+                    entityRect = new Rectangle(entity.x+10,entity.y+entity.height,entity.width-20,1);
                     if (entityRect.intersects(tileRect)) {
+                        entity.y = row * TILE_HEIGHT- entity.height;
+//                        System.out.println("clipped floor");
                         entity.onFloor = true ;
                     }
 
 
                     entityRect = new Rectangle(entity.x,entity.y,1,entity.height-2);
                     if (entityRect.intersects(tileRect)) {
+                        entity.x = (col+1) * TILE_WIDTH;
+                        System.out.println("clipped left");
                         entity.leftCollision=true;
                     }
                     entityRect = new Rectangle(entity.x+entity.width,entity.y,1,entity.height-2);
                     if (entityRect.intersects(tileRect)) {
+                        entity.x = col * TILE_WIDTH-entity.width;
+                        System.out.println("clipped right");
                         entity.rightCollision = true;
                     }
                 }
             }
         }
+    }
+    public void fixClipping(TestEntity entity){
+
     }
 
 }

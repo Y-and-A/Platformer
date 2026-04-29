@@ -8,7 +8,11 @@ public abstract class TestEntity extends TestGameObject {
     protected int maxVelocityX;
     protected int width;
     protected int height;
-    private final float friction =0.2F;
+    protected double movement;
+    protected double jumpForce;
+    protected final double friction =0.1;
+    protected final double drag =0.2;
+    protected double gravity = 0.1;
     protected boolean leftCollision;
     protected boolean rightCollision;
 
@@ -18,12 +22,17 @@ public abstract class TestEntity extends TestGameObject {
     protected boolean alive = true;
     protected boolean onFloor;
 
-    protected double gravity = 0.1;
 
     public void update(boolean[] keys) {
+        //more realistic friction mechanics
+        if (velocityX<=0.5&&velocityX>=-0.5)
+            velocityX=0;
         //gravity
         if (!onFloor) {
             velocityY += gravity;
+            if (velocityX>0)
+                velocityX-=drag;
+            else velocityX+=drag;
         } else{
             velocityY = 0;
             //friction when on floor
@@ -31,9 +40,7 @@ public abstract class TestEntity extends TestGameObject {
                 velocityX -=friction;
             else velocityX +=friction;
         }
-        //more realistic friction mechanics
-        if (velocityX<=0.5&&velocityX>=-0.5)
-            velocityX=0;
+
         //check for out of bounds
         int moveTo = this.x+(int) velocityX;
         if (moveTo>TestWindow.screenSize.width-this.width)
