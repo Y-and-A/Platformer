@@ -51,7 +51,9 @@ public class TestWindow {
     public JPanel createTitleScreen() {
         JPanel panel = new JPanel();
         panel.setBackground(Color.GRAY);
+        panel.setLayout(null);
         JButton selectLevelButton = new JButton("Select Level");
+        selectLevelButton.setBounds(screenSize.width/2,screenSize.height/2,100,30);
         selectLevelButton.setFocusable(false);
         selectLevelButton.addActionListener(e -> changeScene(levelSelectorName));
         panel.add(selectLevelButton);

@@ -1,8 +1,11 @@
 package org.example;
 
+import java.awt.*;
+
 public abstract class TestEntity extends TestGameObject {
     protected int width;
     protected int height;
+    protected Image image;
 
     protected double velocityX = 0;
     protected double velocityY = 0;
