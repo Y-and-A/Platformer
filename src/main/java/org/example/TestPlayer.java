@@ -30,13 +30,15 @@ public class TestPlayer extends TestEntity {
         maxVelocityY = 16.0;
     }
 
-    public void update(boolean[] keys) {
+    public void update(boolean[] keys, double deltaTime) {
+        double timeScale = deltaTime * 60.0;
+
         if (keys[KeyEvent.VK_RIGHT]){
-            this.velocityX += movementForce;
+            this.velocityX += movementForce * timeScale;
             image = imgRight;
         }
         if (keys[KeyEvent.VK_LEFT]){
-            this.velocityX -= movementForce;
+            this.velocityX -= movementForce * timeScale;
             image = imgLeft;
         }
         if ((keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_SPACE]) && onFloor){
@@ -44,7 +46,7 @@ public class TestPlayer extends TestEntity {
             image = imgUp;
         }
 
-        super.update();
+        super.update(deltaTime);
     }
 
     @Override

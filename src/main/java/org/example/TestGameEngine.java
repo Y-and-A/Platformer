@@ -38,13 +38,15 @@ public class TestGameEngine {
         TILE_HEIGHT = TestWindow.HEIGHT / map.length;
     }
 
-    public void update(boolean[] keys) {
-        this.player.update(keys);
-        handleCollisions(player);
+    public void update(boolean[] keys, double deltaTime) {
+        this.player.update(keys, deltaTime);
+        handleCollisions(player, deltaTime);
     }
 
-    public void handleCollisions(TestEntity entity) {
-        entity.x += entity.velocityX;
+    public void handleCollisions(TestEntity entity, double deltaTime) {
+        double timeScale = deltaTime * 60;
+
+        entity.x += entity.velocityX * timeScale;
 
         if (isColliding(entity.x, entity.y, entity.width, entity.height)) {
             if (entity.velocityX > 0) {
@@ -58,7 +60,7 @@ public class TestGameEngine {
         if (entity.x < 0) entity.x = 0;
         if (entity.x + entity.width> TestWindow.WIDTH) entity.x = TestWindow.WIDTH - entity.width;
 
-        entity.y += entity.velocityY;
+        entity.y += entity.velocityY * timeScale;
         entity.onFloor = false;
 
         if (isColliding(entity.x, entity.y, entity.width, entity.height)) {

@@ -82,8 +82,14 @@ public class TestGamePanel extends JPanel implements Runnable {
         double drawInterval = 1000000000.0 / 60;
         double nextDrawTime = System.nanoTime() + drawInterval;
 
+        long lastTime = System.nanoTime();
+
         while (gameThread != null) {
-            gameEngine.update(keys);
+            long now = System.nanoTime();
+            double deltaTime = (now - lastTime) / 1000000000.0;
+            lastTime = now;
+
+            gameEngine.update(keys, deltaTime);
             repaint();
 
             try {

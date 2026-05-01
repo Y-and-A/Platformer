@@ -24,15 +24,17 @@ public abstract class TestEntity extends TestGameObject {
     protected boolean onFloor;
 
 
-    public void update() {
-        velocityY += gravity;
+    public void update(double deltaTime) {
+        double timeScale = deltaTime * 60;
+
+        velocityY += gravity * timeScale;
 
         if (velocityX > 0) {
-            velocityX -= onFloor ? friction : drag;
+            velocityX -= (onFloor ? friction : drag) * timeScale;
             if (velocityX < 0) velocityX = 0;
         }
         else if (velocityX < 0) {
-            velocityX += onFloor ? friction : drag;
+            velocityX += (onFloor ? friction : drag) * timeScale;
             if (velocityX > 0) velocityX = 0;
         }
 
