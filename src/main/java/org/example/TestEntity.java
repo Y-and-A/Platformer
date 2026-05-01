@@ -7,15 +7,14 @@ public abstract class TestEntity extends TestGameObject {
     protected int height;
     protected Image image;
 
+    protected double gravity = 0.45;
+    protected final double friction = 0.8;
+    protected final double drag = 0.01;
+
     protected double velocityX = 0;
     protected double velocityY = 0;
-
-    protected double gravity = 0.5;
-    protected final double friction = 0.5;
-    protected final double drag = 0.1;
     protected double maxVelocityX;
     protected double maxVelocityY;
-
     protected double movementForce;
     protected double jumpForce;
 
@@ -26,7 +25,7 @@ public abstract class TestEntity extends TestGameObject {
 
 
     public void update() {
-        if (!onFloor) velocityY += gravity;
+        velocityY += gravity;
 
         if (velocityX > 0) {
             velocityX -= onFloor ? friction : drag;

@@ -2,7 +2,6 @@ package org.example;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 
@@ -32,7 +31,7 @@ public class TestGameEngine {
     public TestGameEngine(TestPlayer player, int[][] map) {
         this.player = player;
         this.map = map;
-        startImages();
+        loadImages();
 
 
         TILE_WIDTH = TestWindow.WIDTH / map[0].length;
@@ -56,6 +55,9 @@ public class TestGameEngine {
             entity.velocityX = 0;
         }
 
+        if (entity.x < 0) entity.x = 0;
+        if (entity.x + entity.width> TestWindow.WIDTH) entity.x = TestWindow.WIDTH - entity.width;
+
         entity.y += entity.velocityY;
         entity.onFloor = false;
 
@@ -68,18 +70,13 @@ public class TestGameEngine {
             }
             entity.velocityY = 0;
         }
-
-        if (entity.x < 0) entity.x = 0;
-        if (entity.x > TestWindow.WIDTH - entity.width) entity.x = TestWindow.WIDTH - entity.width;
     }
 
     public boolean isColliding(double x, double y, int width, int height) {
-        int leftCol = (int) (x / TILE_WIDTH);
-        int rightCol = (int) ((x + width - 1) / TILE_WIDTH);
-        int topRow = (int) (y / TILE_HEIGHT);
-        int bottomRow = (int) ((y + height - 1) / TILE_HEIGHT);
-
-        if (leftCol < 0 || rightCol >= map[0].length || topRow < 0 || bottomRow > map.length) return false;
+        int leftCol =  Math.max(0, (int) (x / TILE_WIDTH));
+        int rightCol = Math.min(map[0].length - 1, (int) ((x + width - 0.01) / TILE_WIDTH));
+        int topRow = Math.max(0, (int) (y / TILE_HEIGHT));
+        int bottomRow = Math.min(map.length - 1, (int) ((y + height - 0.01) / TILE_HEIGHT));
 
         for (int r = topRow; r <= bottomRow; r++) {
             for (int c = leftCol; c <= rightCol; c++) {
@@ -122,7 +119,7 @@ public class TestGameEngine {
         }
         this.player.draw(g);
     }
-    private void startImages(){
+    private void loadImages(){
         try {
             rightTop = ImageIO.read(new File("src/main/resources/tiles/rightTop.png"));
             middleTop = ImageIO.read(new File("src/main/resources/tiles/middleTop.png"));
