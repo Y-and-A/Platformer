@@ -7,9 +7,9 @@ public abstract class TestEntity extends TestGameObject {
     protected int height;
     protected Image image;
 
-    protected double gravity = 0.45;
-    protected final double friction = 0.8;
-    protected final double drag = 0.01;
+    protected double gravity = 0.6;
+    protected final double friction = 1.5;
+    protected final double drag = 0.2;
 
     protected double velocityX = 0;
     protected double velocityY = 0;

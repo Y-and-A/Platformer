@@ -5,9 +5,10 @@ import org.example.levels.Level00;
 import javax.swing.*;
 import java.awt.*;
 
-public class TestGamePanel extends JPanel {
+public class TestGamePanel extends JPanel implements Runnable {
     private final TestGameEngine gameEngine;
-    private final Timer gameLoop;
+    private Thread gameThread;
+
     private TestPlayer player;
     private int[][] map;
 
@@ -65,19 +66,38 @@ public class TestGamePanel extends JPanel {
                 if (e.getKeyCode() < 256) keys[e.getKeyCode()] = false;
             }
         });
-
-        gameLoop = new Timer(16, e -> {
-            gameEngine.update(keys);
-            repaint();
-        });
     }
 
     public void startGame() {
-        gameLoop.start();
+        gameThread = new Thread(this);
+        gameThread.start();
     }
 
     public void stopGame() {
-        gameLoop.stop();
+        gameThread = null;
+    }
+
+    @Override
+    public void run() {
+        double drawInterval = 1000000000.0 / 60;
+        double nextDrawTime = System.nanoTime() + drawInterval;
+
+        while (gameThread != null) {
+            gameEngine.update(keys);
+            repaint();
+
+            try {
+                double remainingTime = nextDrawTime - System.nanoTime();
+                remainingTime = remainingTime / 1000000;
+
+                if (remainingTime < 0) remainingTime = 0;
+
+                Thread.sleep((long) remainingTime);
+                nextDrawTime += drawInterval;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

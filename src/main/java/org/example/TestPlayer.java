@@ -24,8 +24,8 @@ public class TestPlayer extends TestEntity {
         }
         image = imgFront;
 
-        movementForce = 1.5;
-        jumpForce = 11.0;
+        movementForce = 2.5;
+        jumpForce = 14.0;
         maxVelocityX = 7.0;
         maxVelocityY = 16.0;
     }
