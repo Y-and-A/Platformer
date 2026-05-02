@@ -44,9 +44,7 @@ public class TestGameEngine {
     }
 
     public void handleCollisions(TestEntity entity, double deltaTime) {
-        double timeScale = deltaTime * 60;
-
-        entity.x += entity.velocityX * timeScale;
+        entity.x += entity.velocityX * deltaTime;
 
         if (isColliding(entity.x, entity.y, entity.width, entity.height)) {
             if (entity.velocityX > 0) {
@@ -60,7 +58,7 @@ public class TestGameEngine {
         if (entity.x < 0) entity.x = 0;
         if (entity.x + entity.width> TestWindow.WIDTH) entity.x = TestWindow.WIDTH - entity.width;
 
-        entity.y += entity.velocityY * timeScale;
+        entity.y += entity.velocityY * deltaTime;
         entity.onFloor = false;
 
         if (isColliding(entity.x, entity.y, entity.width, entity.height)) {

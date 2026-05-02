@@ -1,6 +1,7 @@
 package org.example;
 
 import javax.imageio.ImageIO;
+import javax.swing.colorchooser.AbstractColorChooserPanel;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -14,6 +15,11 @@ public class TestPlayer extends TestEntity {
         width = 50;
         height = 70;
 
+        movementForce = 2.5 * ACCELERATION_MULTIPLIER;
+        jumpForce = 14.0 * VELOCITY_MULTIPLIER;
+        maxVelocityX = 7.0 * VELOCITY_MULTIPLIER;
+        maxVelocityY = 16.0  * VELOCITY_MULTIPLIER;
+
         try {
             imgLeft = ImageIO.read(new File("src/main/resources/player/player-facingLeft.png"));
             imgRight = ImageIO.read(new File("src/main/resources/player/player-facingRight.png"));
@@ -23,22 +29,15 @@ public class TestPlayer extends TestEntity {
             e.printStackTrace();
         }
         image = imgFront;
-
-        movementForce = 2.5;
-        jumpForce = 14.0;
-        maxVelocityX = 7.0;
-        maxVelocityY = 16.0;
     }
 
     public void update(boolean[] keys, double deltaTime) {
-        double timeScale = deltaTime * 60.0;
-
         if (keys[KeyEvent.VK_RIGHT]){
-            this.velocityX += movementForce * timeScale;
+            this.velocityX += movementForce * deltaTime;
             image = imgRight;
         }
         if (keys[KeyEvent.VK_LEFT]){
-            this.velocityX -= movementForce * timeScale;
+            this.velocityX -= movementForce * deltaTime;
             image = imgLeft;
         }
         if ((keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_SPACE]) && onFloor){
