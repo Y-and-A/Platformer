@@ -2,7 +2,7 @@ package org.example;
 
 import java.awt.*;
 
-public abstract class TestGameObject {
+public abstract class GameObject {
     protected double x;
     protected double y;
 

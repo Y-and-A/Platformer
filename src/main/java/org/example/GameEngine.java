@@ -5,11 +5,12 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class TestGameEngine {
-    private TestPlayer player;
+public class GameEngine {
+    private Player player;
     private int[][] map;
     private int TILE_WIDTH;
     private int TILE_HEIGHT;
+
     private Image rightTop;
     private Image middleTop;
     private Image leftTop;
@@ -28,39 +29,47 @@ public class TestGameEngine {
     private Image only4;
 
 
-    public TestGameEngine(TestPlayer player, int[][] map) {
+    public GameEngine(Player player, int[][] map) {
         this.player = player;
         this.map = map;
         loadImages();
 
-
-        TILE_WIDTH = TestWindow.WIDTH / map[0].length;
-        TILE_HEIGHT = TestWindow.HEIGHT / map.length;
+        TILE_WIDTH = Window.WIDTH / map[0].length;
+        TILE_HEIGHT = Window.HEIGHT / map.length;
     }
 
-    public void update(boolean[] keys, double deltaTime) {
-        this.player.update(keys, deltaTime);
+    public void update(boolean[] keys, boolean[] prevKeys, double deltaTime) {
+        this.player.update(keys, prevKeys, deltaTime);
         handleCollisions(player, deltaTime);
     }
 
-    public void handleCollisions(TestEntity entity, double deltaTime) {
+    public void handleCollisions(Entity entity, double deltaTime) {
+        entity.onWall = false;
+        entity.onFloor = false;
+
         entity.x += entity.velocityX * deltaTime;
 
         if (isColliding(entity.x, entity.y, entity.width, entity.height)) {
             if (entity.velocityX > 0) {
                 entity.x = ((int) (entity.x + entity.width) / TILE_WIDTH) * TILE_WIDTH - entity.width - 0.01;
+                entity.onWall = true;
             } else if (entity.velocityX < 0) {
                 entity.x = ((int) entity.x / TILE_WIDTH + 1) * TILE_WIDTH;
+                entity.onWall = true;
             }
             entity.velocityX = 0;
         }
 
-        if (entity.x < 0) entity.x = 0;
-        if (entity.x + entity.width> TestWindow.WIDTH) entity.x = TestWindow.WIDTH - entity.width;
+        if (entity.x < 0) {
+            entity.x = 0;
+            entity.onWall = true;
+        }
+        if (entity.x + entity.width> Window.WIDTH) {
+            entity.x = Window.WIDTH - entity.width;
+            entity.onWall = true;
+        }
 
         entity.y += entity.velocityY * deltaTime;
-        entity.onFloor = false;
-
         if (isColliding(entity.x, entity.y, entity.width, entity.height)) {
             if (entity.velocityY > 0) {
                 entity.y = ((int) (entity.y + entity.height) / TILE_HEIGHT) * TILE_HEIGHT - entity.height - 0.01;
