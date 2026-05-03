@@ -19,6 +19,8 @@ public class GamePanel extends JPanel implements Runnable {
         player.x = 1100;
         player.y = 500;
 
+        setBackground(Color.CYAN);
+
         /*
         guide 0 =air
         11-13 top layer
@@ -28,7 +30,7 @@ public class GamePanel extends JPanel implements Runnable {
         21-13 floating blocks
         31 -34 on part grass rest dirt
          */
-        map = new int[][]{
+        map = new int[][] {
                 {0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
                 {0 , 0 , 0 , 0 , 0 , 21, 23, 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
                 {0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
@@ -47,9 +49,8 @@ public class GamePanel extends JPanel implements Runnable {
                 {14, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 16},
                 {14, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 16},
                 {14, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 16}
-
-
         };
+
         gameEngine = new GameEngine(player, map);
         setFocusable(true);
 
