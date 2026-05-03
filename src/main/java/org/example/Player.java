@@ -21,7 +21,7 @@ public class Player extends Entity {
         jumpForce = 14.0 * VELOCITY_MULTIPLIER;
         maxVelocityX = 7.0 * VELOCITY_MULTIPLIER;
         maxVelocityY = 16.0  * VELOCITY_MULTIPLIER;
-        wallJumpForce = 10.0 * VELOCITY_MULTIPLIER;
+        wallJumpForce = 6.0 * VELOCITY_MULTIPLIER;
 
         try {
             imgLeft = ImageIO.read(new File("src/main/resources/player/player-facingLeft.png"));
@@ -73,17 +73,12 @@ public class Player extends Entity {
                 image = imgRight;
             }
         }
-
         super.update(deltaTime);
     }
 
     @Override
     public void draw(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.drawImage(image, (int) x, (int) y,width,height,null);
-        g2d.setColor(Color.blue);
-//        Rectangle2D.Double playerRect = new Rectangle2D.Double(this.x, this.y, width, height);
-//        g2d.fill(playerRect);
+        g.drawImage(image, (int) x, (int) y,width,height,null);
+        g.setColor(Color.blue);
     }
 }

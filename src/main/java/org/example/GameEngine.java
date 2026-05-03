@@ -23,10 +23,13 @@ public class GameEngine {
     private Image floatingLeft;
     private Image floatingMiddle;
     private Image floatingRight;
+    private Image floatingSingle;
     private Image only1;
     private Image only2;
     private Image only3;
     private Image only4;
+    private Image special1;
+    private Image fullGrassUp;
 
 
     public GameEngine(Player player, int[][] map) {
@@ -117,10 +120,13 @@ public class GameEngine {
                     case 21 -> floatingLeft;
                     case 22 -> floatingMiddle;
                     case 23 -> floatingRight;
+                    case 24 -> floatingSingle;
                     case 31 -> only1;
                     case 32 -> only2;
                     case 33 -> only3;
                     case 34 -> only4;
+                    case 40 -> fullGrassUp;
+                    case 61 -> special1;
                     default -> middleTop;
                 };
                 g2d.drawImage(tile,col * TILE_WIDTH, row * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT,null);
@@ -142,10 +148,13 @@ public class GameEngine {
             floatingLeft = ImageIO.read(new File("src/main/resources/tiles/floatingLeft.png"));
             floatingMiddle = ImageIO.read(new File("src/main/resources/tiles/floatingMiddle.png"));
             floatingRight = ImageIO.read(new File("src/main/resources/tiles/floatingRight.png"));
+            floatingSingle = ImageIO.read(new File("src/main/resources/tiles/floatingSingle.png"));
             only1 = ImageIO.read(new File("src/main/resources/tiles/only1.png"));
             only2 = ImageIO.read(new File("src/main/resources/tiles/only2.png"));
             only3 = ImageIO.read(new File("src/main/resources/tiles/only3.png"));
             only4 = ImageIO.read(new File("src/main/resources/tiles/only4.png"));
+            special1 = ImageIO.read(new File("src/main/resources/tiles/special1.png"));
+            fullGrassUp = ImageIO.read(new File("src/main/resources/tiles/fullGrassUp.png"));
 
         } catch (IOException e) {
             throw new RuntimeException(e);
