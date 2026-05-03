@@ -13,7 +13,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final boolean[] keys = new boolean[256];
     private final boolean[] prevKeys = new boolean[256];
 
-    public int[][] maps(int level) {
+    public int[][] maps(int level){
         /*
         guide
          0 =air
@@ -105,13 +105,11 @@ public class GamePanel extends JPanel implements Runnable {
             addKeyListener(new java.awt.event.KeyAdapter() {
                 @Override
                 public void keyPressed(java.awt.event.KeyEvent e) {
-//                System.out.println("Key pressed");
                     if (e.getKeyCode() < 256) keys[e.getKeyCode()] = true;
                 }
 
                 @Override
                 public void keyReleased(java.awt.event.KeyEvent e) {
-//                System.out.println("Key released");
                     if (e.getKeyCode() < 256) keys[e.getKeyCode()] = false;
                 }
             });
@@ -128,30 +126,15 @@ public class GamePanel extends JPanel implements Runnable {
 
         @Override
         public void run () {
-            double drawInterval = 1000000000.0 / 60;
-            double nextDrawTime = System.nanoTime() + drawInterval;
-
-            long lastTime = System.nanoTime();
 
             while (gameThread != null) {
-                long now = System.nanoTime();
-                double deltaTime = (now - lastTime) / 1000000000.0;
-                lastTime = now;
-
-                gameEngine.update(keys, prevKeys, deltaTime);
+                gameEngine.update(keys, prevKeys);
                 System.arraycopy(keys, 0, prevKeys, 0, keys.length);
                 repaint();
-
                 try {
-                    double remainingTime = nextDrawTime - System.nanoTime();
-                    remainingTime = remainingTime / 1000000;
-
-                    if (remainingTime < 0) remainingTime = 0;
-
-                    Thread.sleep((long) remainingTime);
-                    nextDrawTime += drawInterval;
+                    Thread.sleep(16);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
         }

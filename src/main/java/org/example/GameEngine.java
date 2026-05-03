@@ -8,8 +8,8 @@ import java.io.IOException;
 public class GameEngine {
     private Player player;
     private int[][] map;
-    private int TILE_WIDTH;
-    private int TILE_HEIGHT;
+    private final int TILE_WIDTH;
+    private final int TILE_HEIGHT;
 
     private Image rightTop;
     private Image middleTop;
@@ -41,18 +41,18 @@ public class GameEngine {
         TILE_HEIGHT = Window.HEIGHT / map.length;
     }
 
-    public void update(boolean[] keys, boolean[] prevKeys, double deltaTime) {
-        this.player.update(keys, prevKeys, deltaTime);
-        handleCollisions(player, deltaTime);
+    public void update(boolean[] keys, boolean[] prevKeys) {
+        this.player.update(keys, prevKeys);
+        handleCollisions(player);
     }
 
-    public void handleCollisions(Entity entity, double deltaTime) {
+    public void handleCollisions(Entity entity) {
         entity.onWall = false;
         entity.onFloor = false;
 
-        entity.x += entity.velocityX * deltaTime;
+        entity.x += entity.velocityX;
 
-        if (isColliding(entity.x, entity.y, entity.width, entity.height)) {
+        if (isColliding(entity)) {
             if (entity.velocityX > 0) {
                 entity.x = ((int) (entity.x + entity.width) / TILE_WIDTH) * TILE_WIDTH - entity.width - 0.01;
                 entity.onWall = true;
@@ -72,8 +72,8 @@ public class GameEngine {
             entity.onWall = true;
         }
 
-        entity.y += entity.velocityY * deltaTime;
-        if (isColliding(entity.x, entity.y, entity.width, entity.height)) {
+        entity.y += entity.velocityY;
+        if (isColliding(entity)) {
             if (entity.velocityY > 0) {
                 entity.y = ((int) (entity.y + entity.height) / TILE_HEIGHT) * TILE_HEIGHT - entity.height - 0.01;
                 entity.onFloor = true;
@@ -84,15 +84,15 @@ public class GameEngine {
         }
     }
 
-    public boolean isColliding(double x, double y, int width, int height) {
-        int leftCol =  Math.max(0, (int) (x / TILE_WIDTH));
-        int rightCol = Math.min(map[0].length - 1, (int) ((x + width - 0.01) / TILE_WIDTH));
-        int topRow = Math.max(0, (int) (y / TILE_HEIGHT));
-        int bottomRow = Math.min(map.length - 1, (int) ((y + height - 0.01) / TILE_HEIGHT));
+    public boolean isColliding(Entity entity) {
+        int leftColumn =  Math.max(0, (int) (entity.x / TILE_WIDTH));//math max/min to insure bounds
+        int rightColumn = Math.min(map[0].length - 1, (int) ((entity.x + entity.width - 0.01) / TILE_WIDTH));
+        int topRow = Math.max(0, (int) (entity.y / TILE_HEIGHT));
+        int bottomRow = Math.min(map.length - 1, (int) ((entity.y + entity.height - 0.01) / TILE_HEIGHT));
 
         for (int r = topRow; r <= bottomRow; r++) {
-            for (int c = leftCol; c <= rightCol; c++) {
-                if (map[r][c] != 0) return true;
+            for (int c = leftColumn; c <= rightColumn; c++) {
+               if (map[r][c]!=0)return true;
             }
         }
 
