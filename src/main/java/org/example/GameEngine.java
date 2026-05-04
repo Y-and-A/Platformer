@@ -5,6 +5,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+import static org.example.UiScaling.scale;
+
 public class GameEngine {
     private Player player;
     private int[][] map;
@@ -37,8 +39,8 @@ public class GameEngine {
         this.map = map;
         loadImages();
 
-        TILE_WIDTH = Window.WIDTH / map[0].length;
-        TILE_HEIGHT = Window.HEIGHT / map.length;
+        TILE_WIDTH = (int) (50*scale);
+        TILE_HEIGHT = (int) (50*scale);
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
