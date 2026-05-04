@@ -13,10 +13,8 @@ public class Player extends Entity {
     private double canWallJumpIn;
 
 //    private String direction; was meant to be a way to change the image from other places
-    public Player() {
-        width = 50;
-        height = 70;
-
+    public Player(int x,int y) {
+        super(x,y,(int) 49,70);
         jumpForce = 14.0 ;
         maxVelocityX = 7.0;
         maxVelocityY = 16.0;
@@ -73,6 +71,8 @@ public class Player extends Entity {
             }
             canWallJumpIn = wallJumpCooldown;
         }
+
+        if (y > Window.HEIGHT) y = 0;//TODO DEATH LOGIC HERE
         super.update();
     }
 

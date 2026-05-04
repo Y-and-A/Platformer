@@ -3,8 +3,6 @@ package org.example;
 import java.awt.*;
 
 public abstract class Entity extends GameObject {
-    protected int width;
-    protected int height;
     protected Image image;
 
     protected final double GRAVITY = 0.6;
@@ -24,6 +22,14 @@ public abstract class Entity extends GameObject {
     protected boolean alive = true;
     protected boolean onFloor;
     protected boolean onWall;
+    protected boolean leftCollision;
+    protected boolean rightCollision;
+    protected boolean topCollision;
+//    protected boolean topCollisionWithFloating;
+
+    protected Entity(int x, int y, int width, int height) {
+        super(x, y, width, height);
+    }
 
 
     public void update() {
