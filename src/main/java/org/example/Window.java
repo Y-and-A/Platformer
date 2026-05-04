@@ -2,6 +2,9 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
+
+import static org.example.UiScaling.scale;
 
 public class Window {
     public final JFrame window = new JFrame("Platformer");
@@ -19,8 +22,9 @@ public class Window {
     public static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     public Window() {
+//        System.out.println(scale*96);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setSize(screenSize);
+        window.setSize((int) (1300/scale), (int) (800/scale));
         WIDTH = window.getWidth();
         HEIGHT = window.getHeight();
         window.setResizable(false);
@@ -53,7 +57,7 @@ public class Window {
         panel.setBackground(Color.GRAY);
         panel.setLayout(null);
         JButton selectLevelButton = new JButton("Select Level");
-        selectLevelButton.setBounds(screenSize.width/2,screenSize.height/2,100,30);
+        selectLevelButton.setBounds(window.getWidth()/2-50,window.getHeight()/2,100,30);
         selectLevelButton.setFocusable(false);
         selectLevelButton.addActionListener(e -> changeScene(levelSelectorName));
         panel.add(selectLevelButton);

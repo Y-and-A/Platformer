@@ -2,14 +2,16 @@ package org.example;
 
 import java.awt.*;
 
+import static org.example.UiScaling.scale;
+
 public abstract class Entity extends GameObject {
     protected int width;
     protected int height;
     protected Image image;
 
-    protected final double GRAVITY = 0.6;
-    protected final double FRICTION = 1.5;
-    protected final double DRAG = 0.2;
+    protected final double GRAVITY = 0.6*scale;
+    protected final double FRICTION = 1.5*scale;
+    protected final double DRAG = 0.2*scale;
 
     protected double moveX;
     protected double velocityX = 0;

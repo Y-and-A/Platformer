@@ -1,0 +1,8 @@
+package org.example;
+
+import java.awt.*;
+
+public interface UiScaling {
+    static final double scale = (double) Toolkit.getDefaultToolkit().getScreenResolution() /96;
+
+}
