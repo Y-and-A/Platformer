@@ -9,7 +9,7 @@ import static org.example.UiScaling.scale;
 
 public class GameEngine {
     private Player player;
-    private int[][] map;
+    private short[][] map;
     private final int TILE_WIDTH;
     private final int TILE_HEIGHT;
 
@@ -34,7 +34,7 @@ public class GameEngine {
     private Image fullGrassUp;
 
 
-    public GameEngine(Player player, int[][] map) {
+    public GameEngine(Player player, short[][] map) {
         this.player = player;
         this.map = map;
         loadImages();

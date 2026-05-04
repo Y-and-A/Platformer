@@ -14,10 +14,10 @@ public class Window {
     public final CardLayout cardLayout = new CardLayout();
     public final JPanel mainPanel = new JPanel();
 
-    private final GamePanel gamePanel;
+    private GamePanel gamePanel = null;
 
     private final String titleScreenName = "Title screen";
-    private final String levelSelectorName = "LEVEL SELECTOR";
+    private final String levelSelectorName = "SELECTOR";
     private final String levelName = "LEVEL";
     public static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -30,26 +30,36 @@ public class Window {
         window.setResizable(false);
         System.out.println(WIDTH + "," + HEIGHT);
 
-        gamePanel = new GamePanel();
-
         mainPanel.setLayout(cardLayout);
 
         mainPanel.add(createTitleScreen(), titleScreenName);
         mainPanel.add(createLevelSelectorScreen(), levelSelectorName);
-        mainPanel.add(gamePanel, levelName);
 
         window.add(mainPanel);
         window.setVisible(true);
     }
 
     public void changeScene(String scene) {
-        cardLayout.show(mainPanel, scene);
-        mainPanel.requestFocusInWindow();
+        if (scene.contains(levelName)) {
+            int level = Integer.parseInt(scene.substring(levelName.length()));
 
-        if (scene.equals(levelName)) {
+            if (gamePanel == null) {
+                gamePanel = new GamePanel(level);
+                mainPanel.add(gamePanel, levelName); // add gamePanel to mainPanel for the first time
+            } else {
+                gamePanel = new GamePanel(level);
+            }
             gamePanel.startGame();
+            cardLayout.show(mainPanel, levelName);
             gamePanel.requestFocusInWindow();
-        } else gamePanel.stopGame();
+        }
+
+        else {
+            cardLayout.show(mainPanel, scene);
+            mainPanel.requestFocusInWindow();
+
+            if (gamePanel != null) gamePanel.stopGame();
+        }
     }
 
     public JPanel createTitleScreen() {
@@ -71,8 +81,9 @@ public class Window {
         panel.setBackground(Color.GREEN);
 
         for (int i = 0; i < 9; i++) {
-            JButton levelButton = new LevelButton("Level " + (i + 1));
-            levelButton.addActionListener(e -> changeScene(levelName));
+            JButton levelButton = new LevelButton("Level " + i);
+            int finalI = i;
+            levelButton.addActionListener(e -> changeScene(levelName + finalI));
             panel.add(levelButton);
         }
 
