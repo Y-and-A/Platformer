@@ -12,8 +12,8 @@ public class GameEngine {
     private Player player;
     private short[][] map;
     private ArrayList<Tile> tiles = new ArrayList<>();
-    private final int TILE_WIDTH=(int) (50 * scale);
-    private final int TILE_HEIGHT=(int) (50 * scale);
+    private final int TILE_WIDTH = (int) (50 * scale);
+    private final int TILE_HEIGHT = (int) (50 * scale);
 
     private Image rightTop;
     private Image middleTop;
@@ -45,8 +45,8 @@ public class GameEngine {
         Image image = special1;
         for (int r = 0; r < map.length; r++) {
             for (int c = 0; c < map[r].length; c++) {
-                int multiplier = (int) (50 *scale);
-                boolean floating = (map[r][c]>20&&map[r][c]<25);//floating tiles id 21,22,23,24
+                int multiplier = (int) (50 * scale);
+                boolean floating = (map[r][c] > 20 && map[r][c] < 25);//floating tiles id 21,22,23,24
                 image = switch (map[r][c]) {
                     case 0 -> null;
                     case 11 -> leftTop;
@@ -72,8 +72,8 @@ public class GameEngine {
                     case 62 -> special2;
                     default -> null;
                 };
-                if (image!=null){
-                    tiles.add(new Tile(c*multiplier,r*multiplier,floating,image));
+                if (image != null) {
+                    tiles.add(new Tile(c * multiplier, r * multiplier, floating, image));
                 }
             }
         }
@@ -81,72 +81,94 @@ public class GameEngine {
 
     public void update(boolean[] keys, boolean[] prevKeys) {
         this.player.update(keys, prevKeys);
-        handleCollisions(player);
+//        handleCollisions(player);
+        move(player);
     }
 
-    public void handleCollisions(Entity entity) {
-        entity.onWall = false;
+    public boolean collisionV2(Entity entity) {
+        Rectangle entityLeft = new Rectangle((int) entity.x, (int) entity.y, 1, entity.height);
+        Rectangle entityRight = new Rectangle((int) entity.x + entity.width - 1, (int) entity.y, 1, entity.height);
+        Rectangle entityUp = new Rectangle((int) entity.x, (int) entity.y, entity.width, 1);
+        Rectangle entityDown = new Rectangle((int) entity.x, (int) entity.y + entity.height, entity.width, 1);
+        Rectangle tileRect;
         entity.onFloor = false;
+        entity.topCollision = false;
+        entity.topCollisionWithFloating =false;
+        entity.leftCollision = false;
+        entity.rightCollision = false;
+        entity.onWall = false;
+        for (int i = 0; i < tiles.size(); i++) {
+            tileRect = tiles.get(i).rectangle();
 
-        entity.x += entity.velocityX;
-
-        if (isColliding(entity)) {
-            if (entity.velocityX > 0) {
-                entity.x = ((int) (entity.x + entity.width) / TILE_WIDTH) * TILE_WIDTH - entity.width - 0.01;
-                entity.onWall = true;
-            } else if (entity.velocityX < 0) {
-                entity.x = ((int) entity.x / TILE_WIDTH + 1) * TILE_WIDTH;
-                entity.onWall = true;
+            if (entityLeft.intersects(tileRect)){
+                entity.leftCollision = true;
+                entity.onWall =true;
             }
+            if (entityRight.intersects(tileRect)) {
+                entity.rightCollision = true;
+                entity.onWall =true;
+            }
+            if (entityUp.intersects(tileRect)){
+                if (tiles.get(i).floating)
+                    entity.topCollisionWithFloating =true;
+                else entity.topCollision = true;
+            }
+            if (entityDown.intersects(tileRect))
+                entity.onFloor = true;
+        }
+        if (entity.onFloor || entity.topCollision || entity.leftCollision || entity.rightCollision||entity.topCollisionWithFloating)
+            return true;
+        return false;
+    }
+
+    public void move(Entity entity) {
+        entity.x += entity.velocityX;
+        collisionV2(entity);
+        if (entity.rightCollision) {
+            entity.x = ((int) (entity.x + entity.width) / TILE_WIDTH) * TILE_WIDTH - entity.width - 0.01;
             entity.velocityX = 0;
+            entity.onWall = true;
+        } else if (entity.leftCollision) {
+            entity.x = ((int) entity.x / TILE_WIDTH + 1) * TILE_WIDTH;
+            entity.velocityX = 0;
+            entity.onWall = true;
         }
 
         if (entity.x < 0) {
             entity.x = 0;
             entity.onWall = true;
         }
-        if (entity.x + entity.width> Window.WIDTH) {
+        if (entity.x + entity.width > Window.WIDTH) {
             entity.x = Window.WIDTH - entity.width;
             entity.onWall = true;
         }
 
         entity.y += entity.velocityY;
-        if (isColliding(entity)) {
-            if (entity.velocityY > 0) {
+        collisionV2(entity);
+            if (entity.onFloor) {
                 entity.y = ((int) (entity.y + entity.height) / TILE_HEIGHT) * TILE_HEIGHT - entity.height - 0.01;
-                entity.onFloor = true;
-            } else if (entity.velocityY < 0) {
+                entity.velocityY = 0;
+            } else if (entity.topCollision) {
                 entity.y = ((int) entity.y / TILE_HEIGHT + 1) * TILE_HEIGHT;
+                entity.velocityY = 0;
+            }else if (entity.topCollisionWithFloating){//needs some work
+                entity.y = ((int) entity.y / TILE_HEIGHT+1)* TILE_HEIGHT;
+                entity.velocityY = 0;
             }
-            entity.velocityY = 0;
-        }
-    }
-
-    public boolean isColliding(Entity entity) {
-        int leftColumn =  Math.max(0, (int) (entity.x / TILE_WIDTH));//math max/min to insure bounds
-        int rightColumn = Math.min(map[0].length - 1, (int) ((entity.x + entity.width - 0.01) / TILE_WIDTH));
-        int topRow = Math.max(0, (int) (entity.y / TILE_HEIGHT));
-        int bottomRow = Math.min(map.length - 1, (int) ((entity.y + entity.height - 0.01) / TILE_HEIGHT));
-
-        for (int r = topRow; r <= bottomRow; r++) {
-            for (int c = leftColumn; c <= rightColumn; c++) {
-               if (map[r][c]!=0)return true;
-            }
-        }
-
-        return false;
     }
 
     public void draw(Graphics g) {
         drawTiles(g);
         this.player.draw(g);
     }
-    private void drawTiles(Graphics g){
+
+    private void drawTiles(Graphics g) {
         for (int i = 0; i < tiles.size(); i++) {
             tiles.get(i).draw(g);
         }
     }
-    private void loadImages(){
+
+    private void loadImages() {
         try {
             rightTop = ImageIO.read(new File("src/main/resources/tiles/rightTop.png"));
             middleTop = ImageIO.read(new File("src/main/resources/tiles/middleTop.png"));
@@ -173,5 +195,99 @@ public class GameEngine {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    //old code
+    public void handleCollisions(Entity entity) {
+        entity.onWall = false;
+        entity.onFloor = false;
+
+        entity.x += entity.velocityX;
+
+        if (collisionV2(entity)) {
+            if (entity.velocityX > 0) {
+                entity.x = ((int) (entity.x + entity.width) / TILE_WIDTH) * TILE_WIDTH - entity.width - 0.01;
+                entity.onWall = true;
+            } else if (entity.velocityX < 0) {
+                entity.x = ((int) entity.x / TILE_WIDTH + 1) * TILE_WIDTH;
+                entity.onWall = true;
+            }
+            entity.velocityX = 0;
+        }
+
+        if (entity.x < 0) {
+            entity.x = 0;
+            entity.onWall = true;
+        }
+        if (entity.x + entity.width > Window.WIDTH) {
+            entity.x = Window.WIDTH - entity.width;
+            entity.onWall = true;
+        }
+
+        entity.y += entity.velocityY;
+        if (collisionV2(entity)) {
+            if (entity.velocityY > 0) {
+                entity.y = ((int) (entity.y + entity.height) / TILE_HEIGHT) * TILE_HEIGHT - entity.height - 0.01;
+                entity.onFloor = true;
+            } else if (entity.velocityY < 0) {
+                entity.y = ((int) entity.y / TILE_HEIGHT + 1) * TILE_HEIGHT;
+            }
+            entity.velocityY = 0;
+        }
+    }
+
+    public boolean isColliding(Entity entity) {
+        int leftColumn = Math.max(0, (int) (entity.x / TILE_WIDTH));//math max/min to insure bounds
+        int rightColumn = Math.min(map[0].length - 1, (int) ((entity.x + entity.width - 0.01) / TILE_WIDTH));
+        int topRow = Math.max(0, (int) (entity.y / TILE_HEIGHT));
+        int bottomRow = Math.min(map.length - 1, (int) ((entity.y + entity.height - 0.01) / TILE_HEIGHT));
+
+        for (int r = topRow; r <= bottomRow; r++) {
+            for (int c = leftColumn; c <= rightColumn; c++) {
+                if (map[r][c] != 0) return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean collisionV3(Entity entity) {
+        Rectangle entityLeft = new Rectangle((int) entity.x, (int) entity.y, 1, entity.height);
+        Rectangle entityRight = new Rectangle((int) entity.x + entity.width - 1, (int) entity.y, 1, entity.height);
+        Rectangle entityUp = new Rectangle((int) entity.x, (int) entity.y, entity.width, 1);
+        Rectangle entityDown = new Rectangle((int) entity.x, (int) entity.y + entity.height, entity.width, 1);
+        Rectangle tileRect;
+        entity.onFloor = false;
+        entity.topCollision = false;
+        entity.leftCollision = false;
+        entity.rightCollision = false;
+//        entity.onWall = false;
+        for (int i = 0; i < tiles.size(); i++) {
+            tileRect = tiles.get(i).rectangle();
+
+            if (entityLeft.intersects(tileRect)) {
+                entity.leftCollision = true;
+                entity.velocityX = 0;
+                entity.x = tileRect.x + tileRect.width;
+            }
+            if (entityRight.intersects(tileRect)) {
+                entity.rightCollision = true;
+                entity.velocityX = 0;
+                entity.x = tileRect.x;
+            }
+            if (entityUp.intersects(tileRect)) {
+                entity.topCollision = true;
+                entity.velocityY = 0;
+                entity.y = tileRect.y + tileRect.height;
+            }
+            if (entityDown.intersects(tileRect)) {
+                entity.onFloor = true;
+                entity.y = tileRect.y;
+
+            }
+        }
+        if (entity.onFloor || entity.topCollision || entity.leftCollision || entity.rightCollision)
+            return true;
+        return false;
     }
 }

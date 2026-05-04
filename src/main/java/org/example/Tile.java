@@ -23,4 +23,7 @@ public class Tile extends GameObject{
     public void draw(Graphics g) {
         g.drawImage(image, (int) x, (int) y,width, (int) (50*scale),null);
     }
+    public Rectangle rectangle (){
+        return new Rectangle((int) x, (int) y,width,height);
+    }
 }
