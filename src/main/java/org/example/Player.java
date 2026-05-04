@@ -15,10 +15,8 @@ public class Player extends Entity {
     private double canWallJumpIn;
 
 //    private String direction; was meant to be a way to change the image from other places
-    public Player() {
-        width = (int) (49*scale);
-        height = (int) (70*scale);
-
+    public Player(int x,int y) {
+        super(x,y,(int) (49*scale),(int) (70*scale));
         jumpForce = 14.0*scale ;
         maxVelocityX = 7.0*scale;
         maxVelocityY = 16.0*scale;

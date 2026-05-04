@@ -4,15 +4,16 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.example.UiScaling.scale;
 
 public class GameEngine {
     private Player player;
     private short[][] map;
+    private ArrayList<Tile> tiles = new ArrayList<>();
     private final int TILE_WIDTH=(int) (50 * scale);
     private final int TILE_HEIGHT=(int) (50 * scale);
-    private final int Floating_HEIGHT=(int) (25 * scale);
 
     private Image rightTop;
     private Image middleTop;
@@ -41,7 +42,41 @@ public class GameEngine {
         this.player = player;
         this.map = map;
         loadImages();
-
+        Image image = special1;
+        for (int r = 0; r < map.length; r++) {
+            for (int c = 0; c < map[r].length; c++) {
+                int multiplier = (int) (50 *scale);
+                boolean floating = (map[r][c]>20&&map[r][c]<25);//floating tiles id 21,22,23,24
+                image = switch (map[r][c]) {
+                    case 0 -> null;
+                    case 11 -> leftTop;
+                    case 12 -> middleTop;
+                    case 13 -> rightTop;
+                    case 14 -> leftMiddle;
+                    case 15 -> middleMiddle;
+                    case 16 -> rightMiddle;
+                    case 17 -> leftBottom;
+                    case 18 -> middleBottom;
+                    case 19 -> rightBottom;
+                    case 21 -> floatingLeft;
+                    case 22 -> floatingMiddle;
+                    case 23 -> floatingRight;
+                    case 24 -> floatingSingle;
+                    case 31 -> only1;
+                    case 32 -> only2;
+                    case 33 -> only3;
+                    case 34 -> only4;
+                    case 40 -> fullGrassUp;
+                    case 41 -> fullGrassLeft;
+                    case 61 -> special1;
+                    case 62 -> special2;
+                    default -> null;
+                };
+                if (image!=null){
+                    tiles.add(new Tile(c*multiplier,r*multiplier,floating,image));
+                }
+            }
+        }
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
@@ -103,41 +138,13 @@ public class GameEngine {
     }
 
     public void draw(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(Color.GREEN);
-
-        Image tile = null;
-        for (int row = 0; row < map.length; row++) {
-            for (int col = 0; col < map[0].length; col++) {
-                tile = switch (map[row][col]) {
-                    case 0 -> null;
-                    case 11 -> leftTop;
-                    case 12 -> middleTop;
-                    case 13 -> rightTop;
-                    case 14 -> leftMiddle;
-                    case 15 -> middleMiddle;
-                    case 16 -> rightMiddle;
-                    case 17 -> leftBottom;
-                    case 18 -> middleBottom;
-                    case 19 -> rightBottom;
-                    case 21 -> floatingLeft;
-                    case 22 -> floatingMiddle;
-                    case 23 -> floatingRight;
-                    case 24 -> floatingSingle;
-                    case 31 -> only1;
-                    case 32 -> only2;
-                    case 33 -> only3;
-                    case 34 -> only4;
-                    case 40 -> fullGrassUp;
-                    case 41 -> fullGrassLeft;
-                    case 61 -> special1;
-                    case 62 -> special2;
-                    default -> middleTop;
-                };
-                g2d.drawImage(tile,col * TILE_WIDTH, row * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT,null);
-            }
-        }
+        drawTiles(g);
         this.player.draw(g);
+    }
+    private void drawTiles(Graphics g){
+        for (int i = 0; i < tiles.size(); i++) {
+            tiles.get(i).draw(g);
+        }
     }
     private void loadImages(){
         try {
@@ -160,6 +167,7 @@ public class GameEngine {
             only4 = ImageIO.read(new File("src/main/resources/tiles/only4.png"));
             special1 = ImageIO.read(new File("src/main/resources/tiles/special1.png"));
             special2 = ImageIO.read(new File("src/main/resources/tiles/special2.png"));
+            fullGrassUp = ImageIO.read(new File("src/main/resources/tiles/fullGrassUp.png"));
             fullGrassLeft = ImageIO.read(new File("src/main/resources/tiles/fullGrassLeft.png"));
 
         } catch (IOException e) {

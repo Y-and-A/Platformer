@@ -5,8 +5,6 @@ import java.awt.*;
 import static org.example.UiScaling.scale;
 
 public abstract class Entity extends GameObject {
-    protected int width;
-    protected int height;
     protected Image image;
 
     protected final double GRAVITY = 0.6*scale;
@@ -26,6 +24,10 @@ public abstract class Entity extends GameObject {
     protected boolean alive = true;
     protected boolean onFloor;
     protected boolean onWall;
+
+    protected Entity(int x, int y, int width, int height) {
+        super(x, y, width, height);
+    }
 
 
     public void update() {

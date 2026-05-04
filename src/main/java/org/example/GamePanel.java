@@ -15,10 +15,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public GamePanel(int levelNum) {
         map = Level.getLevel(levelNum);
-
-        player = new Player();
-        player.x = Level.getPlayerPos(levelNum)[0];
-        player.y = Level.getPlayerPos(levelNum)[1];
+        int playerX =Level.getPlayerPos(levelNum)[0];
+        int playerY =Level.getPlayerPos(levelNum)[1];
+        player = new Player(playerX,playerY);
 
         gameEngine = new GameEngine(player, map);
         setFocusable(true);
@@ -62,7 +61,6 @@ public class GamePanel extends JPanel implements Runnable {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         gameEngine.draw(g);
     }
 }
