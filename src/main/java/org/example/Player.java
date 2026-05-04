@@ -9,19 +9,19 @@ import java.io.IOException;
 public class Player extends Entity {
     private Image imgLeft, imgRight, imgFront, imgUp;
 
-    private double wallJumpTimer = 0;
-    private final double WALL_JUMP_LOCK_TIME = 0.4;
+    private final double wallJumpCooldown = 3000;
+    private double canWallJumpIn;
 
-//    private String direction; was ment to be a way to change the image from other places
+//    private String direction; was meant to be a way to change the image from other places
     public Player() {
         width = 50;
         height = 70;
 
-        movementForce = 2.5 * ACCELERATION_MULTIPLIER;
-        jumpForce = 14.0 * VELOCITY_MULTIPLIER;
-        maxVelocityX = 7.0 * VELOCITY_MULTIPLIER;
-        maxVelocityY = 16.0  * VELOCITY_MULTIPLIER;
-        wallJumpForce = 6.0 * VELOCITY_MULTIPLIER;
+        jumpForce = 14.0 ;
+        maxVelocityX = 7.0;
+        maxVelocityY = 16.0;
+        wallJumpForce = 6.0;
+        moveX =2;
 
         try {
             imgLeft = ImageIO.read(new File("src/main/resources/player/player-facingLeft.png"));
@@ -34,16 +34,16 @@ public class Player extends Entity {
         image = imgFront;
     }
 
-    public void update(boolean[] keys, boolean[] prevKeys, double deltaTime) {
-        if (wallJumpTimer > 0) wallJumpTimer -= deltaTime;
+    public void update(boolean[] keys, boolean[] prevKeys) {
+        if (canWallJumpIn > 0) canWallJumpIn -= 100 ;
 
-        if (wallJumpTimer <= 0) {
+        if (canWallJumpIn <= 0) {
             if (keys[KeyEvent.VK_RIGHT]){
-                this.velocityX += movementForce * deltaTime;
+                this.velocityX += moveX;
                 image = imgRight;
             }
             if (keys[KeyEvent.VK_LEFT]){
-                this.velocityX -= movementForce * deltaTime;
+                this.velocityX -= moveX;
                 image = imgLeft;
             }
         }
@@ -60,20 +60,20 @@ public class Player extends Entity {
         }
 
         if (!onFloor && onWall && jumpKeyPressed && !jumpKeyPrev) {
-            wallJumpTimer = WALL_JUMP_LOCK_TIME;
-
-            if (keys[KeyEvent.VK_RIGHT]) {
-                this.velocityY = -wallJumpForce;
-                this.velocityX = -maxVelocityX;
-                image = imgLeft;
+            if (canWallJumpIn <= 0) {
+                if (keys[KeyEvent.VK_RIGHT]) {
+                    this.velocityY = -wallJumpForce;
+                    this.velocityX = -maxVelocityX;
+                    image = imgLeft;
+                } else if (keys[KeyEvent.VK_LEFT]) {
+                    this.velocityY = -wallJumpForce;
+                    this.velocityX = maxVelocityX;
+                    image = imgRight;
+                }
             }
-            else if (keys[KeyEvent.VK_LEFT]) {
-                this.velocityY = -wallJumpForce;
-                this.velocityX = maxVelocityX;
-                image = imgRight;
-            }
+            canWallJumpIn = wallJumpCooldown;
         }
-        super.update(deltaTime);
+        super.update();
     }
 
     @Override
