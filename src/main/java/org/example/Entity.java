@@ -2,14 +2,12 @@ package org.example;
 
 import java.awt.*;
 
-import static org.example.UiScaling.scale;
-
 public abstract class Entity extends GameObject {
     protected Image image;
 
-    protected final double GRAVITY = 0.6*scale;
-    protected final double FRICTION = 1.5*scale;
-    protected final double DRAG = 0.2*scale;
+    protected final double GRAVITY = 0.6;
+    protected final double FRICTION = 1.5;
+    protected final double DRAG = 0.2;
 
     protected double moveX;
     protected double velocityX = 0;
@@ -27,7 +25,7 @@ public abstract class Entity extends GameObject {
     protected boolean leftCollision;
     protected boolean rightCollision;
     protected boolean topCollision;
-    protected boolean topCollisionWithFloating;
+//    protected boolean topCollisionWithFloating;
 
     protected Entity(int x, int y, int width, int height) {
         super(x, y, width, height);

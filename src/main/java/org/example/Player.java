@@ -6,8 +6,6 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 
-import static org.example.UiScaling.scale;
-
 public class Player extends Entity {
     private Image imgLeft, imgRight, imgFront, imgUp;
 
@@ -16,12 +14,12 @@ public class Player extends Entity {
 
 //    private String direction; was meant to be a way to change the image from other places
     public Player(int x,int y) {
-        super(x,y,(int) (49*scale),(int) (70*scale));
-        jumpForce = 14.0*scale ;
-        maxVelocityX = 7.0*scale;
-        maxVelocityY = 16.0*scale;
-        wallJumpForce = 6.0*scale;
-        moveX =2*scale;
+        super(x,y,(int) 49,70);
+        jumpForce = 14.0 ;
+        maxVelocityX = 7.0;
+        maxVelocityY = 16.0;
+        wallJumpForce = 6.0;
+        moveX =2;
 
         try {
             imgLeft = ImageIO.read(new File("src/main/resources/player/player-facingLeft.png"));
@@ -56,7 +54,7 @@ public class Player extends Entity {
             image = imgUp;
         }
         if (!jumpKeyPressed && jumpKeyPrev && this.velocityY < 0) {
-            this.velocityY *= 0.5*scale;
+            this.velocityY *= 0.5;
         }
 
         if (!onFloor && onWall && jumpKeyPressed && !jumpKeyPrev) {
@@ -73,6 +71,8 @@ public class Player extends Entity {
             }
             canWallJumpIn = wallJumpCooldown;
         }
+
+        if (y > Window.HEIGHT) y = 0;//TODO DEATH LOGIC HERE
         super.update();
     }
 

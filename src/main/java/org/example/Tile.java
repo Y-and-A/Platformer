@@ -2,28 +2,27 @@ package org.example;
 
 import java.awt.*;
 
-import static org.example.UiScaling.scale;
-
-public class Tile extends GameObject{
+public class Tile extends GameObject {
     Image image;
     boolean floating;
-    public Tile(int x,int y,boolean floating,Image image){
+
+    public Tile(int x, int y, boolean floating, Image image) {
         super(x, y);
-        width= (int) (50*scale);
-        if (floating){
-            height = (int) (20*scale);
-            floating = true;
-        }
-        else
-            height = (int) (50*scale);
+        width = 50;
+        if (floating) {
+            height = 20;
+            this.floating = true;
+        } else
+            height =  50;
         this.image = image;
     }
 
     @Override
     public void draw(Graphics g) {
-        g.drawImage(image, (int) x, (int) y,width, (int) (50*scale),null);
+        g.drawImage(image, (int) x, (int) y, width, 50, null);
     }
-    public Rectangle rectangle (){
-        return new Rectangle((int) x, (int) y,width,height);
+
+    public Rectangle rectangle() {
+        return new Rectangle((int) x, (int) y, width, height);
     }
 }

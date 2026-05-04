@@ -6,14 +6,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static org.example.UiScaling.scale;
-
 public class GameEngine {
     private Player player;
     private short[][] map;
     private ArrayList<Tile> tiles = new ArrayList<>();
-    private final int TILE_WIDTH = (int) (50 * scale);
-    private final int TILE_HEIGHT = (int) (50 * scale);
+    private final int TILE_WIDTH = 50;
+    private final int TILE_HEIGHT = 50;
 
     private Image rightTop;
     private Image middleTop;
@@ -42,10 +40,9 @@ public class GameEngine {
         this.player = player;
         this.map = map;
         loadImages();
-        Image image = special1;
+        Image image;
         for (int r = 0; r < map.length; r++) {
             for (int c = 0; c < map[r].length; c++) {
-                int multiplier = (int) (50 * scale);
                 boolean floating = (map[r][c] > 20 && map[r][c] < 25);//floating tiles id 21,22,23,24
                 image = switch (map[r][c]) {
                     case 0 -> null;
@@ -73,7 +70,7 @@ public class GameEngine {
                     default -> null;
                 };
                 if (image != null) {
-                    tiles.add(new Tile(c * multiplier, r * multiplier, floating, image));
+                    tiles.add(new Tile(c * 50, r * 50, floating, image));
                 }
             }
         }
@@ -85,45 +82,60 @@ public class GameEngine {
         move(player);
     }
 
-    public boolean collisionV2(Entity entity) {
-        Rectangle entityLeft = new Rectangle((int) entity.x, (int) entity.y, 1, entity.height);
-        Rectangle entityRight = new Rectangle((int) entity.x + entity.width - 1, (int) entity.y, 1, entity.height);
-        Rectangle entityUp = new Rectangle((int) entity.x, (int) entity.y, entity.width, 1);
-        Rectangle entityDown = new Rectangle((int) entity.x, (int) entity.y + entity.height, entity.width, 1);
+    public void updateCollision(Entity entity) {
+        Rectangle entityLeft = new Rectangle((int) entity.x, (int) entity.y, 1, entity.height-14);
+        Rectangle entityRight = new Rectangle((int) ((int) entity.x + entity.width ), (int) entity.y, 1, entity.height-14);
+        Rectangle entityUp = new Rectangle((int) entity.x, (int) entity.y, entity.width-2, 1);
+        Rectangle entityDown = new Rectangle((int) entity.x, (int) entity.y + entity.height, entity.width-2, 1);
         Rectangle tileRect;
+//        System.out.println("caled");
+
         entity.onFloor = false;
         entity.topCollision = false;
-        entity.topCollisionWithFloating =false;
+//        entity.topCollisionWithFloating = false;
         entity.leftCollision = false;
         entity.rightCollision = false;
         entity.onWall = false;
+
         for (int i = 0; i < tiles.size(); i++) {
             tileRect = tiles.get(i).rectangle();
 
-            if (entityLeft.intersects(tileRect)){
+            if (entityLeft.intersects(tileRect)) {
                 entity.leftCollision = true;
-                entity.onWall =true;
+                entity.onWall = true;
+                System.out.println("left");
             }
             if (entityRight.intersects(tileRect)) {
                 entity.rightCollision = true;
-                entity.onWall =true;
+                entity.onWall = true;
+                System.out.println("right");
             }
-            if (entityUp.intersects(tileRect)){
-                if (tiles.get(i).floating)
-                    entity.topCollisionWithFloating =true;
-                else entity.topCollision = true;
+//            if (entityUp.intersects(tileRect)) {
+//                if (tiles.get(i).floating)
+//                    entity.topCollisionWithFloating = true;
+//                else entity.topCollision = true;
+//            }
+            if (entityUp.intersects(tileRect)) {
+                System.out.println("prolem start now");
+                if (tiles.get(i).floating){
+                    System.out.println("works now");
+                    entity.y +=entityUp.union(tileRect).getHeight();
+                    entity.velocityY = 0;
+                }
+                else{
+                    entity.topCollision = true;
+                    System.out.println("top");
+                }
             }
             if (entityDown.intersects(tileRect))
                 entity.onFloor = true;
+//            System.out.println("floar");
         }
-        if (entity.onFloor || entity.topCollision || entity.leftCollision || entity.rightCollision||entity.topCollisionWithFloating)
-            return true;
-        return false;
     }
 
     public void move(Entity entity) {
         entity.x += entity.velocityX;
-        collisionV2(entity);
+        updateCollision(entity);
         if (entity.rightCollision) {
             entity.x = ((int) (entity.x + entity.width) / TILE_WIDTH) * TILE_WIDTH - entity.width - 0.01;
             entity.velocityX = 0;
@@ -144,17 +156,17 @@ public class GameEngine {
         }
 
         entity.y += entity.velocityY;
-        collisionV2(entity);
-            if (entity.onFloor) {
-                entity.y = ((int) (entity.y + entity.height) / TILE_HEIGHT) * TILE_HEIGHT - entity.height - 0.01;
-                entity.velocityY = 0;
-            } else if (entity.topCollision) {
-                entity.y = ((int) entity.y / TILE_HEIGHT + 1) * TILE_HEIGHT;
-                entity.velocityY = 0;
-            }else if (entity.topCollisionWithFloating){//needs some work
-                entity.y = ((int) entity.y / TILE_HEIGHT+1)* TILE_HEIGHT;
-                entity.velocityY = 0;
-            }
+        updateCollision(entity);
+        if (entity.onFloor) {
+            entity.y = ((int) (entity.y + entity.height) / TILE_HEIGHT) * TILE_HEIGHT - entity.height - 0.01;
+            entity.velocityY = 0;
+        } else if (entity.topCollision) {
+            entity.y = ((int) entity.y / TILE_HEIGHT + 1) * TILE_HEIGHT;
+            entity.velocityY = 0;
+//        } else if (entity.topCollisionWithFloating) {//needs some work
+//            entity.y = ((int) entity.y / TILE_HEIGHT + 1) * TILE_HEIGHT;
+//            entity.velocityY = 0;
+        }
     }
 
     public void draw(Graphics g) {
@@ -204,7 +216,7 @@ public class GameEngine {
 
         entity.x += entity.velocityX;
 
-        if (collisionV2(entity)) {
+        if (isColliding(entity)) {
             if (entity.velocityX > 0) {
                 entity.x = ((int) (entity.x + entity.width) / TILE_WIDTH) * TILE_WIDTH - entity.width - 0.01;
                 entity.onWall = true;
@@ -225,7 +237,7 @@ public class GameEngine {
         }
 
         entity.y += entity.velocityY;
-        if (collisionV2(entity)) {
+        if (isColliding(entity)) {
             if (entity.velocityY > 0) {
                 entity.y = ((int) (entity.y + entity.height) / TILE_HEIGHT) * TILE_HEIGHT - entity.height - 0.01;
                 entity.onFloor = true;

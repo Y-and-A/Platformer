@@ -2,14 +2,12 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
-
-import static org.example.UiScaling.scale;
 
 public class Window {
     public final JFrame window = new JFrame("Platformer");
-    public static int WIDTH;
-    public static int HEIGHT;
+
+    public static final int WIDTH = 1300;
+    public static final int HEIGHT = 800;
 
     public final CardLayout cardLayout = new CardLayout();
     public final JPanel mainPanel = new JPanel();
@@ -19,19 +17,13 @@ public class Window {
     private final String titleScreenName = "Title screen";
     private final String levelSelectorName = "SELECTOR";
     private final String levelName = "LEVEL";
-    public static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     public Window() {
-//        System.out.println(scale*96);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setSize((int) (1300/scale), (int) (800/scale));
-        WIDTH = window.getWidth();
-        HEIGHT = window.getHeight();
-        window.setResizable(false);
-        System.out.println(WIDTH + "," + HEIGHT);
+        window.setSize(WIDTH, HEIGHT);
+        window.setLocationRelativeTo(null);
 
         mainPanel.setLayout(cardLayout);
-
         mainPanel.add(createTitleScreen(), titleScreenName);
         mainPanel.add(createLevelSelectorScreen(), levelSelectorName);
 
