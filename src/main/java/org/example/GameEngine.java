@@ -10,8 +10,9 @@ import static org.example.UiScaling.scale;
 public class GameEngine {
     private Player player;
     private short[][] map;
-    private final int TILE_WIDTH;
-    private final int TILE_HEIGHT;
+    private final int TILE_WIDTH=(int) (50 * scale);
+    private final int TILE_HEIGHT=(int) (50 * scale);
+    private final int Floating_HEIGHT=(int) (25 * scale);
 
     private Image rightTop;
     private Image middleTop;
@@ -31,7 +32,9 @@ public class GameEngine {
     private Image only3;
     private Image only4;
     private Image special1;
+    private Image special2;
     private Image fullGrassUp;
+    private Image fullGrassLeft;
 
 
     public GameEngine(Player player, short[][] map) {
@@ -39,8 +42,6 @@ public class GameEngine {
         this.map = map;
         loadImages();
 
-        TILE_WIDTH = (int) (50*scale);
-        TILE_HEIGHT = (int) (50*scale);
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
@@ -128,7 +129,9 @@ public class GameEngine {
                     case 33 -> only3;
                     case 34 -> only4;
                     case 40 -> fullGrassUp;
+                    case 41 -> fullGrassLeft;
                     case 61 -> special1;
+                    case 62 -> special2;
                     default -> middleTop;
                 };
                 g2d.drawImage(tile,col * TILE_WIDTH, row * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT,null);
@@ -156,7 +159,8 @@ public class GameEngine {
             only3 = ImageIO.read(new File("src/main/resources/tiles/only3.png"));
             only4 = ImageIO.read(new File("src/main/resources/tiles/only4.png"));
             special1 = ImageIO.read(new File("src/main/resources/tiles/special1.png"));
-            fullGrassUp = ImageIO.read(new File("src/main/resources/tiles/fullGrassUp.png"));
+            special2 = ImageIO.read(new File("src/main/resources/tiles/special2.png"));
+            fullGrassLeft = ImageIO.read(new File("src/main/resources/tiles/fullGrassLeft.png"));
 
         } catch (IOException e) {
             throw new RuntimeException(e);

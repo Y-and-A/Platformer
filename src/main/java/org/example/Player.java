@@ -16,7 +16,7 @@ public class Player extends Entity {
 
 //    private String direction; was meant to be a way to change the image from other places
     public Player() {
-        width = (int) (50*scale);
+        width = (int) (49*scale);
         height = (int) (70*scale);
 
         jumpForce = 14.0*scale ;
