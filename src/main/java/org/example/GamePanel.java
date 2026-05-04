@@ -8,48 +8,17 @@ public class GamePanel extends JPanel implements Runnable {
     private Thread gameThread;
 
     private Player player;
-    private int[][] map;
+    private short[][] map;
 
     private final boolean[] keys = new boolean[256];
     private final boolean[] prevKeys = new boolean[256];
 
-    public GamePanel() {
+    public GamePanel(int levelNum) {
+        map = Level.getLevel(levelNum);
+
         player = new Player();
-
-        player.x = 1100;
-        player.y = 500;
-
-        setBackground(Color.CYAN);
-
-        /*
-        guide 0 =air
-        11-13 top layer
-        14-16 middle layer
-        17-19 bottom layer
-
-        21-13 floating blocks
-        31 -34 on part grass rest dirt
-         */
-        map = new int[][] {
-                {0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
-                {0 , 0 , 0 , 0 , 0 , 21, 23, 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
-                {0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
-                {0 , 0 , 0 , 0 , 0 , 0 , 0 , 21, 23, 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
-                {0 , 21, 22, 23, 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
-                {0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 21, 23, 0 , 0 , 0 , 0 , 0 , 0 , 0 },
-                {0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 11, 0 , 0 },
-                {0 , 0 , 0 , 0 , 0 , 0 , 11, 12, 13, 0 , 0 , 0 , 0 , 0 , 0 , 0 , 11, 0 , 0 },
-                {0 , 0 , 0 , 0 , 0 , 14, 15, 15, 16, 0 , 0 , 0 , 0 , 0 , 0 , 0 , 11, 0 , 0 },
-                {0 , 0 , 0 , 0 , 0 , 0 , 17, 18, 19, 0 , 0 , 0 , 0 , 0 , 0 , 0 , 11, 0 , 0 },
-                {0 , 0 , 0 , 21, 23, 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 11, 0 , 0 },
-                {0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 11, 0 , 0 },
-                {11, 13, 0 , 0 , 0 , 0 , 11, 12, 13, 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
-                {14, 32, 12, 12, 12, 12, 31, 15, 32, 12, 12, 12, 12, 12, 12, 12, 12, 12, 13},
-                {14, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 16},
-                {14, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 16},
-                {14, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 16},
-                {14, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 16}
-        };
+        player.x = Level.getPlayerPos(levelNum)[0];
+        player.y = Level.getPlayerPos(levelNum)[1];
 
         gameEngine = new GameEngine(player, map);
         setFocusable(true);
@@ -57,13 +26,11 @@ public class GamePanel extends JPanel implements Runnable {
         addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyPressed(java.awt.event.KeyEvent e) {
-//                System.out.println("Key pressed");
                 if (e.getKeyCode() < 256) keys[e.getKeyCode()] = true;
             }
 
             @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
-//                System.out.println("Key released");
                 if (e.getKeyCode() < 256) keys[e.getKeyCode()] = false;
             }
         });
@@ -80,30 +47,14 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        double drawInterval = 1000000000.0 / 60;
-        double nextDrawTime = System.nanoTime() + drawInterval;
-
-        long lastTime = System.nanoTime();
-
         while (gameThread != null) {
-            long now = System.nanoTime();
-            double deltaTime = (now - lastTime) / 1000000000.0;
-            lastTime = now;
-
-            gameEngine.update(keys, prevKeys, deltaTime);
+            gameEngine.update(keys, prevKeys);
             System.arraycopy(keys, 0, prevKeys, 0, keys.length);
             repaint();
-
             try {
-                double remainingTime = nextDrawTime - System.nanoTime();
-                remainingTime = remainingTime / 1000000;
-
-                if (remainingTime < 0) remainingTime = 0;
-
-                Thread.sleep((long) remainingTime);
-                nextDrawTime += drawInterval;
+                Thread.sleep(16);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
     }
