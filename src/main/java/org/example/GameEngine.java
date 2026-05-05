@@ -10,6 +10,7 @@ public class GameEngine {
     private Player player;
     private short[][] map;
     private ArrayList<Tile> tiles = new ArrayList<>();
+    private ArrayList<Enemy> enemies = new ArrayList<>();
     private final int TILE_WIDTH = 50;
     private final int TILE_HEIGHT = 50;
 
@@ -40,6 +41,7 @@ public class GameEngine {
         this.player = player;
         this.map = map;
         loadImages();
+        enemies.add(new Enemy(100,100,50,50));
         Image image;
         for (int r = 0; r < map.length; r++) {
             for (int c = 0; c < map[r].length; c++) {
@@ -154,6 +156,7 @@ public class GameEngine {
 
     public void draw(Graphics g) {
         drawTiles(g);
+        drawEnemies(g);
         this.player.draw(g);
     }
 
@@ -162,6 +165,12 @@ public class GameEngine {
             tiles.get(i).draw(g);
         }
     }
+    private void drawEnemies(Graphics g) {
+        for (int i = 0; i < enemies.size(); i++) {
+            enemies.get(i).draw(g);
+        }
+    }
+
 
     private void loadImages() {
         try {
