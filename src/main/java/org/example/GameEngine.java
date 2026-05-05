@@ -16,27 +16,12 @@ public class GameEngine {
     private final int TILE_WIDTH = 50;
     private final int TILE_HEIGHT = 50;
 
-    private Image rightTop;
-    private Image middleTop;
-    private Image leftTop;
-    private Image leftMiddle;
-    private Image middleMiddle;
-    private Image rightMiddle;
-    private Image leftBottom;
-    private Image middleBottom;
-    private Image rightBottom;
-    private Image floatingLeft;
-    private Image floatingMiddle;
-    private Image floatingRight;
-    private Image floatingSingle;
-    private Image only1;
-    private Image only2;
-    private Image only3;
-    private Image only4;
-    private Image special1;
-    private Image special2;
-    private Image fullGrassUp;
-    private Image fullGrassLeft;
+    private Image rightTop, middleTop, leftTop;
+    private Image leftMiddle, middleMiddle, rightMiddle;
+    private Image leftBottom, middleBottom, rightBottom;
+    private Image floatingLeft, floatingMiddle, floatingRight, floatingSingle;
+    private Image only1, only2, only3, only4;
+    private Image special1, special2, fullGrassUp, fullGrassLeft;
 
 
     public GameEngine(short[][] map) {
@@ -253,6 +238,10 @@ public class GameEngine {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int getPlayerLives() {
+        return player.lives;
     }
 
     //old code
