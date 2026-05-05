@@ -78,7 +78,6 @@ public class GameEngine {
 
     public void update(boolean[] keys, boolean[] prevKeys) {
         this.player.update(keys, prevKeys);
-//        handleCollisions(player);
         move(player);
     }
 
@@ -88,11 +87,9 @@ public class GameEngine {
         Rectangle entityUp = new Rectangle((int) entity.x, (int) entity.y, entity.width-2, 1);
         Rectangle entityDown = new Rectangle((int) entity.x, (int) entity.y + entity.height, entity.width-2, 1);
         Rectangle tileRect;
-//        System.out.println("caled");
 
         entity.onFloor = false;
         entity.topCollision = false;
-//        entity.topCollisionWithFloating = false;
         entity.leftCollision = false;
         entity.rightCollision = false;
         entity.onWall = false;
@@ -103,33 +100,22 @@ public class GameEngine {
             if (entityLeft.intersects(tileRect)) {
                 entity.leftCollision = true;
                 entity.onWall = true;
-                System.out.println("left");
             }
             if (entityRight.intersects(tileRect)) {
                 entity.rightCollision = true;
                 entity.onWall = true;
-                System.out.println("right");
             }
-//            if (entityUp.intersects(tileRect)) {
-//                if (tiles.get(i).floating)
-//                    entity.topCollisionWithFloating = true;
-//                else entity.topCollision = true;
-//            }
             if (entityUp.intersects(tileRect)) {
-                System.out.println("prolem start now");
                 if (tiles.get(i).floating){
-                    System.out.println("works now");
-                    entity.y +=entityUp.union(tileRect).getHeight();
+                    entity.y =tileRect.y+ tileRect.height;
                     entity.velocityY = 0;
                 }
                 else{
                     entity.topCollision = true;
-                    System.out.println("top");
                 }
             }
             if (entityDown.intersects(tileRect))
                 entity.onFloor = true;
-//            System.out.println("floar");
         }
     }
 
@@ -163,9 +149,6 @@ public class GameEngine {
         } else if (entity.topCollision) {
             entity.y = ((int) entity.y / TILE_HEIGHT + 1) * TILE_HEIGHT;
             entity.velocityY = 0;
-//        } else if (entity.topCollisionWithFloating) {//needs some work
-//            entity.y = ((int) entity.y / TILE_HEIGHT + 1) * TILE_HEIGHT;
-//            entity.velocityY = 0;
         }
     }
 

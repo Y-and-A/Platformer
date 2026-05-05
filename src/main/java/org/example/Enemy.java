@@ -1,12 +1,23 @@
 package org.example;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 public class Enemy extends Entity {
     protected Enemy(int x, int y, int width, int height) {
         super(x, y, width, height);
+        try {
+            image = ImageIO.read(new File("src/main/resources/enemy/front.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
+
+
+
 
     public void findPath(short[][] map, int targetX, int targetY) {
         pathFinderHelper(convertMap(map), (int) this.x, (int) this.y, targetX, targetY, new boolean[map.length][map[0].length]);
@@ -32,6 +43,6 @@ public class Enemy extends Entity {
 
     @Override
     public void draw(Graphics g) {
-
+        g.drawImage(image, (int) x, (int) y,width,height,null);
     }
 }

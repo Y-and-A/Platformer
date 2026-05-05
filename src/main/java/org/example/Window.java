@@ -5,7 +5,6 @@ import java.awt.*;
 
 public class Window {
     public final JFrame window = new JFrame("Platformer");
-
     public static final int WIDTH = 1300;
     public static final int HEIGHT = 800;
 
