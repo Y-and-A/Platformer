@@ -8,14 +8,14 @@ public class Window {
     public static final int WIDTH = 1300;
     public static final int HEIGHT = 800;
 
-    public final CardLayout cardLayout = new CardLayout();
-    public final JPanel mainPanel = new JPanel();
+    public static final CardLayout cardLayout = new CardLayout();
+    public static final JPanel mainPanel = new JPanel();
 
-    private GamePanel gamePanel = null;
+    private static GamePanel gamePanel = null;
 
-    private final String titleScreenName = "Title screen";
-    private final String levelSelectorName = "SELECTOR";
-    private final String levelName = "LEVEL";
+    private static final String titleScreenName = "Title screen";
+    protected static final String levelSelectorName = "SELECTOR";
+    private static final String levelName = "LEVEL";
 
     public Window() {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -30,7 +30,7 @@ public class Window {
         window.setVisible(true);
     }
 
-    public void changeScene(String scene) {
+    public static void changeScene(String scene) {
         if (scene.contains(levelName)) {
             int level = Integer.parseInt(scene.substring(levelName.length()));
 
@@ -38,11 +38,14 @@ public class Window {
                 gamePanel = new GamePanel(level);
                 mainPanel.add(gamePanel, levelName); // add gamePanel to mainPanel for the first time
             } else {
+                gamePanel.remove(gamePanel);
                 gamePanel = new GamePanel(level);
+                mainPanel.add(gamePanel, levelName);
             }
             gamePanel.startGame();
             cardLayout.show(mainPanel, levelName);
             gamePanel.requestFocusInWindow();
+
         }
 
         else {
@@ -58,7 +61,7 @@ public class Window {
         panel.setBackground(Color.GRAY);
         panel.setLayout(null);
         JButton selectLevelButton = new JButton("Select Level");
-        selectLevelButton.setBounds(window.getWidth()/2-50,window.getHeight()/2,100,30);
+        selectLevelButton.setBounds(window.WIDTH/2-50,window.HEIGHT/2,100,30);
         selectLevelButton.setFocusable(false);
         selectLevelButton.addActionListener(e -> changeScene(levelSelectorName));
         panel.add(selectLevelButton);

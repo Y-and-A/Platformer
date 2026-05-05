@@ -59,4 +59,7 @@ public class Enemy extends Entity {
             throw new RuntimeException(e);
         }
     }
+    public Rectangle rectangle(){
+        return new Rectangle((int) x, (int) y,width,height);
+    }
 }

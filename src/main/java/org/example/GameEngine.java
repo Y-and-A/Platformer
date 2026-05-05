@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static org.example.Window.levelSelectorName;
+
 public class GameEngine {
     private Player player;
     private short[][] map;
@@ -37,12 +39,9 @@ public class GameEngine {
     private Image fullGrassLeft;
 
 
-    public GameEngine(Player player, short[][] map) {
-        this.player = player;
+    public GameEngine(short[][] map) {
         this.map = map;
         loadImages();
-        enemies.add(new Enemy(100,100));
-        enemies.add(new Enemy(400,50));
         Image image;
         for (int r = 0; r < map.length; r++) {
             for (int c = 0; c < map[r].length; c++) {
@@ -75,6 +74,11 @@ public class GameEngine {
                 if (image != null) {
                     tiles.add(new Tile(c * 50, r * 50, floating, image));
                 }
+                if (map[r][c] == 90) {
+                    enemies.add(new Enemy(c * TILE_WIDTH, r * TILE_HEIGHT));
+                }
+                if (map[r][c] == 99)
+                    this.player = new Player(c * TILE_WIDTH, r * TILE_HEIGHT);
             }
         }
     }
@@ -82,21 +86,24 @@ public class GameEngine {
     public void update(boolean[] keys, boolean[] prevKeys) {
         this.player.update(keys, prevKeys);
         move(player);
+        if (!player.alive) {
+            System.out.println("i'm dead");
+            Window.changeScene(levelSelectorName);
+        }
     }
 
     public void updateCollision(Entity entity) {
-        Rectangle entityLeft = new Rectangle((int) entity.x, (int) entity.y, 1, entity.height-14);
-        Rectangle entityRight = new Rectangle((int) ((int) entity.x + entity.width ), (int) entity.y, 1, entity.height-14);
-        Rectangle entityUp = new Rectangle((int) entity.x, (int) entity.y, entity.width-2, 1);
-        Rectangle entityDown = new Rectangle((int) entity.x, (int) entity.y + entity.height, entity.width-2, 1);
+        Rectangle entityLeft = new Rectangle((int) entity.x, (int) entity.y, 1, entity.height - 14);
+        Rectangle entityRight = new Rectangle((int) ((int) entity.x + entity.width), (int) entity.y, 1, entity.height - 14);
+        Rectangle entityUp = new Rectangle((int) entity.x, (int) entity.y, entity.width - 2, 1);
+        Rectangle entityDown = new Rectangle((int) entity.x, (int) entity.y + entity.height, entity.width - 2, 1);
         Rectangle tileRect;
-
+        Rectangle enemyRect;
         entity.onFloor = false;
         entity.topCollision = false;
         entity.leftCollision = false;
         entity.rightCollision = false;
         entity.onWall = false;
-
         for (int i = 0; i < tiles.size(); i++) {
             tileRect = tiles.get(i).rectangle();
 
@@ -109,16 +116,45 @@ public class GameEngine {
                 entity.onWall = true;
             }
             if (entityUp.intersects(tileRect)) {
-                if (tiles.get(i).floating){
-                    entity.y =tileRect.y+ tileRect.height;
+                if (tiles.get(i).floating) {
+                    entity.y = tileRect.y + tileRect.height;
                     entity.velocityY = 0;
-                }
-                else{
+                } else {
                     entity.topCollision = true;
                 }
             }
             if (entityDown.intersects(tileRect))
                 entity.onFloor = true;
+        }
+        entity.canBeHitIn-=100;
+        for (int i = 0; i < enemies.size(); i++) {
+            if (entity.canBeHitIn <= 0) {
+                enemyRect = enemies.get(i).rectangle();
+
+                if (entityLeft.intersects(enemyRect)) {
+                    entity.lives--;
+                    entity.velocityX = 17;
+                    entity.velocityY = -2;
+                    entity.canBeHitIn=1500;
+                }
+                if (entityRight.intersects(enemyRect)) {
+                    entity.lives--;
+                    entity.velocityX = -17;
+                    entity.velocityY = -2;
+                    entity.canBeHitIn=1500;
+                }
+                if (entityUp.intersects(enemyRect)) {
+                    entity.lives--;
+                    entity.canBeHitIn=1500;
+                }
+                if (entityDown.intersects(enemyRect)) {
+                    entity.lives--;
+                    entity.canBeHitIn=1500;
+                }
+                if (entity.lives <= 0)
+                    entity.alive = false;
+
+            }
         }
     }
 
@@ -166,6 +202,7 @@ public class GameEngine {
             tiles.get(i).draw(g);
         }
     }
+
     private void drawEnemies(Graphics g) {
         for (int i = 0; i < enemies.size(); i++) {
             enemies.get(i).draw(g);

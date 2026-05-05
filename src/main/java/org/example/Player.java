@@ -11,9 +11,9 @@ public class Player extends Entity {
 
     private final double wallJumpCooldown = 3000;
     private double canWallJumpIn;
-
     public Player(int x,int y) {
         super(x,y,49,70);
+        lives=3;
         jumpForce = 14.0 ;
         maxVelocityX = 7.0;
         maxVelocityY = 16.0;

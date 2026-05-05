@@ -19,13 +19,16 @@ public abstract class Entity extends GameObject {
 
     protected int lives;
 
-    protected boolean alive = true;
+    public boolean alive = true;
     protected boolean onFloor;
     protected boolean onWall;
     protected boolean leftCollision;
     protected boolean rightCollision;
     protected boolean topCollision;
 //    protected boolean topCollisionWithFloating;
+
+    public int canBeHitIn;
+
 
     protected Entity(int x, int y, int width, int height) {
         super(x, y, width, height);
