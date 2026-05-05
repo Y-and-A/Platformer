@@ -4,9 +4,11 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class Enemy extends Entity {
+    private enum Directions {LEFT, RIGHT}
+    private Directions direction;
+
     protected Enemy(int x, int y, int width, int height) {
         super(x, y, width, height);
         try {
@@ -16,17 +18,38 @@ public class Enemy extends Entity {
         }
     }
 
-
-
-
     public void findPath(short[][] map, int targetX, int targetY) {
-        pathFinderHelper(convertMap(map), (int) this.x, (int) this.y, targetX, targetY, new boolean[map.length][map[0].length]);
+        pathFinderHelper(convertMap(map), (int) this.x, (int) this.y, targetX, targetY);
     }
-    public boolean pathFinderHelper(boolean[][] map, int cX, int cY, int tX, int tY, boolean[][] visited) {
-        if (cX == tX && cY == tY) return true;
 
+    public boolean pathFinderHelper(boolean[][] map, int cX, int cY, int tX, int tY) {
+        if (cX == tX && cY == tY) return true; // check win
 
-        return true;
+        // try to go left
+        if (map[0].length > cX-1 && map[cY][cX-1]) {
+            for (int i = cX-1; i < map.length; i++) {
+                // find the lowest ground in the left column and consider the tile above as the next tile
+                if (!map[i][cX-1]) {
+                    // send the next tile to find the solution and return its answer if it's positive
+                    boolean hasSolution = pathFinderHelper(map, cX-1, i+1, tX, tY);
+                    this.direction = Directions.LEFT;
+                    if (hasSolution) return true;
+                }
+            }
+        }
+
+        // try to go right
+        if (map.length > cX+1 && map[cY][cX+1]) {
+            for (int i = cX+1; i < map.length; i++) {
+                if (!map[i][cX+1]) {
+                    boolean hasSolution = pathFinderHelper(map, cX+1, i+1, tX, tY);
+                    this.direction = Directions.RIGHT;
+                    if (hasSolution) return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public boolean[][] convertMap(short[][] map) {

@@ -8,19 +8,16 @@ public class GamePanel extends JPanel implements Runnable {
     private final GameEngine gameEngine;
     private Thread gameThread;
 
-    private Player player;
-    private short[][] map;
-
     private final boolean[] keys = new boolean[256];
     private final boolean[] prevKeys = new boolean[256];
 
-    private BufferedImage backBuffer;
+    private final BufferedImage backBuffer;
 
     public GamePanel(int levelNum) {
-        map = Level.getLevel(levelNum);
+        short[][] map = Level.getLevel(levelNum);
         int playerX = Level.getPlayerPos(levelNum)[0];
         int playerY = Level.getPlayerPos(levelNum)[1];
-        player = new Player(playerX, playerY);
+        Player player = new Player(playerX, playerY);
 
         gameEngine = new GameEngine(player, map);
         setFocusable(true);
