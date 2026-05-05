@@ -4,33 +4,82 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class Enemy extends Entity {
-    Image front;
-    Image back;
-    Image left;
-    Image right;
+    Image left, right, front, back;
+
+    private enum Direction {LEFT, RIGHT, UP, DOWN}
+    private Direction nextMove;
+
     protected Enemy(int x, int y) {
         super(x, y);
-        width =50;
-        height =50;
+
+        width = 50;
+        height = 50;
+
         loadImages();
         image = front;
-
     }
 
-
-
-
-    public void findPath(short[][] map, int targetX, int targetY) {
-        pathFinderHelper(convertMap(map), (int) this.x, (int) this.y, targetX, targetY, new boolean[map.length][map[0].length]);
+    public void chasePlayer(short[][] map, int playerRow, int playerCol) {
+        boolean[][] visited = new boolean[map.length][map[0].length];
+        boolean hasSolution = findPath(map, (int) x / 50, (int) y / 50, playerRow, playerCol, visited);
+        if (hasSolution) {
+            //TODO call this.update here, which should use nextMove to perform action (move left, right, or jump)
+        }
     }
-    public boolean pathFinderHelper(boolean[][] map, int cX, int cY, int tX, int tY, boolean[][] visited) {
-        if (cX == tX && cY == tY) return true;
 
+    private boolean findPath(short[][] map, int cR, int cC, int tR, int tC, boolean[][] visited) {
+        if (cR == tR && cC == tC) {
+            visited[cR][cC] = true; // has no affect
+            return true;
+        }
+        if (cR < 0 || cR >= map.length || cC < 0 || cC >= map[0].length) return false;
 
-        return true;
+        // LEFT
+        if (cC - 1 >= 0 && canWalkThrough(map[cR][cC - 1]) && !visited[cR][cC + 1]) {
+            boolean hasSolution = findPath(map, cR, cC - 1, tR, tC, visited);
+            if (hasSolution) {
+                nextMove = Direction.LEFT;
+                return true;
+            }
+        }
+
+        // RIGHT
+        if (cC + 1 < map[0].length && canWalkThrough(map[cR][cC + 1]) && !visited[cR][cC + 1]) {
+            boolean hasSolution = findPath(map, cR, cC + 1, tR, tC, visited);
+            if (hasSolution) {
+                nextMove = Direction.RIGHT;
+                return true;
+            }
+        }
+
+        // UP
+        if (cR - 1 >= 0 && canWalkThrough(map[cR - 1][cC]) && !visited[cR - 1][cC]) {
+            boolean hasSolution = findPath(map, cR - 1, cC, tR, tC, visited);
+            if (hasSolution) {
+                nextMove = Direction.UP;
+                return true;
+            }
+        }
+
+        // DOWN
+        if (cR + 1 < map.length && canWalkThrough(map[cR + 1][cC]) && !visited[cR + 1][cC]) {
+            boolean hasSolution = findPath(map, cR + 1, cC, tR, tC, visited);
+            if (hasSolution) {
+                nextMove = Direction.DOWN;
+                return true;
+            }
+        }
+
+        visited[cR][cC] = false;
+        return false;
+    }
+
+    //TODO this method should be provided by other class
+    // something like boolean canWalkThrough(Entity entity, int tileNum)
+    private boolean canWalkThrough(int tileType) {
+        return tileType == 0 || tileType > 90;
     }
 
     public boolean[][] convertMap(short[][] map) {
@@ -45,11 +94,7 @@ public class Enemy extends Entity {
         return result;
     }
 
-    @Override
-    public void draw(Graphics g) {
-        g.drawImage(image, (int) x, (int) y,width,height,null);
-    }
-    private void loadImages(){
+    private void loadImages() {
         try {
             front = ImageIO.read(new File("src/main/resources/enemy/front.png"));
             back = ImageIO.read(new File("src/main/resources/enemy/back.png"));
@@ -59,7 +104,13 @@ public class Enemy extends Entity {
             throw new RuntimeException(e);
         }
     }
-    public Rectangle rectangle(){
-        return new Rectangle((int) x, (int) y,width,height);
+
+    public Rectangle rectangle() {
+        return new Rectangle((int) x, (int) y, width, height);
+    }
+
+    @Override
+    public void draw(Graphics g) {
+        g.drawImage(image, (int) x, (int) y, width, height, null);
     }
 }

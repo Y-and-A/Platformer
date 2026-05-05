@@ -1,16 +1,15 @@
 package org.example;
 
-import java.util.Arrays;
-
+// TESTING ENEMY PATH FINDING HERE, DON'T USE IT IN GAME
 public class PathFinder {
     private static boolean[][] path = new boolean[10][10];
-    private static enum Direction {LEFT, RIGHT}
+    private enum Direction {LEFT, RIGHT, UP, DOWN}
     private static Direction direction;
 
     public static void main(String[] args) {
         int[][] map = new int[][] {
-                {0, 0, 1, 1, 1, 1, 1, 1, 1, 1},
-                {1, 0, 0, 0, 0, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
                 {1, 1, 1, 0, 1, 1, 1, 0, 1, 1},
                 {1, 0, 0, 0, 1, 0, 0, 0, 1, 1},
                 {1, 0, 1, 1, 1, 1, 1, 0, 1, 1},
@@ -20,7 +19,7 @@ public class PathFinder {
                 {1, 1, 1, 1, 0, 0, 0, 0, 1, 1},
                 {1, 1, 1, 1, 1, 1, 1, 0, 0, 0}
         };
-        boolean pathFound = findPath(map, 0, 0, new boolean[10][10]);
+        boolean pathFound = findPath(Level.getLevel(0), 0, 0, new boolean[10][10]);
         if (pathFound) {
             System.out.println("Found path:");
             for (int i = 0; i < path.length; i++) {
@@ -30,11 +29,13 @@ public class PathFinder {
                 }
                 System.out.println("]");
             }
+            System.out.println("Next move should be: " + direction);
         }
     }
 
-    public static boolean findPath(int[][] map, int cR, int cC, boolean[][] visited) {
+    public static boolean findPath(short[][] map, int cR, int cC, boolean[][] visited) {
         if (cR == map.length - 1 && cC == map[0].length - 1) {
+            visited[cR][cC] = true;
             path = visited;
             return true;
         }
@@ -60,24 +61,21 @@ public class PathFinder {
 
         if (cR-1 >= 0 && map[cR-1][cC] == 0 && !visited[cR-1][cC]) { // up
             boolean hasSolution = findPath(map, cR-1, cC, visited);
-            if (hasSolution) return true;
+            if (hasSolution) {
+                direction = Direction.UP;
+                return true;
+            }
         }
 
         if (cR+1 < map.length && map[cR+1][cC] == 0 && !visited[cR+1][cC]) { // down
             boolean hasSolution = findPath(map, cR+1, cC, visited);
-            if (hasSolution) return true;
+            if (hasSolution) {
+                direction = Direction.DOWN;
+                return true;
+            }
         }
 
         visited[cR][cC] = false;
-
         return false;
     }
 }
-
-
-
-
-
-
-
-
