@@ -70,13 +70,7 @@ public class Level {
 
 
     public static short[][] getLevel(int levelNum) {
-        if (levelNum >= levels.length) return new short[][] {{0, 0}, {0, 0}};
+        if (levelNum >= levels.length) return levels[0];
         return levels[levelNum];
-    }
-
-    public static short[] getPlayerPos(int levelNum) {
-        System.out.println(levelNum);
-        if (levelNum >= playerStartPoints.length) return new short[] {0, 0};
-        return playerStartPoints[levelNum];
     }
 }

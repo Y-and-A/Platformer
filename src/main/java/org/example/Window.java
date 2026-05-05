@@ -57,12 +57,11 @@ public class Window {
     }
 
     public JPanel createTitleScreen() {
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.GRAY);
-        panel.setLayout(null);
         JButton selectLevelButton = new JButton("Select Level");
-        selectLevelButton.setBounds(window.WIDTH/2-50,window.HEIGHT/2,100,30);
         selectLevelButton.setFocusable(false);
+        selectLevelButton.setSize(100, 60);
         selectLevelButton.addActionListener(e -> changeScene(levelSelectorName));
         panel.add(selectLevelButton);
 
