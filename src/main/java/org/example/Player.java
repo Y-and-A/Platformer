@@ -73,6 +73,7 @@ public class Player extends Entity {
 
         if (y > Window.HEIGHT){
             y=0;
+            x=0;
             lives--;
         }
         super.update();

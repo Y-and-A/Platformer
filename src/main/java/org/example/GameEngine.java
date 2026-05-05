@@ -72,7 +72,6 @@ public class GameEngine {
         this.player.update(keys, prevKeys);
         move(player);
         if (!player.alive) {
-            System.out.println("i'm dead");
             Window.changeScene(levelSelectorName);
         }
     }

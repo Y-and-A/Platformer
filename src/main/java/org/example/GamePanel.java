@@ -2,11 +2,15 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements Runnable {
     private final GameEngine gameEngine;
     private Thread gameThread;
+    public static ArrayList<Long> paintingDelay = new ArrayList<>();
 
     private final boolean[] keys = new boolean[256];
     private final boolean[] prevKeys = new boolean[256];
@@ -21,14 +25,14 @@ public class GamePanel extends JPanel implements Runnable {
         backBuffer = new BufferedImage(Window.WIDTH, Window.HEIGHT, BufferedImage.TYPE_INT_RGB);
         setBackground(Color.BLACK);
 
-        addKeyListener(new java.awt.event.KeyAdapter() {
+        addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(java.awt.event.KeyEvent e) {
+            public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() < 256) keys[e.getKeyCode()] = true;
             }
 
             @Override
-            public void keyReleased(java.awt.event.KeyEvent e) {
+            public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() < 256) keys[e.getKeyCode()] = false;
             }
         });
@@ -65,8 +69,15 @@ public class GamePanel extends JPanel implements Runnable {
 
         bG.setColor(Color.decode("#87CEEB")); //blue
         bG.fillRect(0, 0, Window.WIDTH, Window.HEIGHT);
-
+        long before = System.nanoTime();
         gameEngine.draw(bG);//draws the image on the backBuffer
+        long after = System.nanoTime() -before;
+        paintingDelay.add(after);
+        long longest = 0;
+        for (int i = 0; i < paintingDelay.size(); i++) {
+            if (paintingDelay.get(i)>longest)longest = paintingDelay.get(i);
+        }
+        System.out.println("longest: "+longest/100000);
         bG.setColor(Color.red);
         bG.setFont(new Font("David",Font.BOLD,30));
         bG.drawString(gameEngine.getPlayerLives()+"",Window.WIDTH-30,30);
