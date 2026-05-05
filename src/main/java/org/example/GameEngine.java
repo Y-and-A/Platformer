@@ -94,7 +94,7 @@ public class GameEngine {
 
     public void updateCollision(Entity entity) {
         Rectangle entityLeft = new Rectangle((int) entity.x, (int) entity.y, 1, entity.height - 14);
-        Rectangle entityRight = new Rectangle((int) ((int) entity.x + entity.width), (int) entity.y, 1, entity.height - 14);
+        Rectangle entityRight = new Rectangle(((int) entity.x + entity.width), (int) entity.y, 1, entity.height - 14);
         Rectangle entityUp = new Rectangle((int) entity.x, (int) entity.y, entity.width - 2, 1);
         Rectangle entityDown = new Rectangle((int) entity.x, (int) entity.y + entity.height, entity.width - 2, 1);
         Rectangle tileRect;
@@ -126,7 +126,7 @@ public class GameEngine {
             if (entityDown.intersects(tileRect))
                 entity.onFloor = true;
         }
-        entity.canBeHitIn-=100;
+        entity.canBeHitIn -= 100;
         for (int i = 0; i < enemies.size(); i++) {
             if (entity.canBeHitIn <= 0) {
                 enemyRect = enemies.get(i).rectangle();
@@ -135,26 +135,42 @@ public class GameEngine {
                     entity.lives--;
                     entity.velocityX = 17;
                     entity.velocityY = -2;
-                    entity.canBeHitIn=1500;
+                    entity.canBeHitIn = 1500;
+                    System.out.println("left");
+                    System.out.println(entity.lives);
+                    continue;
                 }
                 if (entityRight.intersects(enemyRect)) {
                     entity.lives--;
                     entity.velocityX = -17;
                     entity.velocityY = -2;
-                    entity.canBeHitIn=1500;
+                    entity.canBeHitIn = 1500;
+                    System.out.println("right");
+                    System.out.println(entity.lives);
+                    continue;
                 }
                 if (entityUp.intersects(enemyRect)) {
                     entity.lives--;
-                    entity.canBeHitIn=1500;
+                    entity.velocityY = -10;
+                    entity.canBeHitIn = 1500;
+                    System.out.println("top");
+                    System.out.println(entity.lives);
+                    continue;
                 }
                 if (entityDown.intersects(enemyRect)) {
                     entity.lives--;
-                    entity.canBeHitIn=1500;
+                    entity.velocityY = -10;
+                    entity.canBeHitIn = 1500;
+                    System.out.println("bottom");
+                    System.out.println(entity.lives);
+                    continue;
                 }
-                if (entity.lives <= 0)
-                    entity.alive = false;
+
 
             }
+        }
+        if (entity.lives <= 0) {
+            entity.alive = false;
         }
     }
 
