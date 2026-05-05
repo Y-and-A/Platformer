@@ -22,22 +22,31 @@ public class Enemy extends Entity {
     }
 
     public void chasePlayer(short[][] map, int playerRow, int playerCol) {
+        boolean[][] bMap = convertMap(map);
         boolean[][] visited = new boolean[map.length][map[0].length];
-        boolean hasSolution = findPath(map, (int) x / 50, (int) y / 50, playerRow, playerCol, visited);
+        boolean hasSolution = findPath(bMap, (int) x / 50, (int) y / 50, playerRow, playerCol, visited);
         if (hasSolution) {
+//            System.out.println("Solution found");
             //TODO call this.update here, which should use nextMove to perform action (move left, right, or jump)
         }
     }
 
-    private boolean findPath(short[][] map, int cR, int cC, int tR, int tC, boolean[][] visited) {
+    public void update() {
+        System.out.println("Enemy update called");
+        super.update();
+    }
+
+    private boolean findPath(boolean[][] map, int cR, int cC, int tR, int tC, boolean[][] visited) {
         if (cR == tR && cC == tC) {
-            visited[cR][cC] = true; // has no affect
+            visited[cR][cC] = true; // has no effect
             return true;
         }
         if (cR < 0 || cR >= map.length || cC < 0 || cC >= map[0].length) return false;
 
+        visited[cR][cC] = true;
+
         // LEFT
-        if (cC - 1 >= 0 && canWalkThrough(map[cR][cC - 1]) && !visited[cR][cC + 1]) {
+        if (cC - 1 >= 0 && map[cR][cC - 1] && !visited[cR][cC + 1]) {
             boolean hasSolution = findPath(map, cR, cC - 1, tR, tC, visited);
             if (hasSolution) {
                 nextMove = Direction.LEFT;
@@ -46,7 +55,7 @@ public class Enemy extends Entity {
         }
 
         // RIGHT
-        if (cC + 1 < map[0].length && canWalkThrough(map[cR][cC + 1]) && !visited[cR][cC + 1]) {
+        if (cC + 1 < map[0].length && map[cR][cC + 1] && !visited[cR][cC + 1]) {
             boolean hasSolution = findPath(map, cR, cC + 1, tR, tC, visited);
             if (hasSolution) {
                 nextMove = Direction.RIGHT;
@@ -55,7 +64,7 @@ public class Enemy extends Entity {
         }
 
         // UP
-        if (cR - 1 >= 0 && canWalkThrough(map[cR - 1][cC]) && !visited[cR - 1][cC]) {
+        if (cR - 1 >= 0 && map[cR - 1][cC] && !visited[cR - 1][cC]) {
             boolean hasSolution = findPath(map, cR - 1, cC, tR, tC, visited);
             if (hasSolution) {
                 nextMove = Direction.UP;
@@ -64,7 +73,7 @@ public class Enemy extends Entity {
         }
 
         // DOWN
-        if (cR + 1 < map.length && canWalkThrough(map[cR + 1][cC]) && !visited[cR + 1][cC]) {
+        if (cR + 1 < map.length && map[cR + 1][cC] && !visited[cR + 1][cC]) {
             boolean hasSolution = findPath(map, cR + 1, cC, tR, tC, visited);
             if (hasSolution) {
                 nextMove = Direction.DOWN;
@@ -85,9 +94,9 @@ public class Enemy extends Entity {
     public boolean[][] convertMap(short[][] map) {
         boolean[][] result = new boolean[map.length][map[0].length];
 
-        for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j < map[0].length; j++) {
-                result[i][j] = map[i][j] != 0;
+        for (int r = 0; r < map.length; r++) {
+            for (int c = 0; c < map[0].length; c++) {
+                result[r][c] = canWalkThrough(map[r][c]);
             }
         }
 

@@ -4,13 +4,14 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.MarshalledObject;
 import java.util.ArrayList;
 
 import static org.example.Window.levelSelectorName;
 
 public class GameEngine {
-    private Player player;
     private short[][] map;
+    private Player player;
     private ArrayList<Tile> tiles = new ArrayList<>();
     private ArrayList<Enemy> enemies = new ArrayList<>();
     private final int TILE_WIDTH = 50;
@@ -71,6 +72,9 @@ public class GameEngine {
     public void update(boolean[] keys, boolean[] prevKeys) {
         this.player.update(keys, prevKeys);
         move(player);
+
+//        enemies.getFirst().chasePlayer(map, (int) (player.x / TILE_WIDTH), (int) (player.y / TILE_HEIGHT));
+
         if (!player.alive) {
             Window.changeScene(levelSelectorName);
         }
@@ -208,7 +212,6 @@ public class GameEngine {
             enemies.get(i).draw(g);
         }
     }
-
 
     private void loadImages() {
         try {
