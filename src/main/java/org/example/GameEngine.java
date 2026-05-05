@@ -41,7 +41,8 @@ public class GameEngine {
         this.player = player;
         this.map = map;
         loadImages();
-        enemies.add(new Enemy(100,100,50,50));
+        enemies.add(new Enemy(100,100));
+        enemies.add(new Enemy(400,50));
         Image image;
         for (int r = 0; r < map.length; r++) {
             for (int c = 0; c < map[r].length; c++) {

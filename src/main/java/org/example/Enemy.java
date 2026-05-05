@@ -7,13 +7,17 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class Enemy extends Entity {
-    protected Enemy(int x, int y, int width, int height) {
-        super(x, y, width, height);
-        try {
-            image = ImageIO.read(new File("src/main/resources/enemy/front.png"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    Image front;
+    Image back;
+    Image left;
+    Image right;
+    protected Enemy(int x, int y) {
+        super(x, y);
+        width =50;
+        height =50;
+        loadImages();
+        image = front;
+
     }
 
 
@@ -44,5 +48,15 @@ public class Enemy extends Entity {
     @Override
     public void draw(Graphics g) {
         g.drawImage(image, (int) x, (int) y,width,height,null);
+    }
+    private void loadImages(){
+        try {
+            front = ImageIO.read(new File("src/main/resources/enemy/front.png"));
+            back = ImageIO.read(new File("src/main/resources/enemy/back.png"));
+            left = ImageIO.read(new File("src/main/resources/enemy/left.png"));
+            right = ImageIO.read(new File("src/main/resources/enemy/right.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

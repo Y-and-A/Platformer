@@ -31,6 +31,10 @@ public abstract class Entity extends GameObject {
         super(x, y, width, height);
     }
 
+    public Entity(int x, int y) {
+        super(x,y);
+    }
+
 
     public void update() {
         velocityY += GRAVITY;
