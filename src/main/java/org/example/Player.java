@@ -71,7 +71,10 @@ public class Player extends Entity {
             canWallJumpIn = wallJumpCooldown;
         }
 
-        if (y > Window.HEIGHT) y = 0;//TODO DEATH LOGIC HERE
+        if (y > Window.HEIGHT){
+            y=0;
+            lives--;
+        }
         super.update();
     }
 
