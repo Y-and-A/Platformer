@@ -26,7 +26,7 @@ public class Enemy extends Entity {
         boolean[][] visited = new boolean[map.length][map[0].length];
         boolean hasSolution = findPath(bMap, (int) x / 50, (int) y / 50, playerRow, playerCol, visited);
         if (hasSolution) {
-//            System.out.println("Solution found");
+            System.out.println("Solution found, enemy should go: " + nextMove);
             //TODO call this.update here, which should use nextMove to perform action (move left, right, or jump)
         }
     }

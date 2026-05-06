@@ -9,16 +9,14 @@ import java.io.IOException;
 public class Player extends Entity {
     private Image imgLeft, imgRight, imgFront, imgUp;
 
-    private final double wallJumpCooldown = 3000;
-    private double canWallJumpIn;
-    public Player(int x,int y) {
-        super(x,y,49,70);
-        lives=3;
-        jumpForce = 14.0 ;
+    public Player(int x, int y) {
+        super(x, y, 49, 70);
+        lives = 3;
+        jumpForce = 14.0;
         maxVelocityX = 7.0;
         maxVelocityY = 16.0;
         wallJumpForce = 6.0;
-        moveX =2;
+        moveX = 2;
 
         try {
             imgLeft = ImageIO.read(new File("src/main/resources/player/player-facingLeft.png"));
@@ -32,17 +30,13 @@ public class Player extends Entity {
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
-        if (canWallJumpIn > 0) canWallJumpIn -= 100 ;
-
-        if (canWallJumpIn <= 0) {
-            if (keys[KeyEvent.VK_RIGHT]){
-                this.velocityX += moveX;
-                image = imgRight;
-            }
-            if (keys[KeyEvent.VK_LEFT]){
-                this.velocityX -= moveX;
-                image = imgLeft;
-            }
+        if (keys[KeyEvent.VK_RIGHT]) {
+            this.velocityX += moveX;
+            image = imgRight;
+        }
+        if (keys[KeyEvent.VK_LEFT]) {
+            this.velocityX -= moveX;
+            image = imgLeft;
         }
 
         boolean jumpKeyPressed = keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_SPACE];
@@ -57,23 +51,20 @@ public class Player extends Entity {
         }
 
         if (!onFloor && onWall && jumpKeyPressed && !jumpKeyPrev) {
-            if (canWallJumpIn <= 0) {
-                if (keys[KeyEvent.VK_RIGHT]) {
-                    this.velocityY = -wallJumpForce;
-                    this.velocityX = -maxVelocityX;
-                    image = imgLeft;
-                } else if (keys[KeyEvent.VK_LEFT]) {
-                    this.velocityY = -wallJumpForce;
-                    this.velocityX = maxVelocityX;
-                    image = imgRight;
-                }
+            if (keys[KeyEvent.VK_RIGHT]) {
+                this.velocityY = -wallJumpForce;
+                this.velocityX = -maxVelocityX;
+                image = imgLeft;
+            } else if (keys[KeyEvent.VK_LEFT]) {
+                this.velocityY = -wallJumpForce;
+                this.velocityX = maxVelocityX;
+                image = imgRight;
             }
-            canWallJumpIn = wallJumpCooldown;
         }
 
-        if (y > Window.HEIGHT){
-            y=0;
-            x=0;
+        if (y > Window.HEIGHT) {
+            y = 0;
+            x = 0;
             lives--;
         }
         super.update();
@@ -81,7 +72,7 @@ public class Player extends Entity {
 
     @Override
     public void draw(Graphics g) {
-        g.drawImage(image, (int) x, (int) y,width,height,null);
+        g.drawImage(image, (int) x, (int) y, width, height, null);
         g.setColor(Color.blue);
     }
 }
