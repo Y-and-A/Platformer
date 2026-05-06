@@ -10,14 +10,15 @@ public class GamePanel extends JPanel implements Runnable {
     private final GameEngine gameEngine;
     private Thread gameThread;
 
+    short[][] map;
+
     private final boolean[] keys = new boolean[256];
     private final boolean[] prevKeys = new boolean[256];
 
     private final BufferedImage backBuffer;
-    long longest=0;
 
     public GamePanel(int levelNum) {
-        short[][] map = Level.getLevel(levelNum);
+        map = Level.getLevel(levelNum);
         gameEngine = new GameEngine(map);
         setFocusable(true);
 
@@ -66,7 +67,9 @@ public class GamePanel extends JPanel implements Runnable {
 
             // If a full tick (or multiple) has accumulated, update the game logic!
             while (deltaAccumulator >= 1) {
-                gameEngine.update(keys, prevKeys);
+                if (gameThread == null) break;
+
+                gameEngine.update(keys, prevKeys, map);
                 System.arraycopy(keys, 0, prevKeys, 0, keys.length);
                 deltaAccumulator--; // Consume one logical tick
             }

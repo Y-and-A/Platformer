@@ -64,13 +64,11 @@ public class GameEngine {
         }
     }
 
-    public void update(boolean[] keys, boolean[] prevKeys) {
+    public void update(boolean[] keys, boolean[] prevKeys, short[][] map) {
         this.player.update(keys, prevKeys);
         move(player);
 //        enemies.getFirst().chasePlayer(map, (int) (player.x / Tile.WIDTH), (int) (player.y / Tile.HEIGHT));
-        if (!player.alive) {
-            Window.changeScene(levelSelectorName);
-        }
+        if (!player.alive) Window.changeScene(levelSelectorName);
     }
 
     public void updateCollision(Entity entity) {

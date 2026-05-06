@@ -34,20 +34,15 @@ public class Window {
         if (scene.contains(levelName)) {
             int level = Integer.parseInt(scene.substring(levelName.length()));
 
-            if (gamePanel == null) {
-                gamePanel = new GamePanel(level);
-                mainPanel.add(gamePanel, levelName); // add gamePanel to mainPanel for the first time
-            } else {
-                mainPanel.remove(gamePanel);
-                gamePanel = new GamePanel(level);
-                mainPanel.add(gamePanel, levelName);
-            }
+            if (gamePanel != null) mainPanel.remove(gamePanel);
+
+            gamePanel = new GamePanel(level);
+            mainPanel.add(gamePanel, levelName);
+
             gamePanel.startGame();
             cardLayout.show(mainPanel, levelName);
             gamePanel.requestFocusInWindow();
-
         }
-
         else {
             cardLayout.show(mainPanel, scene);
             mainPanel.requestFocusInWindow();

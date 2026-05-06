@@ -11,6 +11,9 @@ public class Enemy extends Entity {
     private enum Direction {LEFT, RIGHT, UP, DOWN}
     private Direction nextMove;
 
+    private int pathFinderIterations = 0;
+    private int maxPathFinderIterations = 10000;
+
     protected Enemy(int x, int y) {
         super(x, y);
 
@@ -24,11 +27,12 @@ public class Enemy extends Entity {
     public void chasePlayer(short[][] map, int playerRow, int playerCol) {
         boolean[][] bMap = convertMap(map);
         boolean[][] visited = new boolean[map.length][map[0].length];
+        pathFinderIterations = 0;
         boolean hasSolution = findPath(bMap, (int) x / 50, (int) y / 50, playerRow, playerCol, visited);
         if (hasSolution) {
             System.out.println("Solution found, enemy should go: " + nextMove);
             //TODO call this.update here, which should use nextMove to perform action (move left, right, or jump)
-        }
+        } else System.out.println("Couldn't find path to player");
     }
 
     public void update() {
@@ -37,6 +41,7 @@ public class Enemy extends Entity {
     }
 
     private boolean findPath(boolean[][] map, int cR, int cC, int tR, int tC, boolean[][] visited) {
+        if (pathFinderIterations++ > maxPathFinderIterations) return false;
         if (cR == tR && cC == tC) {
             visited[cR][cC] = true; // has no effect
             return true;
