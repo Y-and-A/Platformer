@@ -7,6 +7,7 @@ import java.io.File;
 
 public class Player extends Entity {
     private final Image imgLeft, imgRight, imgFront, imgUp;
+    public String lookingDirection;
 
     public Player(int x, int y) {
         super(x, y, 49, 70);
@@ -34,10 +35,12 @@ public class Player extends Entity {
         if (keys[KeyEvent.VK_RIGHT]) {
             this.velocityX += movementForce;
             image = imgRight;
+            lookingDirection="right";
         }
         if (keys[KeyEvent.VK_LEFT]) {
             this.velocityX -= movementForce;
             image = imgLeft;
+            lookingDirection="left";
         }
 
         boolean jumpKeyPressed = keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_SPACE];

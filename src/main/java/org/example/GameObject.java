@@ -7,7 +7,7 @@ public abstract class GameObject {
     protected double y;
     protected int width;
     protected int height;
-    protected GameObject(int x,int y){
+    protected GameObject(double x,double y){
         this.x = x;
         this.y = y;
     }

@@ -33,7 +33,7 @@ public abstract class Entity extends GameObject {
         super(x, y, width, height);
     }
 
-    public Entity(int x, int y) {
+    public Entity(double x, double y) {
         super(x,y);
     }
 

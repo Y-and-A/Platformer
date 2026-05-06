@@ -10,6 +10,7 @@ import static org.example.Window.levelSelectorName;
 
 public class GameEngine {
     private Player player;
+    private Gun gun;
     private final ArrayList<Tile> tiles = new ArrayList<>();
     private final ArrayList<Enemy> enemies = new ArrayList<>();
 
@@ -61,6 +62,7 @@ public class GameEngine {
                     this.player = new Player(c * Tile.WIDTH, r * Tile.HEIGHT);
             }
         }
+        gun = new Gun(player.x,player.y);
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
@@ -247,5 +249,8 @@ public class GameEngine {
 
     public int getPlayerLives() {
         return player.lives;
+    }
+    public void shotBullet(){
+        gun.shotBullet(player.lookingDirection);
     }
 }

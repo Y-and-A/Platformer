@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -34,6 +36,32 @@ public class GamePanel extends JPanel implements Runnable {
             @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() < 256) keys[e.getKeyCode()] = false;
+            }
+        });
+        addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                gameEngine.shotBullet();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
             }
         });
     }
@@ -86,6 +114,9 @@ public class GamePanel extends JPanel implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+    public void shotBullet(){
+        gameEngine.shotBullet();
     }
 
     @Override
