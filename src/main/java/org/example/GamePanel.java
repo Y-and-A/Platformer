@@ -14,6 +14,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final boolean[] prevKeys = new boolean[256];
 
     private final BufferedImage backBuffer;
+    long longest=0;
 
     public GamePanel(int levelNum) {
         short[][] map = Level.getLevel(levelNum);
@@ -113,5 +114,10 @@ public class GamePanel extends JPanel implements Runnable {
 
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         g2d.drawImage(backBuffer, offsetX, offsetY, scaledWidth, scaledHeight, null);
+        long after = System.nanoTime() - before;
+        if (after>longest){
+            longest = after;
+            System.out.println("longest: "+longest/100000);
+        }
     }
 }
