@@ -24,9 +24,6 @@ public class GameEngine {
     private Image only1, only2, only3, only4;
     private Image special1, special2, fullGrassUp, fullGrassLeft;
 
-    Graphics2D tilesGraphics = null;
-    private BufferedImage tileImage;
-
 
     public GameEngine(short[][] map) {
         this.map = map;
@@ -199,16 +196,9 @@ public class GameEngine {
     }
 
     public void draw(Graphics g) {
-        if (tileImage==null) {
-            tileImage = new BufferedImage(Window.WIDTH, Window.HEIGHT, BufferedImage.TYPE_INT_RGB);
-            tilesGraphics = tileImage.createGraphics();
-            tilesGraphics.setColor(Color.decode("#87CEEB")); //blue
-            tilesGraphics.fillRect(0, 0, Window.WIDTH, Window.HEIGHT);
-            drawTiles(tilesGraphics);
-        }
-        g.drawImage(tileImage,0,0,null);
         this.player.draw(g);
         drawEnemies(g);
+        drawTiles(g);
     }
 
     private void drawTiles(Graphics g) {
