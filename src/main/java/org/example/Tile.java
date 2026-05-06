@@ -19,10 +19,6 @@ public class Tile extends GameObject {
         this.image = image;
     }
 
-    public static boolean isFloatingTile(int tileId) {
-        return tileId >= 21 && tileId <= 24;
-    }
-
     @Override
     public void draw(Graphics g) {
         g.drawImage(image, (int) x, (int) y, width, 50, null);

@@ -14,6 +14,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final boolean[] prevKeys = new boolean[256];
 
     private final BufferedImage backBuffer;
+    long longest=0;
 
     public GamePanel(int levelNum) {
         short[][] map = Level.getLevel(levelNum);
@@ -92,7 +93,9 @@ public class GamePanel extends JPanel implements Runnable {
 
         bG.setColor(Color.decode("#87CEEB")); //blue
         bG.fillRect(0, 0, Window.WIDTH, Window.HEIGHT);
+
         gameEngine.draw(bG);//draws the image on the backBuffer
+
         bG.setColor(Color.red);
         bG.setFont(new Font("David",Font.BOLD,30));
         bG.drawString(gameEngine.getPlayerLives()+"",Window.WIDTH-30,30);
