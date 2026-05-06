@@ -78,10 +78,18 @@ public class GamePanel extends JPanel implements Runnable {
 
         bG.setColor(Color.decode("#87CEEB")); //blue
         bG.fillRect(0, 0, Window.WIDTH, Window.HEIGHT);
+        long before = System.nanoTime();
         gameEngine.draw(bG);//draws the image on the backBuffer
+        long after = System.nanoTime() -before;
+        paintingDelay.add(after);
+        long longest = 0;
+        for (int i = 0; i < paintingDelay.size(); i++) {
+            if (paintingDelay.get(i)>longest)longest = paintingDelay.get(i);
+        }
+        System.out.println("longest: "+longest/100000);
         bG.setColor(Color.red);
-        bG.setFont(new Font("David", Font.BOLD, 30));
-        bG.drawString(gameEngine.getPlayerLives() + "", Window.WIDTH - 30, 30);
+        bG.setFont(new Font("David",Font.BOLD,30));
+        bG.drawString(gameEngine.getPlayerLives()+"",Window.WIDTH-30,30);
         bG.dispose();
 
         Graphics2D g2d = (Graphics2D) g;
