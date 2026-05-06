@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.MarshalledObject;
 import java.util.ArrayList;
 
 import static org.example.Window.levelSelectorName;
@@ -188,9 +189,9 @@ public class GameEngine {
     }
 
     public void draw(Graphics g) {
-        this.player.draw(g);
-        drawEnemies(g);
         drawTiles(g);
+        drawEnemies(g);
+        this.player.draw(g);
     }
 
     private void drawTiles(Graphics g) {
