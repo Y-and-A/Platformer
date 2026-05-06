@@ -16,6 +16,15 @@ public class GamePanel extends JPanel implements Runnable {
     private final boolean[] prevKeys = new boolean[256];
 
     private final BufferedImage backBuffer;
+    private static int windowWidth;
+    private static int windowHeight;
+    private static double scaleX;
+    private static double scaleY;
+    private static double scale;
+    private static int scaledWidth;
+    private static int scaledHeight;
+    private static int offsetX;
+    private static int offsetY;
 
     public GamePanel(int levelNum) {
         short[][] map = Level.getLevel(levelNum);
@@ -69,32 +78,24 @@ public class GamePanel extends JPanel implements Runnable {
 
         bG.setColor(Color.decode("#87CEEB")); //blue
         bG.fillRect(0, 0, Window.WIDTH, Window.HEIGHT);
-        long before = System.nanoTime();
         gameEngine.draw(bG);//draws the image on the backBuffer
-        long after = System.nanoTime() -before;
-        paintingDelay.add(after);
-        long longest = 0;
-        for (int i = 0; i < paintingDelay.size(); i++) {
-            if (paintingDelay.get(i)>longest)longest = paintingDelay.get(i);
-        }
-        System.out.println("longest: "+longest/100000);
         bG.setColor(Color.red);
-        bG.setFont(new Font("David",Font.BOLD,30));
-        bG.drawString(gameEngine.getPlayerLives()+"",Window.WIDTH-30,30);
+        bG.setFont(new Font("David", Font.BOLD, 30));
+        bG.drawString(gameEngine.getPlayerLives() + "", Window.WIDTH - 30, 30);
         bG.dispose();
 
         Graphics2D g2d = (Graphics2D) g;
-        int windowWidth = getWidth();
-        int windowHeight = getHeight();
+        windowWidth = getWidth();
+        windowHeight = getHeight();
 
-        double scaleX = (double) windowWidth / Window.WIDTH;
-        double scaleY = (double) windowHeight / Window.HEIGHT;
-        double scale = Math.min(scaleX, scaleY);
+        scaleX = (double) windowWidth / Window.WIDTH;
+        scaleY = (double) windowHeight / Window.HEIGHT;
+        scale = Math.min(scaleX, scaleY);
 
-        int scaledWidth = (int) (Window.WIDTH * scale);
-        int scaledHeight = (int) (Window.HEIGHT * scale);
-        int offsetX = (windowWidth - scaledWidth) / 2;
-        int offsetY = (windowHeight - scaledHeight) / 2;
+        scaledWidth = (int) (Window.WIDTH * scale);
+        scaledHeight = (int) (Window.HEIGHT * scale);
+        offsetX = (windowWidth - scaledWidth) / 2;
+        offsetY = (windowHeight - scaledHeight) / 2;
 
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         g2d.drawImage(backBuffer, offsetX, offsetY, scaledWidth, scaledHeight, null);
