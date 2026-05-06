@@ -47,14 +47,39 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
+        // High-resolution timer for extreme accuracy
+        long lastTime = System.nanoTime();
+
+        // Target 60 Updates (Ticks) Per Second
+        final double TICKS_PER_SECOND = 60.0;
+        final double TIME_PER_TICK_NS = 1000000000.0 / TICKS_PER_SECOND;
+
+        double deltaAccumulator = 0;
+
         while (gameThread != null) {
-            gameEngine.update(keys, prevKeys);
-            System.arraycopy(keys, 0, prevKeys, 0, keys.length);
+            long now = System.nanoTime();
+            // Calculate how much real time passed since the last loop iteration
+            // and add it to the accumulator as a fraction of a "tick".
+            deltaAccumulator += (now - lastTime) / TIME_PER_TICK_NS;
+            lastTime = now;
+
+            // If a full tick (or multiple) has accumulated, update the game logic!
+            while (deltaAccumulator >= 1) {
+                gameEngine.update(keys, prevKeys);
+                System.arraycopy(keys, 0, prevKeys, 0, keys.length);
+                deltaAccumulator--; // Consume one logical tick
+            }
+
+            // Render the screen as fast as possible
             repaint();
+
+            // Optional: Give the CPU a tiny break to prevent 100% core utilization.
+            // Even if this sleep overshoots on Windows, the math above guarantees
+            // our game logic catches up flawlessly on the next iteration.
             try {
-                Thread.sleep(16);
+                Thread.sleep(1);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
     }
@@ -67,15 +92,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         bG.setColor(Color.decode("#87CEEB")); //blue
         bG.fillRect(0, 0, Window.WIDTH, Window.HEIGHT);
-        long before = System.nanoTime();
         gameEngine.draw(bG);//draws the image on the backBuffer
-        long after = System.nanoTime() -before;
-        paintingDelay.add(after);
-        long longest = 0;
-        for (int i = 0; i < paintingDelay.size(); i++) {
-            if (paintingDelay.get(i)>longest)longest = paintingDelay.get(i);
-        }
-        System.out.println("longest: "+longest/100000);
         bG.setColor(Color.red);
         bG.setFont(new Font("David",Font.BOLD,30));
         bG.drawString(gameEngine.getPlayerLives()+"",Window.WIDTH-30,30);

@@ -38,7 +38,7 @@ public class Window {
                 gamePanel = new GamePanel(level);
                 mainPanel.add(gamePanel, levelName); // add gamePanel to mainPanel for the first time
             } else {
-                gamePanel.remove(gamePanel);
+                mainPanel.remove(gamePanel);
                 gamePanel = new GamePanel(level);
                 mainPanel.add(gamePanel, levelName);
             }

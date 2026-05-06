@@ -28,10 +28,6 @@ public class Tile extends GameObject {
         g.drawImage(image, (int) x, (int) y, width, 50, null);
     }
 
-    public static boolean isFloatingTile(int id) {
-        return id >= 21 && id <= 24;
-    }
-
     public Rectangle rectangle() {
         return new Rectangle((int) x, (int) y, width, height);
     }
