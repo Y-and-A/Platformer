@@ -69,7 +69,7 @@ public class GamePanel extends JPanel implements Runnable {
             while (deltaAccumulator >= 1) {
                 if (gameThread == null) break;
 
-                gameEngine.update(keys, prevKeys, map);
+                gameEngine.update(keys, prevKeys);
                 System.arraycopy(keys, 0, prevKeys, 0, keys.length);
                 deltaAccumulator--; // Consume one logical tick
             }

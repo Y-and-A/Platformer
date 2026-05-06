@@ -1,12 +1,6 @@
 package org.example;
 
 public class Level {
-    private static short[][] playerStartPoints = new short[][] {
-            {50, 1000},
-            {600, 100},
-            {200, 400}
-    };
-
     static short[][] l00 = new short[][]{
             {0,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0},
             {0,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	90 ,0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0 ,	0},
@@ -66,7 +60,7 @@ public class Level {
     };
 
 
-    private static short[][][] levels = new short[][][] {l00, l01, l02};
+    private static final short[][][] levels = new short[][][] {l00, l01, l02};
 
 
     public static short[][] getLevel(int levelNum) {

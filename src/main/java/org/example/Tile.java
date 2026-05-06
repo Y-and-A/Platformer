@@ -20,7 +20,7 @@ public class Tile extends GameObject {
         height = floating ? FLOATING_HEIGHT : HEIGHT;
         this.image = image;
 
-        this.rect = new Rectangle((int) x, (int) y, width, height);
+        this.rect = new Rectangle(x, y, width, height);
     }
 
     public static boolean isFloatingTile(int tileId) {

@@ -63,12 +63,12 @@ public class GameEngine {
         }
     }
 
-    public void update(boolean[] keys, boolean[] prevKeys, short[][] map) {
-        this.player.update(keys, prevKeys);
+    public void update(boolean[] keys, boolean[] prevKeys) {
+        player.update(keys, prevKeys);
         move(player);
 
         for (Enemy enemy : enemies) {
-            enemy.chasePlayer(this.player);
+            enemy.chasePlayer(player);
             enemy.update();
             move(enemy);
         }
@@ -109,7 +109,6 @@ public class GameEngine {
         }
 
         entity.canBeHitIn -= 100;
-
         if (entity instanceof Player) {
             for (Enemy enemy : enemies) {
                 if (entity.canBeHitIn <= 0) {
@@ -147,7 +146,7 @@ public class GameEngine {
                         entity.canBeHitIn = 1500;
                         System.out.println("bottom");
                         System.out.println(entity.lives);
-                        continue;
+                        // continue;
                     }
 
 
@@ -206,14 +205,14 @@ public class GameEngine {
     }
 
     private void drawTiles(Graphics g) {
-        for (int i = 0; i < tiles.size(); i++) {
-            tiles.get(i).draw(g);
+        for (Tile tile : tiles) {
+            tile.draw(g);
         }
     }
 
     private void drawEnemies(Graphics g) {
-        for (int i = 0; i < enemies.size(); i++) {
-            enemies.get(i).draw(g);
+        for (Enemy enemy : enemies) {
+            enemy.draw(g);
         }
     }
 

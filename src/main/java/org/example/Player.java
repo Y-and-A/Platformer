@@ -4,38 +4,39 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
 
 public class Player extends Entity {
-    private Image imgLeft, imgRight, imgFront, imgUp;
+    private final Image imgLeft, imgRight, imgFront, imgUp;
 
     public Player(int x, int y) {
         super(x, y, 49, 70);
+
         lives = 5;
         jumpForce = 14.0;
         maxVelocityX = 7.0;
         maxVelocityY = 16.0;
         wallJumpForce = 6.0;
-        moveX = 2;
+        movementForce = 2;
 
         try {
             imgLeft = ImageIO.read(new File("src/main/resources/player/player-facingLeft.png"));
             imgRight = ImageIO.read(new File("src/main/resources/player/player-facingRight.png"));
             imgFront = ImageIO.read(new File("src/main/resources/player/player-front.png"));
             imgUp = ImageIO.read(new File("src/main/resources/player/player-facingUp.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Error loading player images");
+            throw new RuntimeException(e);
         }
         image = imgFront;
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
         if (keys[KeyEvent.VK_RIGHT]) {
-            this.velocityX += moveX;
+            this.velocityX += movementForce;
             image = imgRight;
         }
         if (keys[KeyEvent.VK_LEFT]) {
-            this.velocityX -= moveX;
+            this.velocityX -= movementForce;
             image = imgLeft;
         }
 
@@ -48,18 +49,6 @@ public class Player extends Entity {
         }
         if (!jumpKeyPressed && jumpKeyPrev && this.velocityY < 0) {
             this.velocityY *= 0.5;
-        }
-
-        if (!onFloor && onWall && jumpKeyPressed && !jumpKeyPrev) {
-            if (keys[KeyEvent.VK_RIGHT]) {
-                this.velocityY = -wallJumpForce;
-                this.velocityX = -maxVelocityX;
-                image = imgLeft;
-            } else if (keys[KeyEvent.VK_LEFT]) {
-                this.velocityY = -wallJumpForce;
-                this.velocityX = maxVelocityX;
-                image = imgRight;
-            }
         }
 
         if (y > Window.HEIGHT) {

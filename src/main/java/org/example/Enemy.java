@@ -19,9 +19,9 @@ public class Enemy extends Entity {
 
         lives = 1;
         jumpForce = 11.0;
-        maxVelocityX = 3.5;
+        maxVelocityX = 0;
         maxVelocityY = 16.0;
-        moveX = 2;
+        movementForce = 2;
 
         loadImages();
         image = front;
@@ -35,11 +35,11 @@ public class Enemy extends Entity {
 
         if (Math.abs(distanceX) > 2) {
             if (distanceX > 0) {
-                this.velocityX += moveX;
+                this.velocityX += movementForce;
                 facingDirection = Direction.RIGHT;
                 image = right;
             } else {
-                this.velocityX -= moveX;
+                this.velocityX -= movementForce;
                 facingDirection = Direction.LEFT;
                 image = left;
             }
@@ -59,24 +59,6 @@ public class Enemy extends Entity {
 
     public void update() {
         super.update();
-    }
-
-    //TODO this method should be provided by other class
-    // something like boolean canWalkThrough(Entity entity, int tileNum)
-    private boolean canWalkThrough(int tileType) {
-        return tileType == 0 || tileType > 90;
-    }
-
-    public boolean[][] convertMap(short[][] map) {
-        boolean[][] result = new boolean[map.length][map[0].length];
-
-        for (int r = 0; r < map.length; r++) {
-            for (int c = 0; c < map[0].length; c++) {
-                result[r][c] = canWalkThrough(map[r][c]);
-            }
-        }
-
-        return result;
     }
 
     private void loadImages() {

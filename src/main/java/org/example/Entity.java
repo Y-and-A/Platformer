@@ -9,11 +9,11 @@ public abstract class Entity extends GameObject {
     protected final double FRICTION = 1.5;
     protected final double DRAG = 0.2;
 
-    protected double moveX;
     protected double velocityX = 0;
     protected double velocityY = 0;
     protected double maxVelocityX;
     protected double maxVelocityY;
+    protected double movementForce;
     protected double jumpForce;
     protected double wallJumpForce;
 
@@ -25,7 +25,6 @@ public abstract class Entity extends GameObject {
     protected boolean leftCollision;
     protected boolean rightCollision;
     protected boolean topCollision;
-//    protected boolean topCollisionWithFloating;
 
     public int canBeHitIn;
 
