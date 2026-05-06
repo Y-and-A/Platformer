@@ -10,6 +10,8 @@ public class Tile extends GameObject {
     public static final int HEIGHT = 50;
     public static final int FLOATING_HEIGHT = 20;
 
+    public final Rectangle rect;
+
     public Tile(int x, int y, boolean floating, Image image) {
         super(x, y);
 
@@ -17,6 +19,8 @@ public class Tile extends GameObject {
         width = WIDTH;
         height = floating ? FLOATING_HEIGHT : HEIGHT;
         this.image = image;
+
+        this.rect = new Rectangle((int) x, (int) y, width, height);
     }
 
     public static boolean isFloatingTile(int tileId) {
@@ -26,9 +30,5 @@ public class Tile extends GameObject {
     @Override
     public void draw(Graphics g) {
         g.drawImage(image, (int) x, (int) y, width, 50, null);
-    }
-
-    public Rectangle rectangle() {
-        return new Rectangle((int) x, (int) y, width, height);
     }
 }

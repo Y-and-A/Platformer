@@ -11,7 +11,7 @@ public class Player extends Entity {
 
     public Player(int x, int y) {
         super(x, y, 49, 70);
-        lives = 3;
+        lives = 5;
         jumpForce = 14.0;
         maxVelocityX = 7.0;
         maxVelocityY = 16.0;

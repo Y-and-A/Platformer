@@ -9,10 +9,7 @@ public class Enemy extends Entity {
     Image left, right, front, back;
 
     private enum Direction {LEFT, RIGHT, UP, DOWN}
-    private Direction nextMove;
-
-    private int pathFinderIterations = 0;
-    private int maxPathFinderIterations = 10000;
+    private Direction facingDirection = Direction.RIGHT;
 
     protected Enemy(int x, int y) {
         super(x, y);
@@ -20,74 +17,48 @@ public class Enemy extends Entity {
         width = 50;
         height = 50;
 
+        lives = 1;
+        jumpForce = 11.0;
+        maxVelocityX = 3.5;
+        maxVelocityY = 16.0;
+        moveX = 2;
+
         loadImages();
         image = front;
     }
 
-    public void chasePlayer(short[][] map, int playerRow, int playerCol) {
-        boolean[][] bMap = convertMap(map);
-        boolean[][] visited = new boolean[map.length][map[0].length];
-        pathFinderIterations = 0;
-        boolean hasSolution = findPath(bMap, (int) x / 50, (int) y / 50, playerRow, playerCol, visited);
-        if (hasSolution) {
-            System.out.println("Solution found, enemy should go: " + nextMove);
-            //TODO call this.update here, which should use nextMove to perform action (move left, right, or jump)
-        } else System.out.println("Couldn't find path to player");
+    public void chasePlayer(Player player) {
+        if (!alive) return;
+
+        double distanceX = player.x - this.x;
+        double distanceY = player.y - this.y;
+
+        if (Math.abs(distanceX) > 2) {
+            if (distanceX > 0) {
+                this.velocityX += moveX;
+                facingDirection = Direction.RIGHT;
+                image = right;
+            } else {
+                this.velocityX -= moveX;
+                facingDirection = Direction.LEFT;
+                image = left;
+            }
+        } else this.velocityX = 0;
+
+        if (onFloor) {
+            boolean shouldJump = false;
+
+            if (facingDirection == Direction.RIGHT && rightCollision) shouldJump = true;
+            else if (facingDirection == Direction.LEFT && leftCollision) shouldJump = true;
+
+            else if (distanceY < -60 && Math.abs(distanceX) < 100) shouldJump = true;
+
+            if (shouldJump) this.velocityY = -jumpForce;
+        }
     }
 
     public void update() {
-        System.out.println("Enemy update called");
         super.update();
-    }
-
-    private boolean findPath(boolean[][] map, int cR, int cC, int tR, int tC, boolean[][] visited) {
-        if (pathFinderIterations++ > maxPathFinderIterations) return false;
-        if (cR == tR && cC == tC) {
-            visited[cR][cC] = true; // has no effect
-            return true;
-        }
-        if (cR < 0 || cR >= map.length || cC < 0 || cC >= map[0].length) return false;
-
-        visited[cR][cC] = true;
-
-        // LEFT
-        if (cC - 1 >= 0 && map[cR][cC - 1] && !visited[cR][cC + 1]) {
-            boolean hasSolution = findPath(map, cR, cC - 1, tR, tC, visited);
-            if (hasSolution) {
-                nextMove = Direction.LEFT;
-                return true;
-            }
-        }
-
-        // RIGHT
-        if (cC + 1 < map[0].length && map[cR][cC + 1] && !visited[cR][cC + 1]) {
-            boolean hasSolution = findPath(map, cR, cC + 1, tR, tC, visited);
-            if (hasSolution) {
-                nextMove = Direction.RIGHT;
-                return true;
-            }
-        }
-
-        // UP
-        if (cR - 1 >= 0 && map[cR - 1][cC] && !visited[cR - 1][cC]) {
-            boolean hasSolution = findPath(map, cR - 1, cC, tR, tC, visited);
-            if (hasSolution) {
-                nextMove = Direction.UP;
-                return true;
-            }
-        }
-
-        // DOWN
-        if (cR + 1 < map.length && map[cR + 1][cC] && !visited[cR + 1][cC]) {
-            boolean hasSolution = findPath(map, cR + 1, cC, tR, tC, visited);
-            if (hasSolution) {
-                nextMove = Direction.DOWN;
-                return true;
-            }
-        }
-
-        visited[cR][cC] = false;
-        return false;
     }
 
     //TODO this method should be provided by other class

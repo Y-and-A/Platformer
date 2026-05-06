@@ -4,7 +4,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.rmi.MarshalledObject;
 import java.util.ArrayList;
 
 import static org.example.Window.levelSelectorName;
@@ -67,7 +66,13 @@ public class GameEngine {
     public void update(boolean[] keys, boolean[] prevKeys, short[][] map) {
         this.player.update(keys, prevKeys);
         move(player);
-//        enemies.getFirst().chasePlayer(map, (int) (player.x / Tile.WIDTH), (int) (player.y / Tile.HEIGHT));
+
+        for (Enemy enemy : enemies) {
+            enemy.chasePlayer(this.player);
+            enemy.update();
+            move(enemy);
+        }
+
         if (!player.alive) Window.changeScene(levelSelectorName);
     }
 
@@ -76,15 +81,12 @@ public class GameEngine {
         Rectangle entityRight = new Rectangle(((int) entity.x + entity.width), (int) entity.y, 1, entity.height - 14);
         Rectangle entityUp = new Rectangle((int) entity.x, (int) entity.y, entity.width - 2, 1);
         Rectangle entityDown = new Rectangle((int) entity.x, (int) entity.y + entity.height, entity.width - 2, 1);
+
         Rectangle tileRect;
         Rectangle enemyRect;
-        entity.onFloor = false;
-        entity.topCollision = false;
-        entity.leftCollision = false;
-        entity.rightCollision = false;
-        entity.onWall = false;
+
         for (Tile tile : tiles) {
-            tileRect = tile.rectangle();
+            tileRect = tile.rect;
 
             if (entityLeft.intersects(tileRect)) {
                 entity.leftCollision = true;
@@ -105,47 +107,51 @@ public class GameEngine {
             if (entityDown.intersects(tileRect))
                 entity.onFloor = true;
         }
+
         entity.canBeHitIn -= 100;
-        for (Enemy enemy : enemies) {
-            if (entity.canBeHitIn <= 0) {
-                enemyRect = enemy.rectangle();
 
-                if (entityLeft.intersects(enemyRect)) {
-                    entity.lives--;
-                    entity.velocityX = 17;
-                    entity.velocityY = -2;
-                    entity.canBeHitIn = 1500;
-                    System.out.println("left");
-                    System.out.println(entity.lives);
-                    continue;
-                }
-                if (entityRight.intersects(enemyRect)) {
-                    entity.lives--;
-                    entity.velocityX = -17;
-                    entity.velocityY = -2;
-                    entity.canBeHitIn = 1500;
-                    System.out.println("right");
-                    System.out.println(entity.lives);
-                    continue;
-                }
-                if (entityUp.intersects(enemyRect)) {
-                    entity.lives--;
-                    entity.velocityY = -10;
-                    entity.canBeHitIn = 1500;
-                    System.out.println("top");
-                    System.out.println(entity.lives);
-                    continue;
-                }
-                if (entityDown.intersects(enemyRect)) {
-                    entity.lives--;
-                    entity.velocityY = -10;
-                    entity.canBeHitIn = 1500;
-                    System.out.println("bottom");
-                    System.out.println(entity.lives);
-                    continue;
-                }
+        if (entity instanceof Player) {
+            for (Enemy enemy : enemies) {
+                if (entity.canBeHitIn <= 0) {
+                    enemyRect = enemy.rectangle();
+
+                    if (entityLeft.intersects(enemyRect)) {
+                        entity.lives--;
+                        entity.velocityX = 17;
+                        entity.velocityY = -2;
+                        entity.canBeHitIn = 1500;
+                        System.out.println("left");
+                        System.out.println(entity.lives);
+                        continue;
+                    }
+                    if (entityRight.intersects(enemyRect)) {
+                        entity.lives--;
+                        entity.velocityX = -17;
+                        entity.velocityY = -2;
+                        entity.canBeHitIn = 1500;
+                        System.out.println("right");
+                        System.out.println(entity.lives);
+                        continue;
+                    }
+                    if (entityUp.intersects(enemyRect)) {
+                        entity.lives--;
+                        entity.velocityY = -10;
+                        entity.canBeHitIn = 1500;
+                        System.out.println("top");
+                        System.out.println(entity.lives);
+                        continue;
+                    }
+                    if (entityDown.intersects(enemyRect)) {
+                        entity.lives--;
+                        entity.velocityY = -10;
+                        entity.canBeHitIn = 1500;
+                        System.out.println("bottom");
+                        System.out.println(entity.lives);
+                        continue;
+                    }
 
 
+                }
             }
         }
         if (entity.lives <= 0) {
@@ -154,8 +160,15 @@ public class GameEngine {
     }
 
     public void move(Entity entity) {
+        entity.onFloor = false;
+        entity.topCollision = false;
+        entity.leftCollision = false;
+        entity.rightCollision = false;
+        entity.onWall = false;
+
         entity.x += entity.velocityX;
         updateCollision(entity);
+
         if (entity.rightCollision) {
             entity.x = ((int) (entity.x + entity.width) / Tile.WIDTH) * Tile.WIDTH - entity.width - 0.01;
             entity.velocityX = 0;
