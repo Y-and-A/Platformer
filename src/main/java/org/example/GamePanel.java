@@ -56,12 +56,12 @@ public class GamePanel extends JPanel implements Runnable {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-
+//                System.out.println("Mouse entered");
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-
+//                System.out.println("Mouse exited");
             }
         });
     }
@@ -114,9 +114,6 @@ public class GamePanel extends JPanel implements Runnable {
                 e.printStackTrace();
             }
         }
-    }
-    public void shotBullet(){
-        gameEngine.shotBullet();
     }
 
     @Override

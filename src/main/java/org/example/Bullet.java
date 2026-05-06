@@ -5,46 +5,57 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class Bullet extends Entity{
-    private int bulletWidth =50;
-    private int bulletHeight  =50;
+public class Bullet extends Entity {
+    private int bulletImgWidth = 50;
+    private int bulletImgHeight = 50;
+
     double velocityX;
     double velocityY;
-    double bulletVelocity=5;
-    private Image right;
-    private Image left;
-    public Bullet(double playerX, double playerY,String direction){
-        super(playerX+15,playerY+21);
-        this.width = bulletWidth;
-        this.height  =bulletHeight;
+    double bulletVelocity = 8.5;
+
+    private Image left, right;
+
+    public Bullet(Player player) {
+        // MAGIC NUMBERS IN ORDER TO ALIGN BULLET TO PLAYER HAND
+        super((player.facingDirection == Direction.LEFT) ? player.x : player.x + 15, player.y + 21);
+
+        this.width = bulletImgWidth;
+        this.height = bulletImgHeight;
+
         loadImages();
-        if (direction=="left"){
+        if (player.facingDirection == Direction.LEFT) {
             this.velocityX = -bulletVelocity;
             image = left;
-        }else{
-            this.velocityX= bulletVelocity;
+        } else if (player.facingDirection == Direction.RIGHT) {
+            this.velocityX = bulletVelocity;
             image = right;
+        } else if (player.facingDirection == Direction.UP) {
+            this.velocityY = -bulletVelocity;
+            image = right; //FIXME Joe, add image
+        } else if (player.facingDirection == Direction.DOWN) {
+            this.velocityY = bulletVelocity;
+            image = right; //FIXME Joe, add image
         }
     }
+
     public void update() {
         if (alive) {
             this.x += velocityX;
             this.y += velocityY;
-//            System.out.println("x: "+x+" y: "+y);
-        }
-        else{
-            x=-1;
-            y=-1;
+        } else { // TODO couldn't dispawn bullet, needs to be replaced
+            x = -1;
+            y = -1;
             velocityX = 0;
-            velocityY=0;
-            image=null;
+            velocityY = 0;
+            image = null;
         }
-    }
-    public Rectangle rectangle() {
-        return new Rectangle((int) x, (int) y,width,height);
     }
 
-    public void loadImages(){
+    public Rectangle rectangle() {
+        return new Rectangle((int) x, (int) y, width, height);
+    }
+
+    public void loadImages() {
         try {
             right = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmall.png"));
             left = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallLeft.png"));
@@ -52,8 +63,9 @@ public class Bullet extends Entity{
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public void draw(Graphics g) {
-        g.drawImage(image, (int) x, (int) y,width,height,null);
+        g.drawImage(image, (int) x, (int) y, width, height, null);
     }
 }

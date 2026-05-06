@@ -7,7 +7,7 @@ import java.io.File;
 
 public class Player extends Entity {
     private final Image imgLeft, imgRight, imgFront, imgUp;
-    public String lookingDirection;
+    public Direction facingDirection = Direction.RIGHT;
 
     public Player(int x, int y) {
         super(x, y, 49, 70);
@@ -32,15 +32,17 @@ public class Player extends Entity {
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
+        if (lives <= 0) alive = false;
+
         if (keys[KeyEvent.VK_RIGHT]) {
             this.velocityX += movementForce;
             image = imgRight;
-            lookingDirection="right";
+            facingDirection = Direction.RIGHT;
         }
         if (keys[KeyEvent.VK_LEFT]) {
             this.velocityX -= movementForce;
             image = imgLeft;
-            lookingDirection="left";
+            facingDirection = Direction.LEFT;
         }
 
         boolean jumpKeyPressed = keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_SPACE];
@@ -48,10 +50,13 @@ public class Player extends Entity {
 
         if (jumpKeyPressed && !jumpKeyPrev && onFloor) {
             this.velocityY -= jumpForce;
+            facingDirection = Direction.UP;
             image = imgUp;
         }
         if (!jumpKeyPressed && jumpKeyPrev && this.velocityY < 0) {
             this.velocityY *= 0.5;
+            facingDirection = Direction.DOWN;
+            image = imgFront;
         }
 
         if (y > Window.HEIGHT) {

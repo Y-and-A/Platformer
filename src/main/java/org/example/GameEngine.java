@@ -5,14 +5,23 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.example.Window.levelSelectorName;
+
+//TODO
+// IMPLEMENT A 3D MAP (GameObject[][][]), WHERE EACH LAYER HOLDS ON TYPE OF GAME_OBJECT
+// WHEN CHECKING COLLISIONS, GO OVER FIRST LAYER AND COMPARE IT TO THE OTHER ONES AT THE SAME I,J INDEXES
+// ACHIEVING A FULL UPDATE AT ONLY ONE RUN-THROUGH OF THE FIRST LAYER
 
 public class GameEngine {
     private Player player;
     private Gun gun;
     private final ArrayList<Tile> tiles = new ArrayList<>();
-    private final ArrayList<Enemy> enemies = new ArrayList<>();
+//    private final ArrayList<Enemy> enemies = new ArrayList<>();
+    public List<Enemy> enemies = Collections.synchronizedList(new ArrayList<>());
+    private final ArrayList<Bullet> bullets = new ArrayList<>();
 
     private Image rightTop, middleTop, leftTop;
     private Image leftMiddle, middleMiddle, rightMiddle;
@@ -23,8 +32,13 @@ public class GameEngine {
 
 
     public GameEngine(short[][] map) {
+        initialize(map);
+    }
+
+    public void initialize(short[][] map) {
         loadImages();
         Image image;
+
         for (int r = 0; r < map.length; r++) {
             for (int c = 0; c < map[r].length; c++) {
                 boolean floating = Tile.isFloatingTile(map[r][c]);
@@ -75,6 +89,10 @@ public class GameEngine {
             move(enemy);
         }
 
+        for (Bullet bullet : bullets) {
+            bullet.update();
+        }
+
         if (!player.alive) Window.changeScene(levelSelectorName);
     }
 
@@ -86,6 +104,30 @@ public class GameEngine {
 
         Rectangle tileRect;
         Rectangle enemyRect;
+        Rectangle bulletRect;
+
+        bulletLoop: for (int i = 0; i < bullets.size(); i++) {
+            bulletRect = bullets.get(i).rectangle();
+
+            for (Tile tile : tiles) {
+                tileRect = tile.rect;
+
+                if (tileRect.intersects(bulletRect)) {
+                    bullets.remove(i);
+                    break bulletLoop;
+                }
+            }
+
+            for (int k = 0; k < enemies.size(); k++) {
+                enemyRect = enemies.get(i).rectangle();
+
+                if (enemyRect.intersects(bulletRect)) {
+                    enemies.get(i).lives--;
+                    bullets.remove(i);
+                    break bulletLoop;
+                }
+            }
+        }
 
         for (Tile tile : tiles) {
             tileRect = tile.rect;
@@ -109,6 +151,15 @@ public class GameEngine {
             if (entityDown.intersects(tileRect))
                 entity.onFloor = true;
         }
+
+//        if (entity instanceof Enemy) {
+//            for (int i = 0; i < enemies.size(); i++) {
+//                if (!enemies.get(i).alive) {
+//                    enemies.remove(i);
+//                    break;
+//                }
+//            }
+//        }
 
         entity.canBeHitIn -= 100;
         if (entity instanceof Player) {
@@ -150,13 +201,8 @@ public class GameEngine {
                         System.out.println(entity.lives);
                         // continue;
                     }
-
-
                 }
             }
-        }
-        if (entity.lives <= 0) {
-            entity.alive = false;
         }
     }
 
@@ -203,6 +249,7 @@ public class GameEngine {
     public void draw(Graphics g) {
         drawTiles(g);
         drawEnemies(g);
+        drawBullets(g);
         this.player.draw(g);
     }
 
@@ -215,6 +262,12 @@ public class GameEngine {
     private void drawEnemies(Graphics g) {
         for (Enemy enemy : enemies) {
             enemy.draw(g);
+        }
+    }
+
+    private void drawBullets(Graphics g) {
+        for (Bullet bullet : bullets) {
+            bullet.draw(g);
         }
     }
 
@@ -250,7 +303,8 @@ public class GameEngine {
     public int getPlayerLives() {
         return player.lives;
     }
+
     public void shotBullet(){
-        gun.shotBullet(player.lookingDirection);
+        bullets.add(new Bullet(player));
     }
 }
