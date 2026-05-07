@@ -1,9 +1,6 @@
 package org.example;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 
 public class Bullet extends Entity {
     private int bulletImgWidth = 50;
@@ -13,8 +10,6 @@ public class Bullet extends Entity {
     double velocityY;
     double bulletVelocity = 8.5;
 
-    private Image left, right,up,down;
-
     public Bullet(Player player) {
         // MAGIC NUMBERS IN ORDER TO ALIGN BULLET TO PLAYER HAND
         super((player.facingDirection == Direction.LEFT) ? player.x : player.x + 15, player.y + 21);
@@ -22,19 +17,18 @@ public class Bullet extends Entity {
         this.width = bulletImgWidth;
         this.height = bulletImgHeight;
 
-        loadImages();
         if (player.facingDirection == Direction.LEFT) {
             this.velocityX = -bulletVelocity;
-            image = left;
+            image = Assets.bulletLeft;
         } else if (player.facingDirection == Direction.RIGHT) {
             this.velocityX = bulletVelocity;
-            image = right;
+            image = Assets.bulletRight;
         } else if (player.facingDirection == Direction.UP) {
             this.velocityY = -bulletVelocity;
-            image = up;
+            image = Assets.bulletUp;
         } else if (player.facingDirection == Direction.DOWN) {
             this.velocityY = bulletVelocity;
-            image = down;
+            image = Assets.bulletDown;
         }
     }
 
@@ -53,17 +47,6 @@ public class Bullet extends Entity {
 
     public Rectangle rectangle() {
         return new Rectangle((int) x, (int) y, width, height);
-    }
-
-    public void loadImages() {
-        try {
-            right = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallRight.png"));
-            left = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallLeft.png"));
-            up = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallUp.png"));
-            down = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallDown.png"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

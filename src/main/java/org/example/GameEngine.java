@@ -19,53 +19,19 @@ public class GameEngine {
     private Player player;
     private Gun gun;
     private final ArrayList<Tile> tiles = new ArrayList<>();
-//    private final ArrayList<Enemy> enemies = new ArrayList<>();
-    public List<Enemy> enemies = Collections.synchronizedList(new ArrayList<>());
+    public ArrayList<Enemy> enemies = new ArrayList<>();
     private final ArrayList<Bullet> bullets = new ArrayList<>();
-
-    private Image rightTop, middleTop, leftTop;
-    private Image leftMiddle, middleMiddle, rightMiddle;
-    private Image leftBottom, middleBottom, rightBottom;
-    private Image floatingLeft, floatingMiddle, floatingRight, floatingSingle;
-    private Image only1, only2, only3, only4;
-    private Image special1, special2, fullGrassUp, fullGrassLeft;
-
 
     public GameEngine(short[][] map) {
         initialize(map);
     }
 
     public void initialize(short[][] map) {
-        loadImages();
         Image image;
-
         for (int r = 0; r < map.length; r++) {
             for (int c = 0; c < map[r].length; c++) {
                 boolean floating = Tile.isFloatingTile(map[r][c]);
-                image = switch (map[r][c]) {
-                    case 11 -> leftTop;
-                    case 12 -> middleTop;
-                    case 13 -> rightTop;
-                    case 14 -> leftMiddle;
-                    case 15 -> middleMiddle;
-                    case 16 -> rightMiddle;
-                    case 17 -> leftBottom;
-                    case 18 -> middleBottom;
-                    case 19 -> rightBottom;
-                    case 21 -> floatingLeft;
-                    case 22 -> floatingMiddle;
-                    case 23 -> floatingRight;
-                    case 24 -> floatingSingle;
-                    case 31 -> only1;
-                    case 32 -> only2;
-                    case 33 -> only3;
-                    case 34 -> only4;
-                    case 40 -> fullGrassUp;
-                    case 41 -> fullGrassLeft;
-                    case 61 -> special1;
-                    case 62 -> special2;
-                    default -> null;
-                };
+                image = Assets.getTileImage(map[r][c]);
                 if (image != null) {
                     tiles.add(new Tile(c * 50, r * 50, floating, image));
                 }
@@ -76,7 +42,7 @@ public class GameEngine {
                     this.player = new Player(c * Tile.WIDTH, r * Tile.HEIGHT);
             }
         }
-        gun = new Gun(player.x,player.y);
+        gun = new Gun(player.x, player.y);
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
@@ -93,6 +59,9 @@ public class GameEngine {
             bullet.update();
         }
 
+        bullets.removeIf(bullet -> !bullet.alive);
+        enemies.removeIf(enemy -> !enemy.alive);
+
         if (!player.alive) Window.changeScene(levelSelectorName);
     }
 
@@ -106,25 +75,34 @@ public class GameEngine {
         Rectangle enemyRect;
         Rectangle bulletRect;
 
-        bulletLoop: for (int i = 0; i < bullets.size(); i++) {
-            bulletRect = bullets.get(i).rectangle();
+
+        for (Bullet bullet : bullets) {
+            if (!bullet.alive) continue;
+
+            if (bullet.x < 0 || bullet.x > 1300) { //TODO change 1300 to actual window width, consider window resizes
+                bullet.alive = false;
+                break;
+            }
+
+            bulletRect = bullet.rectangle();
 
             for (Tile tile : tiles) {
-                tileRect = tile.rect;
-
-                if (tileRect.intersects(bulletRect)) {
-                    bullets.remove(i);
-                    break bulletLoop;
+                if (tile.rect.intersects(bulletRect)) {
+                    bullet.alive = false;
+                    break;
                 }
             }
 
-            for (int k = 0; k < enemies.size(); k++) {
-                enemyRect = enemies.get(k).rectangle();
+            if (!bullet.alive) continue;
 
-                if (enemyRect.intersects(bulletRect)) {
-                    enemies.get(k).lives--;
-                    bullets.remove(i);
-                    break bulletLoop;
+            for (Enemy enemy : enemies) {
+                if (!enemy.alive) continue;
+
+                if (enemy.rectangle().intersects(bulletRect)) {
+                    enemy.lives--;
+                    if (enemy.lives <= 0) enemy.alive = false;
+                    bullet.alive = false;
+                    break;
                 }
             }
         }
@@ -151,15 +129,6 @@ public class GameEngine {
             if (entityDown.intersects(tileRect))
                 entity.onFloor = true;
         }
-
-//        if (entity instanceof Enemy) {
-//            for (int i = 0; i < enemies.size(); i++) {
-//                if (!enemies.get(i).alive) {
-//                    enemies.remove(i);
-//                    break;
-//                }
-//            }
-//        }
 
         entity.canBeHitIn -= 100;
         if (entity instanceof Player) {
@@ -271,40 +240,11 @@ public class GameEngine {
         }
     }
 
-    private void loadImages() {
-        try {
-            rightTop = ImageIO.read(new File("src/main/resources/tiles/rightTop.png"));
-            middleTop = ImageIO.read(new File("src/main/resources/tiles/middleTop.png"));
-            leftTop = ImageIO.read(new File("src/main/resources/tiles/leftTop.png"));
-            leftMiddle = ImageIO.read(new File("src/main/resources/tiles/leftMiddle.png"));
-            middleMiddle = ImageIO.read(new File("src/main/resources/tiles/middleMiddle.png"));
-            rightMiddle = ImageIO.read(new File("src/main/resources/tiles/rightMiddle.png"));
-            leftBottom = ImageIO.read(new File("src/main/resources/tiles/leftBottom.png"));
-            middleBottom = ImageIO.read(new File("src/main/resources/tiles/middleBottom.png"));
-            rightBottom = ImageIO.read(new File("src/main/resources/tiles/rightBottom.png"));
-            floatingLeft = ImageIO.read(new File("src/main/resources/tiles/floatingLeft.png"));
-            floatingMiddle = ImageIO.read(new File("src/main/resources/tiles/floatingMiddle.png"));
-            floatingRight = ImageIO.read(new File("src/main/resources/tiles/floatingRight.png"));
-            floatingSingle = ImageIO.read(new File("src/main/resources/tiles/floatingSingle.png"));
-            only1 = ImageIO.read(new File("src/main/resources/tiles/only1.png"));
-            only2 = ImageIO.read(new File("src/main/resources/tiles/only2.png"));
-            only3 = ImageIO.read(new File("src/main/resources/tiles/only3.png"));
-            only4 = ImageIO.read(new File("src/main/resources/tiles/only4.png"));
-            special1 = ImageIO.read(new File("src/main/resources/tiles/special1.png"));
-            special2 = ImageIO.read(new File("src/main/resources/tiles/special2.png"));
-            fullGrassUp = ImageIO.read(new File("src/main/resources/tiles/fullGrassUp.png"));
-            fullGrassLeft = ImageIO.read(new File("src/main/resources/tiles/fullGrassLeft.png"));
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public int getPlayerLives() {
         return player.lives;
     }
 
-    public void shotBullet(){
+    public void shotBullet() {
         bullets.add(new Bullet(player));
     }
 }

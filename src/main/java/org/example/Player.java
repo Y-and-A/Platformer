@@ -1,12 +1,9 @@
 package org.example;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.io.File;
 
 public class Player extends Entity {
-    private final Image imgLeft, imgRight, imgFront, imgUp;
     public Direction facingDirection = Direction.RIGHT;
 
     public Player(int x, int y) {
@@ -19,16 +16,7 @@ public class Player extends Entity {
         wallJumpForce = 6.0;
         movementForce = 2;
 
-        try {
-            imgLeft = ImageIO.read(new File("src/main/resources/player/player-facingLeft.png"));
-            imgRight = ImageIO.read(new File("src/main/resources/player/player-facingRight.png"));
-            imgFront = ImageIO.read(new File("src/main/resources/player/player-front.png"));
-            imgUp = ImageIO.read(new File("src/main/resources/player/player-facingUp.png"));
-        } catch (Exception e) {
-            System.err.println("Error loading player images");
-            throw new RuntimeException(e);
-        }
-        image = imgFront;
+        image = Assets.playerFront;
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
@@ -36,12 +24,12 @@ public class Player extends Entity {
 
         if (keys[KeyEvent.VK_RIGHT]) {
             this.velocityX += movementForce;
-            image = imgRight;
+            image = Assets.playerRight;
             facingDirection = Direction.RIGHT;
         }
         if (keys[KeyEvent.VK_LEFT]) {
             this.velocityX -= movementForce;
-            image = imgLeft;
+            image = Assets.playerLeft;
             facingDirection = Direction.LEFT;
         }
 
@@ -51,12 +39,12 @@ public class Player extends Entity {
         if (jumpKeyPressed && !jumpKeyPrev && onFloor) {
             this.velocityY -= jumpForce;
             facingDirection = Direction.UP;
-            image = imgUp;
+            image = Assets.playerUp;
         }
         if (!jumpKeyPressed && jumpKeyPrev && this.velocityY < 0) {
             this.velocityY *= 0.5;
             facingDirection = Direction.DOWN;
-            image = imgFront;
+            image = Assets.playerFront;
         }
 
         if (y > Window.HEIGHT) {

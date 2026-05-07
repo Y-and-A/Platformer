@@ -1,13 +1,8 @@
 package org.example;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 
 public class Enemy extends Entity {
-    Image left, right, front, back;
-
     private enum Direction {LEFT, RIGHT, UP, DOWN}
     private Direction facingDirection = Direction.RIGHT;
 
@@ -23,8 +18,7 @@ public class Enemy extends Entity {
         maxVelocityY = 16.0;
         movementForce = 2;
 
-        loadImages();
-        image = front;
+        image = Assets.enemyFront;
     }
 
     public void chasePlayer(Player player) {
@@ -37,11 +31,11 @@ public class Enemy extends Entity {
             if (distanceX > 0) {
                 this.velocityX += movementForce;
                 facingDirection = Direction.RIGHT;
-                image = right;
+                image = Assets.enemyRight;
             } else {
                 this.velocityX -= movementForce;
                 facingDirection = Direction.LEFT;
-                image = left;
+                image = Assets.enemyLeft;
             }
         } else this.velocityX = 0;
 
@@ -60,17 +54,6 @@ public class Enemy extends Entity {
     public void update() {
         super.update();
         if (lives <= 0) alive = false;
-    }
-
-    private void loadImages() {
-        try {
-            front = ImageIO.read(new File("src/main/resources/enemy/front.png"));
-            back = ImageIO.read(new File("src/main/resources/enemy/back.png"));
-            left = ImageIO.read(new File("src/main/resources/enemy/left.png"));
-            right = ImageIO.read(new File("src/main/resources/enemy/right.png"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public Rectangle rectangle() {
