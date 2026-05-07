@@ -13,7 +13,7 @@ public class Bullet extends Entity {
     double velocityY;
     double bulletVelocity = 8.5;
 
-    private Image left, right;
+    private Image left, right,up,down;
 
     public Bullet(Player player) {
         // MAGIC NUMBERS IN ORDER TO ALIGN BULLET TO PLAYER HAND
@@ -31,10 +31,10 @@ public class Bullet extends Entity {
             image = right;
         } else if (player.facingDirection == Direction.UP) {
             this.velocityY = -bulletVelocity;
-            image = right; //FIXME Joe, add image
+            image = up;
         } else if (player.facingDirection == Direction.DOWN) {
             this.velocityY = bulletVelocity;
-            image = right; //FIXME Joe, add image
+            image = down;
         }
     }
 
@@ -57,8 +57,10 @@ public class Bullet extends Entity {
 
     public void loadImages() {
         try {
-            right = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmall.png"));
+            right = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallRight.png"));
             left = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallLeft.png"));
+            up = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallUp.png"));
+            down = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallDown.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

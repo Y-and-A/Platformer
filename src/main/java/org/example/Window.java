@@ -1,7 +1,10 @@
 package org.example;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class Window {
     public final JFrame window = new JFrame("Platformer");
@@ -69,7 +72,14 @@ public class Window {
         panel.setBackground(Color.GREEN);
 
         for (int i = 0; i < 9; i++) {
-            JButton levelButton = new LevelButton("Level " + i);
+            Image image;
+            try {
+                image= ImageIO.read(new File("src/main/resources/levelsSneakPeak/level2.png"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            JButton levelButton = new JButton(new ImageIcon(image));
+
             int finalI = i;
             levelButton.addActionListener(e -> changeScene(levelName + finalI));
             panel.add(levelButton);

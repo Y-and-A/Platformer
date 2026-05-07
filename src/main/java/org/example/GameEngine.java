@@ -119,10 +119,10 @@ public class GameEngine {
             }
 
             for (int k = 0; k < enemies.size(); k++) {
-                enemyRect = enemies.get(i).rectangle();
+                enemyRect = enemies.get(k).rectangle();
 
                 if (enemyRect.intersects(bulletRect)) {
-                    enemies.get(i).lives--;
+                    enemies.get(k).lives--;
                     bullets.remove(i);
                     break bulletLoop;
                 }

@@ -59,7 +59,6 @@ public class Enemy extends Entity {
 
     public void update() {
         super.update();
-
         if (lives <= 0) alive = false;
     }
 
