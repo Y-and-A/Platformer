@@ -69,16 +69,10 @@ public class Window {
     public JPanel createLevelSelectorScreen() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(3, 3, 10, 10));
-        panel.setBackground(Color.GREEN);
+        panel.setBackground(Color.DARK_GRAY);
 
         for (int i = 0; i < 9; i++) {
-            Image image;
-            try {
-                image= ImageIO.read(new File("src/main/resources/levelsSneakPeak/level2.png"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            JButton levelButton = new JButton(new ImageIcon(image));
+            JButton levelButton = new LevelButton(i);
 
             int finalI = i;
             levelButton.addActionListener(e -> changeScene(levelName + finalI));

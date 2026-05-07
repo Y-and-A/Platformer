@@ -19,7 +19,7 @@ public class Enemy extends Entity {
 
         lives = 1;
         jumpForce = 11.0;
-        maxVelocityX = 0;
+        maxVelocityX = 3.0;
         maxVelocityY = 16.0;
         movementForce = 2;
 

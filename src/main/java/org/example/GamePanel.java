@@ -109,7 +109,7 @@ public class GamePanel extends JPanel implements Runnable {
             // Even if this sleep overshoots on Windows, the math above guarantees
             // our game logic catches up flawlessly on the next iteration.
             try {
-                Thread.sleep(5);
+                Thread.sleep(2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
