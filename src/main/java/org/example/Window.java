@@ -1,10 +1,7 @@
 package org.example;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 
 public class Window {
     public final JFrame window = new JFrame("Platformer");

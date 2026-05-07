@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class LevelButton extends JButton {
     private final int LEVEL;
-    private Image image;
+    private final Image image;
 
     public LevelButton(int level) {
         this.LEVEL = level;

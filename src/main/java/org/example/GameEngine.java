@@ -1,12 +1,7 @@
 package org.example;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import static org.example.Window.levelSelectorName;
 
@@ -17,7 +12,6 @@ import static org.example.Window.levelSelectorName;
 
 public class GameEngine {
     private Player player;
-    private Gun gun;
     private final ArrayList<Tile> tiles = new ArrayList<>();
     public ArrayList<Enemy> enemies = new ArrayList<>();
     private final ArrayList<Bullet> bullets = new ArrayList<>();
@@ -42,7 +36,6 @@ public class GameEngine {
                     this.player = new Player(c * Tile.WIDTH, r * Tile.HEIGHT);
             }
         }
-        gun = new Gun(player.x, player.y);
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
@@ -57,26 +50,7 @@ public class GameEngine {
 
         for (Bullet bullet : bullets) {
             bullet.update();
-        }
 
-        bullets.removeIf(bullet -> !bullet.alive);
-        enemies.removeIf(enemy -> !enemy.alive);
-
-        if (!player.alive) Window.changeScene(levelSelectorName);
-    }
-
-    public void updateCollision(Entity entity) {
-        Rectangle entityLeft = new Rectangle((int) entity.x, (int) entity.y, 1, entity.height - 14);
-        Rectangle entityRight = new Rectangle(((int) entity.x + entity.width), (int) entity.y, 1, entity.height - 14);
-        Rectangle entityUp = new Rectangle((int) entity.x, (int) entity.y, entity.width - 2, 1);
-        Rectangle entityDown = new Rectangle((int) entity.x, (int) entity.y + entity.height, entity.width - 2, 1);
-
-        Rectangle tileRect;
-        Rectangle enemyRect;
-        Rectangle bulletRect;
-
-
-        for (Bullet bullet : bullets) {
             if (!bullet.alive) continue;
 
             if (bullet.x < 0 || bullet.x > 1300) { //TODO change 1300 to actual window width, consider window resizes
@@ -84,7 +58,7 @@ public class GameEngine {
                 break;
             }
 
-            bulletRect = bullet.rectangle();
+            Rectangle bulletRect = bullet.rectangle();
 
             for (Tile tile : tiles) {
                 if (tile.rect.intersects(bulletRect)) {
@@ -106,6 +80,21 @@ public class GameEngine {
                 }
             }
         }
+
+        bullets.removeIf(bullet -> !bullet.alive);
+        enemies.removeIf(enemy -> !enemy.alive);
+
+        if (!player.alive) Window.changeScene(levelSelectorName);
+    }
+
+    public void updateCollision(Entity entity) {
+        Rectangle entityLeft = new Rectangle((int) entity.x, (int) entity.y, 1, entity.height - 14);
+        Rectangle entityRight = new Rectangle(((int) entity.x + entity.width), (int) entity.y, 1, entity.height - 14);
+        Rectangle entityUp = new Rectangle((int) entity.x, (int) entity.y, entity.width - 2, 1);
+        Rectangle entityDown = new Rectangle((int) entity.x, (int) entity.y + entity.height, entity.width - 2, 1);
+
+        Rectangle tileRect;
+        Rectangle enemyRect;
 
         for (Tile tile : tiles) {
             tileRect = tile.rect;

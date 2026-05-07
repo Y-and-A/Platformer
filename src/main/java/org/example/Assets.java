@@ -62,8 +62,6 @@ public class Assets {
 
         } catch (IOException e) {
             System.err.println("Failed to load assets");
-            e.printStackTrace();
-//            System.exit(1);
         }
     }
 
