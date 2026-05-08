@@ -27,6 +27,10 @@ public class Tile extends GameObject {
         return tileId >= 21 && tileId <= 24;
     }
 
+    public static boolean isSolid(int tileId) {
+        return tileId > 0 && tileId < 90;
+    }
+
     @Override
     public void draw(Graphics g) {
         g.drawImage(image, (int) x, (int) y, width, 50, null);

@@ -5,35 +5,27 @@ import java.util.ArrayList;
 
 import static org.example.Window.levelSelectorName;
 
-//TODO
-// IMPLEMENT A 3D MAP (GameObject[][][]), WHERE EACH LAYER HOLDS ON TYPE OF GAME_OBJECT
-// WHEN CHECKING COLLISIONS, GO OVER FIRST LAYER AND COMPARE IT TO THE OTHER ONES AT THE SAME I,J INDEXES
-// ACHIEVING A FULL UPDATE AT ONLY ONE RUN-THROUGH OF THE FIRST LAYER
-
 public class GameEngine {
     private Player player;
+
     private final ArrayList<Tile> tiles = new ArrayList<>();
     public ArrayList<Enemy> enemies = new ArrayList<>();
     private final ArrayList<Bullet> bullets = new ArrayList<>();
 
-    public GameEngine(short[][] map) {
-        initialize(map);
-    }
+    private final short[][] map;
 
-    public void initialize(short[][] map) {
+    public GameEngine(short[][] map) {
+        this.map = map;
+
         Image image;
         for (int r = 0; r < map.length; r++) {
             for (int c = 0; c < map[r].length; c++) {
                 boolean floating = Tile.isFloatingTile(map[r][c]);
                 image = Assets.getTileImage(map[r][c]);
-                if (image != null) {
-                    tiles.add(new Tile(c * 50, r * 50, floating, image));
-                }
-                if (map[r][c] == 90) {
-                    enemies.add(new Enemy(c * Tile.WIDTH, r * Tile.HEIGHT));
-                }
-                if (map[r][c] == 99)
-                    this.player = new Player(c * Tile.WIDTH, r * Tile.HEIGHT);
+                if (image != null) tiles.add(new Tile(c * Tile.WIDTH, r * Tile.HEIGHT, floating, image));
+                // TODO add consts to Tile, ENEMY_SPAWN_ID and PLAYER_SPAWN_ID
+                else if (map[r][c] == 90) enemies.add(new Enemy(c * Tile.WIDTH, r * Tile.HEIGHT));
+                else if (map[r][c] == 99) this.player = new Player(c * Tile.WIDTH, r * Tile.HEIGHT);
             }
         }
     }
@@ -41,37 +33,46 @@ public class GameEngine {
     public void update(boolean[] keys, boolean[] prevKeys) {
         player.update(keys, prevKeys);
         move(player);
+        checkEnemyDamage(player);
 
         for (Enemy enemy : enemies) {
-            enemy.chasePlayer(player);
-            enemy.update();
-            move(enemy);
+            if (enemy.alive) {
+                enemy.chasePlayer(player);
+                enemy.update();
+                move(enemy);
+            }
         }
 
         for (Bullet bullet : bullets) {
             bullet.update();
-
             if (!bullet.alive) continue;
 
-            if (bullet.x < 0 || bullet.x > 1300) { //TODO change 1300 to actual window width, consider window resizes
+            if (bullet.x < 0 || bullet.x > Window.WIDTH) {
                 bullet.alive = false;
-                break;
+                continue;
             }
 
-            Rectangle bulletRect = bullet.rectangle();
+            int bCol = (int) (bullet.x / Tile.WIDTH);
+            int bRow = (int) (bullet.y / Tile.HEIGHT);
 
-            for (Tile tile : tiles) {
-                if (tile.rect.intersects(bulletRect)) {
-                    bullet.alive = false;
-                    break;
+            if (bRow >= 0 && bRow < map.length && bCol >= 0 && bCol < map[0].length) {
+                short tileId = map[bRow][bCol];
+                if (Tile.isSolid(tileId)) {
+                    if (Tile.isFloatingTile(tileId)) {
+                        if (bullet.y <= bRow * Tile.HEIGHT + Tile.FLOATING_HEIGHT) {
+                            bullet.alive = false;
+                            continue;
+                        }
+                    } else {
+                        bullet.alive = false;
+                        continue;
+                    }
                 }
             }
 
-            if (!bullet.alive) continue;
-
+            Rectangle bulletRect = bullet.rectangle();
             for (Enemy enemy : enemies) {
                 if (!enemy.alive) continue;
-
                 if (enemy.rectangle().intersects(bulletRect)) {
                     enemy.lives--;
                     if (enemy.lives <= 0) enemy.alive = false;
@@ -87,101 +88,16 @@ public class GameEngine {
         if (!player.alive) Window.changeScene(levelSelectorName);
     }
 
-    public void updateCollision(Entity entity) {
-        Rectangle entityLeft = new Rectangle((int) entity.x, (int) entity.y, 1, entity.height - 14);
-        Rectangle entityRight = new Rectangle(((int) entity.x + entity.width), (int) entity.y, 1, entity.height - 14);
-        Rectangle entityUp = new Rectangle((int) entity.x, (int) entity.y, entity.width - 2, 1);
-        Rectangle entityDown = new Rectangle((int) entity.x, (int) entity.y + entity.height, entity.width - 2, 1);
-
-        Rectangle tileRect;
-        Rectangle enemyRect;
-
-        for (Tile tile : tiles) {
-            tileRect = tile.rect;
-
-            if (entityLeft.intersects(tileRect)) {
-                entity.leftCollision = true;
-                entity.onWall = true;
-            }
-            if (entityRight.intersects(tileRect)) {
-                entity.rightCollision = true;
-                entity.onWall = true;
-            }
-            if (entityUp.intersects(tileRect)) {
-                if (tile.floating) {
-                    entity.y = tileRect.y + tileRect.height;
-                    entity.velocityY = 0;
-                } else {
-                    entity.topCollision = true;
-                }
-            }
-            if (entityDown.intersects(tileRect))
-                entity.onFloor = true;
-        }
-
-        entity.canBeHitIn -= 100;
-        if (entity instanceof Player) {
-            for (Enemy enemy : enemies) {
-                if (entity.canBeHitIn <= 0) {
-                    enemyRect = enemy.rectangle();
-
-                    if (entityLeft.intersects(enemyRect)) {
-                        entity.lives--;
-                        entity.velocityX = 17;
-                        entity.velocityY = -2;
-                        entity.canBeHitIn = 1500;
-                        System.out.println("left");
-                        System.out.println(entity.lives);
-                        continue;
-                    }
-                    if (entityRight.intersects(enemyRect)) {
-                        entity.lives--;
-                        entity.velocityX = -17;
-                        entity.velocityY = -2;
-                        entity.canBeHitIn = 1500;
-                        System.out.println("right");
-                        System.out.println(entity.lives);
-                        continue;
-                    }
-                    if (entityUp.intersects(enemyRect)) {
-                        entity.lives--;
-                        entity.velocityY = -10;
-                        entity.canBeHitIn = 1500;
-                        System.out.println("top");
-                        System.out.println(entity.lives);
-                        continue;
-                    }
-                    if (entityDown.intersects(enemyRect)) {
-                        entity.lives--;
-                        entity.velocityY = -10;
-                        entity.canBeHitIn = 1500;
-                        System.out.println("bottom");
-                        System.out.println(entity.lives);
-                        // continue;
-                    }
-                }
-            }
-        }
-    }
-
     public void move(Entity entity) {
-        entity.onFloor = false;
-        entity.topCollision = false;
-        entity.leftCollision = false;
-        entity.rightCollision = false;
-        entity.onWall = false;
-
         entity.x += entity.velocityX;
-        updateCollision(entity);
+        checkXCollision(entity);
 
         if (entity.rightCollision) {
-            entity.x = ((int) (entity.x + entity.width) / Tile.WIDTH) * Tile.WIDTH - entity.width - 0.01;
+            entity.x = Math.floor((entity.x + entity.width) / Tile.WIDTH) * Tile.WIDTH - entity.width - 0.01;
             entity.velocityX = 0;
-            entity.onWall = true;
         } else if (entity.leftCollision) {
-            entity.x = ((int) entity.x / Tile.WIDTH + 1) * Tile.WIDTH;
+            entity.x = (Math.floor(entity.x / Tile.WIDTH) + 1) * Tile.WIDTH;
             entity.velocityX = 0;
-            entity.onWall = true;
         }
 
         if (entity.x < 0) {
@@ -194,38 +110,151 @@ public class GameEngine {
         }
 
         entity.y += entity.velocityY;
-        updateCollision(entity);
+        checkYCollision(entity);
+
         if (entity.onFloor) {
-            entity.y = ((int) (entity.y + entity.height) / Tile.HEIGHT) * Tile.HEIGHT - entity.height - 0.01;
             entity.velocityY = 0;
         } else if (entity.topCollision) {
-            entity.y = ((int) entity.y / Tile.HEIGHT + 1) * Tile.HEIGHT;
             entity.velocityY = 0;
         }
     }
 
-    public void draw(Graphics g) {
-        drawTiles(g);
-        drawEnemies(g);
-        drawBullets(g);
-        this.player.draw(g);
-    }
+    private void checkXCollision(Entity entity) {
+        entity.leftCollision = false;
+        entity.rightCollision = false;
+        entity.onWall = false;
 
-    private void drawTiles(Graphics g) {
-        for (Tile tile : tiles) {
-            tile.draw(g);
+        double leftX = entity.x;
+        double rightX = entity.x + entity.width - 0.1;
+        double topY = entity.y;
+        double bottomY = entity.y + entity.height - 0.1;
+
+        int startRow = Math.max(0, (int) (topY / Tile.HEIGHT));
+        // in (bottomY - 5) I mean to raise the bottom row a bit to make sure it won't consider the floor as a wall
+        int checkBottomRow = Math.min(map.length - 1, (int) ((bottomY - 5) / Tile.HEIGHT));
+
+        if (entity.velocityX > 0) {
+            int rightCol = (int) (rightX / Tile.WIDTH);
+            if (rightCol >= 0 && rightCol < map[0].length) {
+                for (int r = startRow; r <= checkBottomRow; r++) {
+                    short tileId = map[r][rightCol];
+                    if (Tile.isSolid(tileId)) {
+                        double tileTop = r * Tile.HEIGHT;
+
+                        double tileBottom;
+                        if (Tile.isFloatingTile(tileId)) tileBottom = tileTop + Tile.FLOATING_HEIGHT;
+                        else tileBottom = tileTop + Tile.HEIGHT;
+
+                        if (topY < tileBottom && bottomY > tileTop) {
+                            entity.rightCollision = true;
+                            entity.onWall = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        } else if (entity.velocityX < 0) {
+            int leftCol = (int) (leftX / Tile.WIDTH);
+            if (leftCol >= 0 && leftCol < map[0].length) {
+                for (int r = startRow; r <= checkBottomRow; r++) {
+                    short tileId = map[r][leftCol];
+                    if (Tile.isSolid(tileId)) {
+                        double tileTop = r * Tile.HEIGHT;
+
+                        double tileBottom;
+                        if (Tile.isFloatingTile(tileId)) tileBottom = tileTop + Tile.FLOATING_HEIGHT;
+                        else tileBottom = tileTop + Tile.HEIGHT;
+
+                        if (topY < tileBottom && bottomY > tileTop) {
+                            entity.leftCollision = true;
+                            entity.onWall = true;
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 
-    private void drawEnemies(Graphics g) {
+    private void checkYCollision(Entity entity) {
+        entity.onFloor = false;
+        entity.topCollision = false;
+
+        double leftX = entity.x;
+        double rightX = entity.x + entity.width - 0.1;
+        double topY = entity.y;
+        double bottomY = entity.y + entity.height;
+
+        int startCol = Math.max(0, (int) (leftX / Tile.WIDTH));
+        int endCol = Math.min(map[0].length - 1, (int) (rightX / Tile.WIDTH));
+
+        if (entity.velocityY >= 0) {
+            int floorRow = (int) (bottomY / Tile.HEIGHT);
+            if (floorRow >= 0 && floorRow < map.length) {
+                for (int c = startCol; c <= endCol; c++) {
+                    short tileId = map[floorRow][c];
+                    if (Tile.isSolid(tileId)) {
+                        double tileTop = floorRow * Tile.HEIGHT;
+
+                        double tileBottom;
+                        if (Tile.isFloatingTile(tileId)) tileBottom = tileTop + Tile.FLOATING_HEIGHT;
+                        else tileBottom = tileTop + Tile.HEIGHT;
+
+                        if (bottomY >= tileTop && bottomY <= tileBottom) {
+                            entity.onFloor = true;
+                            entity.y = tileTop - entity.height - 0.01;
+                            break;
+                        }
+                    }
+                }
+            }
+        } else if (entity.velocityY < 0) {
+            int ceilRow = (int) (topY / Tile.HEIGHT);
+            if (ceilRow >= 0 && ceilRow < map.length) {
+                for (int c = startCol; c <= endCol; c++) {
+                    short tileId = map[ceilRow][c];
+                    if (Tile.isSolid(tileId)) {
+                        double tileTop = ceilRow * Tile.HEIGHT;
+
+                        double tileBottom;
+                        if (Tile.isFloatingTile(tileId)) tileBottom = tileTop + Tile.FLOATING_HEIGHT;
+                        else tileBottom = tileTop + Tile.HEIGHT;
+
+                        if (topY <= tileBottom && topY >= tileTop) {
+                            entity.topCollision = true;
+                            entity.y = tileBottom + 0.01;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkEnemyDamage(Player player) {
+        player.canBeHitIn -= 100;
+        if (player.canBeHitIn > 0) return;
+
+        Rectangle pRect = new Rectangle((int) player.x, (int) player.y, player.width, player.height);
+
         for (Enemy enemy : enemies) {
-            enemy.draw(g);
-        }
-    }
+            if (!enemy.alive) continue;
+            Rectangle eRect = enemy.rectangle();
 
-    private void drawBullets(Graphics g) {
-        for (Bullet bullet : bullets) {
-            bullet.draw(g);
+            if (pRect.intersects(eRect)) {
+                player.lives--;
+                player.canBeHitIn = 1500;
+
+                double playerCenterX = player.x + player.width / 2.0;
+                double enemyCenterX = enemy.x + enemy.width / 2.0;
+
+                //todo add magic numbers (17, 10) to Entity as hitVelocityX, and hitVelocityY
+                if (playerCenterX < enemyCenterX) player.velocityX = -17;
+                else player.velocityX = 17;
+
+                player.velocityY = -10;
+                break;
+            }
         }
     }
 
@@ -235,5 +264,12 @@ public class GameEngine {
 
     public void shotBullet() {
         bullets.add(new Bullet(player));
+    }
+
+    public void draw(Graphics g) {
+        for (Tile tile : tiles) tile.draw(g);
+        for (Enemy enemy : enemies) enemy.draw(g);
+        for (Bullet bullet : bullets) bullet.draw(g);
+        this.player.draw(g);
     }
 }

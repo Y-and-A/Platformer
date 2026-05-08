@@ -39,6 +39,8 @@ public abstract class Entity extends GameObject {
 
 
     public void update() {
+        if (lives <= 0) alive = false;
+
         velocityY += GRAVITY;
 
         if (velocityX > 0) {

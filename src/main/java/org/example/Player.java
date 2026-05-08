@@ -20,7 +20,7 @@ public class Player extends Entity {
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
-        if (lives <= 0) alive = false;
+        super.update();
 
         if (keys[KeyEvent.VK_RIGHT]) {
             this.velocityX += movementForce;
@@ -52,7 +52,6 @@ public class Player extends Entity {
             x = 0;
             lives--;
         }
-        super.update();
     }
 
     @Override

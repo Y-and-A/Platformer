@@ -128,8 +128,8 @@ public class GamePanel extends JPanel implements Runnable {
         gameEngine.draw(bG);//draws the image on the backBuffer
 
         bG.setColor(Color.red);
-        bG.setFont(new Font("David",Font.BOLD,30));
-        bG.drawString(gameEngine.getPlayerLives()+"",Window.WIDTH-30,30);
+        bG.setFont(new Font("David", Font.BOLD, 30));
+        bG.drawString(gameEngine.getPlayerLives() + "", Window.WIDTH - 30, 30);
         bG.dispose();
 
         Graphics2D g2d = (Graphics2D) g;
