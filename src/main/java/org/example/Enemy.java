@@ -76,9 +76,14 @@ public class Enemy extends Entity {
 
         if (onFloor) {
             boolean shouldJump = false;
+
             if (facingDirection == Direction.RIGHT && rightCollision) shouldJump = true;
             else if (facingDirection == Direction.LEFT && leftCollision) shouldJump = true;
-            else if (distanceY < -60 && Math.abs(distanceX) < 100) shouldJump = true;
+
+            else if (Math.abs(distanceX) < 100) {
+                // making sure enemies won't jump if player is too far above
+                if (distanceY < -20 && distanceY >= -(Tile.HEIGHT * 2)) shouldJump = true;
+            }
 
             if (shouldJump) this.velocityY = -jumpForce;
         }
