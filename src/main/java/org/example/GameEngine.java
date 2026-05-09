@@ -42,8 +42,7 @@ public class GameEngine {
         separateEnemies();
         for (Enemy enemy : enemies) {
             if (enemy.alive) {
-                if ( enemy.y < 0 || enemy.y > Window.HEIGHT) {
-//                    enemy.x < 0 || enemy.x > Window.WIDTH ||
+                if (enemy.x + enemy.width < 0 || enemy.x > Window.WIDTH || enemy.y < 0 || enemy.y > Window.HEIGHT) {
                     enemy.alive = false;
                     continue;
                 }

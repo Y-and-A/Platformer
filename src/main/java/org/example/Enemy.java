@@ -82,7 +82,7 @@ public class Enemy extends Entity {
 
             else if (Math.abs(distanceX) < 100) {
                 // making sure enemies won't jump if player is too far above
-                if (distanceY < -20 && distanceY >= -(Tile.HEIGHT * 2)) shouldJump = true;
+                if (distanceY < -20 && distanceY >= -(Tile.HEIGHT * 3)) shouldJump = true;
             }
 
             if (shouldJump) this.velocityY = -jumpForce;
