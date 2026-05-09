@@ -10,7 +10,7 @@ public class LevelButton extends JButton {
     private final int LEVEL;
     private final Image image;
 
-    public LevelButton(int level) {
+    public LevelButton(int level) {//TODO add sneak peak to new levels
         this.LEVEL = level;
         try {
             int lvl = (level <= 2) ? level : 0;

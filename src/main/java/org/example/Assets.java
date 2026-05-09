@@ -15,7 +15,8 @@ public class Assets {
     private static Image tileLeftBottom, tileMiddleBottom, tileRightBottom;
     private static Image tileFloatingLeft, tileFloatingMiddle, tileFloatingRight, tileFloatingSingle;
     private static Image tileOnly1, tileOnly2, tileOnly3, tileOnly4;
-    private static Image tileSpecial1, tileSpecial2, tileFullGrassUp, tileFullGrassLeft;
+    private static Image tileSpecial1, tileSpecial2,tileSpecial3, tileFullGrassUp, tileFullGrassLeft,tileFullGrassThrough;
+    public static Image jumpMushroom;
 
     public static void loadAll() {
         try {
@@ -57,8 +58,11 @@ public class Assets {
             tileOnly4 = ImageIO.read(new File("src/main/resources/tiles/only4.png"));
             tileSpecial1 = ImageIO.read(new File("src/main/resources/tiles/special1.png"));
             tileSpecial2 = ImageIO.read(new File("src/main/resources/tiles/special2.png"));
+            tileSpecial3 = ImageIO.read(new File("src/main/resources/tiles/special3.png"));
             tileFullGrassUp = ImageIO.read(new File("src/main/resources/tiles/fullGrassUp.png"));
             tileFullGrassLeft = ImageIO.read(new File("src/main/resources/tiles/fullGrassLeft.png"));
+            tileFullGrassThrough = ImageIO.read(new File("src/main/resources/tiles/fullGrassThrough.png"));
+            jumpMushroom =  ImageIO.read(new File("src/main/resources/jumpMushroom.png"));
 
         } catch (IOException e) {
             System.err.println("Failed to load assets");
@@ -86,8 +90,11 @@ public class Assets {
             case 34 -> tileOnly4;
             case 40 -> tileFullGrassUp;
             case 41 -> tileFullGrassLeft;
+            case 42 -> tileFullGrassThrough;
             case 61 -> tileSpecial1;
             case 62 -> tileSpecial2;
+            case 63 -> tileSpecial3;
+            case 66 -> jumpMushroom;
             default -> null;
         };
     }

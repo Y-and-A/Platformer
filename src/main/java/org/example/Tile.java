@@ -28,6 +28,10 @@ public class Tile extends GameObject {
         return tileId >= 21 && tileId <= 24;
     }
 
+    public static boolean isMushroom(int tileId) {
+        return tileId ==66;
+    }
+
     public static boolean isSolid(int tileId) {
         return tileId > 0 && tileId < 90;
     }

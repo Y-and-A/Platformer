@@ -4,7 +4,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import static org.example.Tile.isMushroom;
 import static org.example.Window.levelSelectorName;
+import static org.example.Window.*;
 
 public class GameEngine {
     private Player player;
@@ -40,7 +42,8 @@ public class GameEngine {
         separateEnemies();
         for (Enemy enemy : enemies) {
             if (enemy.alive) {
-                if (enemy.x < 0 || enemy.x > Window.WIDTH || enemy.y < 0 || enemy.y > Window.HEIGHT) {
+                if ( enemy.y < 0 || enemy.y > Window.HEIGHT) {
+//                    enemy.x < 0 || enemy.x > Window.WIDTH ||
                     enemy.alive = false;
                     continue;
                 }
@@ -99,7 +102,7 @@ public class GameEngine {
         synchronized (bullets) {bullets.removeIf(bullet -> !bullet.alive);}
         synchronized (enemies) {enemies.removeIf(enemy -> !enemy.alive);}
 
-        if (!player.alive || enemies.isEmpty()) Window.changeScene(levelSelectorName);
+        if (!player.alive || enemies.isEmpty()) Window.changeScene("Title screen");
     }
 
     public void move(Entity entity) {
@@ -196,6 +199,11 @@ public class GameEngine {
                         else tileBottom = tileTop + Tile.HEIGHT;
 
                         if (bottomY >= tileTop && bottomY <= tileBottom) {
+                            if (isMushroom(tileId)) {
+                                entity.velocityY = -40;
+                                entity.velocityX = 0;
+                                break;
+                            }
                             entity.onFloor = true;
                             entity.y = tileTop - entity.height - 0.01;
                             break;
