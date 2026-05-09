@@ -7,14 +7,11 @@ public class Enemy extends Entity {
     private Direction facingDirection = Direction.RIGHT;
 
     protected Enemy(int x, int y) {
-        super(x, y);
-
-        width = 50;
-        height = 50;
+        super(x, y, 50, 50);
 
         lives = 1;
         jumpForce = 11.0;
-        maxVelocityX = 0.0;
+        maxVelocityX = 0.0; // TODO this is for test purposes only, change it back to around 3.0
         maxVelocityY = 16.0;
         movementForce = 2;
 
@@ -49,10 +46,6 @@ public class Enemy extends Entity {
 
             if (shouldJump) this.velocityY = -jumpForce;
         }
-    }
-
-    public Rectangle rectangle() {
-        return new Rectangle((int) x, (int) y, width, height);
     }
 
     @Override

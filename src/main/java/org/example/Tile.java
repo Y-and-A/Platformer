@@ -2,6 +2,7 @@ package org.example;
 
 import java.awt.*;
 
+//TODO change the name "floating tile" it's confusing, it's just a smaller tile...
 public class Tile extends GameObject {
     Image image;
     boolean floating;
@@ -10,7 +11,6 @@ public class Tile extends GameObject {
     public static final int HEIGHT = 50;
     public static final int FLOATING_HEIGHT = 20;
 
-    public final Rectangle rect;
     public static final int ENEMY_ID = 90;
     public static final int PLAYER_ID = 99;
 
@@ -22,8 +22,6 @@ public class Tile extends GameObject {
         width = WIDTH;
         height = floating ? FLOATING_HEIGHT : HEIGHT;
         this.image = image;
-
-        this.rect = new Rectangle((int) x, (int) y, width, height);
     }
 
     public static boolean isFloatingTile(int tileId) {
@@ -36,6 +34,6 @@ public class Tile extends GameObject {
 
     @Override
     public void draw(Graphics g) {
-        g.drawImage(image, (int) x, (int) y, width, 50, null);
+        g.drawImage(image, (int) x, (int) y, width, HEIGHT, null);
     }
 }

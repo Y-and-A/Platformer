@@ -13,6 +13,7 @@ public class Bullet extends Entity {
     public Bullet(Player player) {
         // MAGIC NUMBERS IN ORDER TO ALIGN BULLET TO PLAYER HAND
         super((player.facingDirection == Direction.LEFT) ? player.x : player.x + 15, player.y + 21);
+        this.hitbox.setSize(BULLET_IMG_WIDTH, BULLET_IMG_HEIGHT);
 
         this.width = BULLET_IMG_WIDTH;
         this.height = BULLET_IMG_HEIGHT;
@@ -36,17 +37,8 @@ public class Bullet extends Entity {
         if (alive) {
             this.x += velocityX;
             this.y += velocityY;
-        } else { // TODO couldn't dispawn bullet, needs to be replaced
-            x = -1;
-            y = -1;
-            velocityX = 0;
-            velocityY = 0;
-            image = null;
+            updateHitbox();
         }
-    }
-
-    public Rectangle rectangle() {
-        return new Rectangle((int) x, (int) y, width, height);
     }
 
     @Override

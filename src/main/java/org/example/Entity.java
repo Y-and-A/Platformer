@@ -31,13 +31,25 @@ public abstract class Entity extends GameObject {
 
     public int canBeHitIn;
 
+    protected Rectangle hitbox;
+
 
     protected Entity(int x, int y, int width, int height) {
         super(x, y, width, height);
+        this.hitbox = new Rectangle(x, y, width, height);
     }
 
     public Entity(double x, double y) {
-        super(x,y);
+        super(x, y);
+        this.hitbox = new Rectangle((int) x, (int) y, 0, 0);
+    }
+
+    public void updateHitbox() {
+        this.hitbox.setLocation((int) x, (int) y);
+    }
+
+    public Rectangle getHitbox() {
+        return this.hitbox;
     }
 
 
@@ -49,8 +61,7 @@ public abstract class Entity extends GameObject {
         if (velocityX > 0) {
             velocityX -= (onFloor ? FRICTION : DRAG);
             if (velocityX < 0) velocityX = 0;
-        }
-        else if (velocityX < 0) {
+        } else if (velocityX < 0) {
             velocityX += (onFloor ? FRICTION : DRAG);
             if (velocityX > 0) velocityX = 0;
         }

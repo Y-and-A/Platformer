@@ -2,6 +2,7 @@ package org.example;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static org.example.Window.levelSelectorName;
 
@@ -9,8 +10,10 @@ public class GameEngine {
     private Player player;
 
     private final ArrayList<Tile> tiles = new ArrayList<>();
-    public ArrayList<Enemy> enemies = new ArrayList<>();
+    public final ArrayList<Enemy> enemies = new ArrayList<>();
+
     private final ArrayList<Bullet> bullets = new ArrayList<>();
+    private final ConcurrentLinkedQueue<Bullet> pendingBullets = new ConcurrentLinkedQueue<>();
 
     private final short[][] map;
 
@@ -42,11 +45,17 @@ public class GameEngine {
             }
         }
 
+        synchronized (bullets) {
+            while (!pendingBullets.isEmpty()) {
+                bullets.add(pendingBullets.poll());
+            }
+        }
+
         for (Bullet bullet : bullets) {
             bullet.update();
             if (!bullet.alive) continue;
 
-            if (bullet.x < 0 || bullet.x > Window.WIDTH) {
+            if (bullet.x < 0 || bullet.x > Window.WIDTH || bullet.y < 0 || bullet.y > Window.HEIGHT) {
                 bullet.alive = false;
                 continue;
             }
@@ -69,10 +78,9 @@ public class GameEngine {
                 }
             }
 
-            Rectangle bulletRect = bullet.rectangle();
             for (Enemy enemy : enemies) {
                 if (!enemy.alive) continue;
-                if (enemy.rectangle().intersects(bulletRect)) {
+                if (enemy.hitbox.intersects(bullet.getHitbox())) {
                     enemy.lives--;
                     if (enemy.lives <= 0) enemy.alive = false;
                     bullet.alive = false;
@@ -81,8 +89,13 @@ public class GameEngine {
             }
         }
 
-        bullets.removeIf(bullet -> !bullet.alive);
-        enemies.removeIf(enemy -> !enemy.alive);
+        synchronized (bullets) {
+            bullets.removeIf(bullet -> !bullet.alive);
+        }
+
+        synchronized (enemies) {
+            enemies.removeIf(enemy -> !enemy.alive);
+        }
 
         if (!player.alive) Window.changeScene(levelSelectorName);
     }
@@ -116,6 +129,8 @@ public class GameEngine {
         } else if (entity.topCollision) {
             entity.velocityY = 0;
         }
+
+        entity.updateHitbox();
     }
 
     private void checkXCollision(Entity entity) {
@@ -123,8 +138,8 @@ public class GameEngine {
         entity.rightCollision = false;
         entity.onWall = false;
 
-        double leftX = entity.x;
-        double rightX = entity.x + entity.width - 0.1;
+        if (entity.velocityX == 0) return;
+
         double topY = entity.y;
         double bottomY = entity.y + entity.height - 0.1;
 
@@ -132,43 +147,22 @@ public class GameEngine {
         // in (bottomY - 5) I mean to raise the bottom row a bit to make sure it won't consider the floor as a wall
         int checkBottomRow = Math.min(map.length - 1, (int) ((bottomY - 5) / Tile.HEIGHT));
 
-        if (entity.velocityX > 0) {
-            int rightCol = (int) (rightX / Tile.WIDTH);
-            if (rightCol >= 0 && rightCol < map[0].length) {
-                for (int r = startRow; r <= checkBottomRow; r++) {
-                    short tileId = map[r][rightCol];
-                    if (Tile.isSolid(tileId)) {
-                        double tileTop = r * Tile.HEIGHT;
+        double targetX = (entity.velocityX > 0) ? (entity.x + entity.width - 0.1) : entity.x;
+        int targetCol = (int) (targetX / Tile.WIDTH);
 
-                        double tileBottom;
-                        if (Tile.isFloatingTile(tileId)) tileBottom = tileTop + Tile.FLOATING_HEIGHT;
-                        else tileBottom = tileTop + Tile.HEIGHT;
+        if (targetCol >= 0 && targetCol < map[0].length) {
+            for (int r = startRow; r <= checkBottomRow; r++) {
+                short tileId = map[r][targetCol];
+                if (Tile.isSolid(tileId)) {
+                    double tileTop = r * Tile.HEIGHT;
+                    double tileBottom = tileTop + (Tile.isFloatingTile(tileId) ? Tile.FLOATING_HEIGHT : Tile.HEIGHT);
 
-                        if (topY < tileBottom && bottomY > tileTop) {
-                            entity.rightCollision = true;
-                            entity.onWall = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        } else if (entity.velocityX < 0) {
-            int leftCol = (int) (leftX / Tile.WIDTH);
-            if (leftCol >= 0 && leftCol < map[0].length) {
-                for (int r = startRow; r <= checkBottomRow; r++) {
-                    short tileId = map[r][leftCol];
-                    if (Tile.isSolid(tileId)) {
-                        double tileTop = r * Tile.HEIGHT;
+                    if (topY < tileBottom && bottomY > tileTop) {
+                        if (entity.velocityX > 0) entity.rightCollision = true;
+                        else entity.leftCollision = true;
 
-                        double tileBottom;
-                        if (Tile.isFloatingTile(tileId)) tileBottom = tileTop + Tile.FLOATING_HEIGHT;
-                        else tileBottom = tileTop + Tile.HEIGHT;
-
-                        if (topY < tileBottom && bottomY > tileTop) {
-                            entity.leftCollision = true;
-                            entity.onWall = true;
-                            break;
-                        }
+                        entity.onWall = true;
+                        break;
                     }
                 }
             }
@@ -231,18 +225,15 @@ public class GameEngine {
     }
 
     private void checkEnemyDamage(Player player) {
-        player.canBeHitIn -= 100;
+        player.canBeHitIn = Math.max(0, player.canBeHitIn - 1);
         if (player.canBeHitIn > 0) return;
-
-        Rectangle pRect = new Rectangle((int) player.x, (int) player.y, player.width, player.height);
 
         for (Enemy enemy : enemies) {
             if (!enemy.alive) continue;
-            Rectangle eRect = enemy.rectangle();
 
-            if (pRect.intersects(eRect)) {
+            if (player.hitbox.intersects(enemy.hitbox)) {
                 player.lives--;
-                player.canBeHitIn = 1500;
+                player.canBeHitIn = 60;
 
                 double playerCenterX = player.x + player.width / 2.0;
                 double enemyCenterX = enemy.x + enemy.width / 2.0;
@@ -261,13 +252,20 @@ public class GameEngine {
     }
 
     public void shotBullet() {
-        bullets.add(new Bullet(player));
+        pendingBullets.add(new Bullet(player));
     }
 
     public void draw(Graphics g) {
         for (Tile tile : tiles) tile.draw(g);
-        for (Enemy enemy : enemies) enemy.draw(g);
-        for (Bullet bullet : bullets) bullet.draw(g);
+
+        synchronized (enemies) {
+            for (Enemy enemy : enemies) enemy.draw(g);
+        }
+
+        synchronized (bullets) {
+            for (Bullet bullet : bullets) bullet.draw(g);
+        }
+
         this.player.draw(g);
     }
 }
