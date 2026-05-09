@@ -4,10 +4,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static org.example.Tile.isMushroom;
-import static org.example.Window.levelSelectorName;
-import static org.example.Window.*;
-
 public class GameEngine {
     private Player player;
 
@@ -68,6 +64,7 @@ public class GameEngine {
                 continue;
             }
 
+            //todo change it to match the bullet size exectly or resize the image and Bullet.width/height
             int bCol = (int) (bullet.x / Tile.WIDTH);
             int bRow = (int) (bullet.y / Tile.HEIGHT);
 
@@ -98,8 +95,8 @@ public class GameEngine {
             }
         }
 
-        synchronized (bullets) {bullets.removeIf(bullet -> !bullet.alive);}
-        synchronized (enemies) {enemies.removeIf(enemy -> !enemy.alive);}
+        synchronized (bullets) { bullets.removeIf(bullet -> !bullet.alive); }
+        synchronized (enemies) { enemies.removeIf(enemy -> !enemy.alive); }
 
         if (!player.alive || enemies.isEmpty()) Window.changeScene("Title screen");
     }
@@ -198,8 +195,9 @@ public class GameEngine {
                         else tileBottom = tileTop + Tile.HEIGHT;
 
                         if (bottomY >= tileTop && bottomY <= tileBottom) {
-                            if (isMushroom(tileId)) {
-                                entity.velocityY = -40;
+                            if (Tile.isMushroom(tileId)) {
+                                //todo it can't be highter than 16 or -16 because of the maxVelocityY of Enemy
+                                entity.velocityY = -16;
                                 entity.velocityX = 0;
                                 break;
                             }
@@ -294,13 +292,8 @@ public class GameEngine {
     public void draw(Graphics g) {
         for (Tile tile : tiles) tile.draw(g);
 
-        synchronized (enemies) {
-            for (Enemy enemy : enemies) enemy.draw(g);
-        }
-
-        synchronized (bullets) {
-            for (Bullet bullet : bullets) bullet.draw(g);
-        }
+        synchronized (enemies) { for (Enemy enemy : enemies) enemy.draw(g); }
+        synchronized (bullets) { for (Bullet bullet : bullets) bullet.draw(g); }
 
         this.player.draw(g);
     }
