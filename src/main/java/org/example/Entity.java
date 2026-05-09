@@ -17,6 +17,9 @@ public abstract class Entity extends GameObject {
     protected double jumpForce;
     protected double wallJumpForce;
 
+    protected double hitForceX;
+    protected double hitForceY;
+
     protected int lives;
 
     public boolean alive = true;

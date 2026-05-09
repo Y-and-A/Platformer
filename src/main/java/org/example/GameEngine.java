@@ -23,9 +23,8 @@ public class GameEngine {
                 boolean floating = Tile.isFloatingTile(map[r][c]);
                 image = Assets.getTileImage(map[r][c]);
                 if (image != null) tiles.add(new Tile(c * Tile.WIDTH, r * Tile.HEIGHT, floating, image));
-                // TODO add consts to Tile, ENEMY_SPAWN_ID and PLAYER_SPAWN_ID
-                else if (map[r][c] == 90) enemies.add(new Enemy(c * Tile.WIDTH, r * Tile.HEIGHT));
-                else if (map[r][c] == 99) this.player = new Player(c * Tile.WIDTH, r * Tile.HEIGHT);
+                else if (map[r][c] == Tile.ENEMY_ID) enemies.add(new Enemy(c * Tile.WIDTH, r * Tile.HEIGHT));
+                else if (map[r][c] == Tile.PLAYER_ID) this.player = new Player(c * Tile.WIDTH, r * Tile.HEIGHT);
             }
         }
     }
@@ -248,11 +247,10 @@ public class GameEngine {
                 double playerCenterX = player.x + player.width / 2.0;
                 double enemyCenterX = enemy.x + enemy.width / 2.0;
 
-                //todo add magic numbers (17, 10) to Entity as hitVelocityX, and hitVelocityY
-                if (playerCenterX < enemyCenterX) player.velocityX = -17;
-                else player.velocityX = 17;
+                if (playerCenterX < enemyCenterX) player.velocityX = -player.hitForceX;
+                else player.velocityX = player.hitForceX;
 
-                player.velocityY = -10;
+                player.velocityY = -player.hitForceY;
                 break;
             }
         }

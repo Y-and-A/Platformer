@@ -15,6 +15,8 @@ public class Player extends Entity {
         maxVelocityY = 16.0;
         wallJumpForce = 6.0;
         movementForce = 2;
+        hitForceX = 17;
+        hitForceY = 10;
 
         image = Assets.playerFront;
     }

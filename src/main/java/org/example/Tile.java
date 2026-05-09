@@ -11,6 +11,9 @@ public class Tile extends GameObject {
     public static final int FLOATING_HEIGHT = 20;
 
     public final Rectangle rect;
+    public static final int ENEMY_ID = 90;
+    public static final int PLAYER_ID = 99;
+
 
     public Tile(double x, double y, boolean floating, Image image) {
         super(x, y);
