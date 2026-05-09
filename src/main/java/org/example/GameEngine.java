@@ -37,6 +37,7 @@ public class GameEngine {
         move(player);
         checkEnemyDamage(player);
 
+        separateEnemies();
         for (Enemy enemy : enemies) {
             if (enemy.alive) {
                 if (enemy.x < 0 || enemy.x > Window.WIDTH || enemy.y < 0 || enemy.y > Window.HEIGHT) {
@@ -44,7 +45,7 @@ public class GameEngine {
                     continue;
                 }
 
-                enemy.chasePlayer(player);
+                enemy.chasePlayer(player, map);
                 enemy.update();
                 move(enemy);
             }
@@ -244,6 +245,33 @@ public class GameEngine {
 
                 player.velocityY = -player.hitForceY;
                 break;
+            }
+        }
+    }
+
+    private void separateEnemies() {
+        //todo O(n^2) :) should be optimized or something
+        for (int i = 0; i < enemies.size(); i++) {
+            Enemy e1 = enemies.get(i);
+            if (!e1.alive) continue;
+
+            for (int j = i + 1; j < enemies.size(); j++) {
+                Enemy e2 = enemies.get(j);
+                if (!e2.alive) continue;
+
+                if (e1.getHitbox().intersects(e2.getHitbox())) {
+                    double center1 = e1.x + e1.width / 2.0;
+                    double center2 = e2.x + e2.width / 2.0;
+
+                    if (center1 == center2) center2 += 0.1; // should  not happen, edge case
+
+                    double pushAmount = 1.0;
+                    e1.x += (center1 < center2) ? -pushAmount : pushAmount;
+                    e2.x += (center1 < center2) ? pushAmount : -pushAmount;
+
+                    e1.updateHitbox();
+                    e2.updateHitbox();
+                }
             }
         }
     }
