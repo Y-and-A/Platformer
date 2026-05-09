@@ -4,66 +4,78 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Window {
-    public final JFrame window = new JFrame("Platformer");
     public static final int WIDTH = 1300;
     public static final int HEIGHT = 800;
 
-    public static final CardLayout cardLayout = new CardLayout();
-    public static final JPanel mainPanel = new JPanel();
+    private static final String SCENE_TITLE = "TITLE_SCREEN";
+    protected static final String SCENE_LEVEL_SELECTOR = "SELECT_LEVEL";
+    private static final String LEVEL_PREFIX = "LEVEL_";
+
+    private static final CardLayout cardLayout = new CardLayout();
+    private static final JPanel mainPanel = new JPanel();
 
     private static GamePanel gamePanel = null;
 
-    private static final String titleScreenName = "Title screen";
-    protected static final String levelSelectorName = "SELECTOR";
-    private static final String levelName = "LEVEL";
 
     public Window() {
+        JFrame window = new JFrame("Platformer");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setSize(WIDTH, HEIGHT);
         window.setLocationRelativeTo(null);
 
         mainPanel.setLayout(cardLayout);
-        mainPanel.add(createTitleScreen(), titleScreenName);
-        mainPanel.add(createLevelSelectorScreen(), levelSelectorName);
+        mainPanel.add(createTitleScreen(), SCENE_TITLE);
+        mainPanel.add(createLevelSelectorScreen(), SCENE_LEVEL_SELECTOR);
 
         window.add(mainPanel);
         window.setVisible(true);
     }
 
     public static void changeScene(String scene) {
-        if (scene.contains(levelName)) {
-            int level = Integer.parseInt(scene.substring(levelName.length()));
+        if (scene.startsWith(LEVEL_PREFIX)) {
+            try {
+                int level = Integer.parseInt(scene.substring(LEVEL_PREFIX.length()));
 
-            if (gamePanel != null) mainPanel.remove(gamePanel);
+                if (gamePanel != null) {
+                    gamePanel.stopGame();
+                    mainPanel.remove(gamePanel);
+                }
 
-            gamePanel = new GamePanel(level);
-            mainPanel.add(gamePanel, levelName);
+                gamePanel = new GamePanel(level);
+                mainPanel.add(gamePanel, scene);
 
-            gamePanel.startGame();
-            cardLayout.show(mainPanel, levelName);
-            gamePanel.requestFocusInWindow();
+                gamePanel.startGame();
+                cardLayout.show(mainPanel, scene);
+                gamePanel.requestFocusInWindow();
+            } catch (NumberFormatException e) {
+                System.err.println("Critical error: Tried to load an invalid level number from string: " + scene);
+            }
         }
         else {
             cardLayout.show(mainPanel, scene);
             mainPanel.requestFocusInWindow();
 
-            if (gamePanel != null) gamePanel.stopGame();
+            if (gamePanel != null) {
+                gamePanel.stopGame();
+                mainPanel.remove(gamePanel);
+                gamePanel = null;
+            }
         }
     }
 
-    public JPanel createTitleScreen() {
+    private JPanel createTitleScreen() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.GRAY);
         JButton selectLevelButton = new JButton("Select Level");
         selectLevelButton.setFocusable(false);
-        selectLevelButton.setSize(100, 60);
-        selectLevelButton.addActionListener(e -> changeScene(levelSelectorName));
+        selectLevelButton.setPreferredSize(new Dimension(120, 30));
+        selectLevelButton.addActionListener(e -> changeScene(SCENE_LEVEL_SELECTOR));
         panel.add(selectLevelButton);
 
         return panel;
     }
 
-    public JPanel createLevelSelectorScreen() {
+    private JPanel createLevelSelectorScreen() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(3, 3, 10, 10));
         panel.setBackground(Color.DARK_GRAY);
@@ -71,8 +83,8 @@ public class Window {
         for (int i = 0; i < 9; i++) {
             JButton levelButton = new LevelButton(i);
 
-            int finalI = i;
-            levelButton.addActionListener(e -> changeScene(levelName + finalI));
+            final int finalI = i;
+            levelButton.addActionListener(e -> changeScene(LEVEL_PREFIX + finalI));
             panel.add(levelButton);
         }
 
