@@ -8,6 +8,7 @@ public class Window {
     public static final int HEIGHT = 800;
 
     private static final String SCENE_TITLE = "TITLE_SCREEN";
+    private static final String SCENE_HOW_TO = "HOW_TO";
     protected static final String SCENE_LEVEL_SELECTOR = "SELECT_LEVEL";
     private static final String LEVEL_PREFIX = "LEVEL_";
 
@@ -26,6 +27,7 @@ public class Window {
         mainPanel.setLayout(cardLayout);
         mainPanel.add(createTitleScreen(), SCENE_TITLE);
         mainPanel.add(createLevelSelectorScreen(), SCENE_LEVEL_SELECTOR);
+        mainPanel.add(createHowToScreen(), SCENE_HOW_TO);
 
         window.add(mainPanel);
         window.setVisible(true);
@@ -66,11 +68,18 @@ public class Window {
     private JPanel createTitleScreen() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.GRAY);
+
         JButton selectLevelButton = new JButton("Select Level");
         selectLevelButton.setFocusable(false);
         selectLevelButton.setPreferredSize(new Dimension(120, 30));
         selectLevelButton.addActionListener(e -> changeScene(SCENE_LEVEL_SELECTOR));
         panel.add(selectLevelButton);
+
+        JButton howToButton = new JButton("How To");
+        howToButton.setFocusable(false);
+        howToButton.setPreferredSize(new Dimension(120, 30));
+        howToButton.addActionListener(e -> changeScene(SCENE_HOW_TO));
+        panel.add(howToButton);
 
         return panel;
     }
@@ -87,6 +96,20 @@ public class Window {
             levelButton.addActionListener(e -> changeScene(LEVEL_PREFIX + finalI));
             panel.add(levelButton);
         }
+
+        return panel;
+    }
+
+    private JPanel createHowToScreen() {
+        JPanel panel = new JPanel();
+        panel.setBackground(Color.CYAN);
+
+        panel.add(new JLabel("how to text"));
+
+        JButton backButton = new JButton("Back");
+        backButton.setFocusable(false);
+        backButton.addActionListener(e -> changeScene(SCENE_TITLE));
+        panel.add(backButton);
 
         return panel;
     }
