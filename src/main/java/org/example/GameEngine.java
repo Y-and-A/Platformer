@@ -39,6 +39,11 @@ public class GameEngine {
 
         for (Enemy enemy : enemies) {
             if (enemy.alive) {
+                if (enemy.x < 0 || enemy.x > Window.WIDTH || enemy.y < 0 || enemy.y > Window.HEIGHT) {
+                    enemy.alive = false;
+                    continue;
+                }
+
                 enemy.chasePlayer(player);
                 enemy.update();
                 move(enemy);
@@ -80,6 +85,7 @@ public class GameEngine {
 
             for (Enemy enemy : enemies) {
                 if (!enemy.alive) continue;
+
                 if (enemy.hitbox.intersects(bullet.getHitbox())) {
                     enemy.lives--;
                     if (enemy.lives <= 0) enemy.alive = false;
@@ -89,15 +95,10 @@ public class GameEngine {
             }
         }
 
-        synchronized (bullets) {
-            bullets.removeIf(bullet -> !bullet.alive);
-        }
+        synchronized (bullets) {bullets.removeIf(bullet -> !bullet.alive);}
+        synchronized (enemies) {enemies.removeIf(enemy -> !enemy.alive);}
 
-        synchronized (enemies) {
-            enemies.removeIf(enemy -> !enemy.alive);
-        }
-
-        if (!player.alive) Window.changeScene(levelSelectorName);
+        if (!player.alive || enemies.isEmpty()) Window.changeScene(levelSelectorName);
     }
 
     public void move(Entity entity) {
