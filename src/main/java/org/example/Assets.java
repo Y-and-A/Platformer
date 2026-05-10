@@ -9,7 +9,7 @@ import java.util.Random;
 public class Assets {
     public static Image playerLeft, playerRight, playerFront, playerUp;
     public static Image enemyLeft, enemyRight, enemyFront, enemyBack;
-    public static Image bulletLeft, bulletRight, bulletUp, bulletDown;
+    public static Image bulletLeft, bulletRight;
 
     private static Image tileRightTop, tileMiddleTop, tileLeftTop;
     private static Image tileLeftMiddle, tileMiddleMiddle, tileRightMiddle;
@@ -52,8 +52,6 @@ public class Assets {
             // Bullets
             bulletLeft = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallLeft.png"));
             bulletRight = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallRight.png"));
-            bulletUp = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallUp.png"));
-            bulletDown = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallDown.png"));
 
             // Tiles
             tileRightTop = ImageIO.read(new File("src/main/resources/tiles/rightTop.png"));

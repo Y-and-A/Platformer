@@ -15,6 +15,8 @@ public class GameEngine {
 
     private final short[][] map;
 
+    private final SoundManager soundManager = new SoundManager();
+
     public GameEngine(short[][] map) {
         this.map = map;
 
@@ -287,6 +289,7 @@ public class GameEngine {
     }
 
     public void shotBullet() {
+        soundManager.play(SoundManager.Sound.SHOT);
         pendingBullets.add(new Bullet(player));
     }
 

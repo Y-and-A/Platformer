@@ -31,7 +31,7 @@ public abstract class Entity extends GameObject {
 
     public int canBeHitIn;
 
-    protected Rectangle hitbox;
+    protected Rectangle hitbox;//todo put in game obgect so tile can use it, so you can fix bullet cillision
 
 
     protected Entity(int x, int y, int width, int height) {

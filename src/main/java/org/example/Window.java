@@ -1,9 +1,9 @@
 package org.example;
 
-import org.w3c.dom.ls.LSOutput;
-
 import javax.swing.*;
 import java.awt.*;
+
+import static org.example.SoundManager.Sound.*;
 
 public class Window {
     public static final int WIDTH = 1300;
@@ -35,7 +35,7 @@ public class Window {
 
         window.add(mainPanel);
         System.out.println("Playing intro for the first time");
-        soundManager.play(SoundManager.Sound.INTRO);
+        soundManager.play(INTRO);
 
         window.setVisible(true);
     }
@@ -56,7 +56,7 @@ public class Window {
 
                 gamePanel.startGame();
                 System.out.println("Playing song");
-                soundManager.play(SoundManager.Sound.SONG);
+                soundManager.play(SONG);
 
                 cardLayout.show(mainPanel, scene);
                 gamePanel.requestFocusInWindow();
@@ -66,7 +66,7 @@ public class Window {
         } else {
             System.out.println("Changing scene to anything but level");
             System.out.println("Playing intro");
-            soundManager.play(SoundManager.Sound.INTRO);
+            soundManager.play(INTRO);
             cardLayout.show(mainPanel, scene);
             mainPanel.requestFocusInWindow();
 

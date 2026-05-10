@@ -9,11 +9,14 @@ public class Bullet extends Entity {
     double velocityX;
     double velocityY;
     double bulletVelocity = 8.5;
+
     public Bullet(Player player) {
         // MAGIC NUMBERS IN ORDER TO ALIGN BULLET TO PLAYER HAND
         super((player.facingDirection == Direction.LEFT) ? player.x : player.x + 15, player.y + 21);
+
         this.hitbox.setSize(16, 16);//actual bullet size
 //        new SoundManager(); //fixme bla
+
         this.width = BULLET_IMG_WIDTH;
         this.height = BULLET_IMG_HEIGHT;
 
@@ -23,12 +26,6 @@ public class Bullet extends Entity {
         } else if (player.facingDirection == Direction.RIGHT) {
             this.velocityX = bulletVelocity;
             image = Assets.bulletRight;
-        } else if (player.facingDirection == Direction.UP) {
-            this.velocityY = -bulletVelocity;
-            image = Assets.bulletUp;
-        } else if (player.facingDirection == Direction.DOWN) {
-            this.velocityY = bulletVelocity;
-            image = Assets.bulletDown;
         }
     }
 

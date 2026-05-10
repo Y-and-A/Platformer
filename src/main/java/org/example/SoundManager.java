@@ -5,21 +5,30 @@ import java.io.File;
 import java.io.IOException;
 
 public class SoundManager {
+    public enum Sound {NULL, SHOT, INTRO, SONG, JUMP, DEATH, KILL, LEVEL_COMPLETE}
+
     private static File file;
-
-    public enum Sound {SHOT, INTRO, SONG, JUMP, DEATH, KILL, LEVEL_COMPLETE;}
-    private Sound currentSound =Sound.INTRO;
-    Clip loopClip;
-
+    private Clip loopClip;
+    private Sound nowPlaying = Sound.NULL;
 
     public void play(Sound sound) {
-        if (currentSound!=sound)stop();
-        currentSound = sound;
+        if (sound.equals(Sound.INTRO) &&  nowPlaying.equals(Sound.INTRO)) return;
+
+        if (sound != Sound.SHOT) stop();
 
         switch (sound) {
-            case SONG -> file = Assets.getRandomSong();
-            case INTRO -> file = Assets.soundIntro;
-            case SHOT -> file = Assets.soundSilencedShot;
+            case SONG -> {
+                file = Assets.getRandomSong();
+                nowPlaying = Sound.SONG;
+            }
+            case INTRO -> {
+                file = Assets.soundIntro;
+                nowPlaying = Sound.INTRO;
+            }
+            case SHOT -> {
+                file = Assets.soundSilencedShot;
+                nowPlaying = Sound.SHOT;
+            }
         }
 
         try {
