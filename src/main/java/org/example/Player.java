@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 
 public class Player extends Entity {
     public Direction facingDirection = Direction.RIGHT;
+    int[] lastSolidPos =new int[2];
 
     public Player(int x, int y) {
         super(x, y - 1, 49, 70);
@@ -22,6 +23,10 @@ public class Player extends Entity {
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
+        if (onFloor){
+            lastSolidPos[0]= (int) x;
+            lastSolidPos[1]= (int) y;
+        }
         super.update();
 
         if (keys[KeyEvent.VK_RIGHT] || keys[KeyEvent.VK_D]) {
@@ -50,8 +55,10 @@ public class Player extends Entity {
         }
 
         if (y > Window.HEIGHT) {
-            y = 0;
-            x = 0;
+            x = lastSolidPos[0];
+            y = lastSolidPos[1];
+            velocityX=0;
+            velocityY=0;
             lives--;
         }
     }

@@ -56,12 +56,10 @@ public class GamePanel extends JPanel implements Runnable {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-//                System.out.println("Mouse entered");
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-//                System.out.println("Mouse exited");
             }
         });
     }
@@ -130,7 +128,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         bG.setColor(Color.red);
         bG.setFont(new Font("David", Font.BOLD, 30));
-        bG.drawString(gameEngine.getPlayerLives() + "", Window.WIDTH - 30, 30);
+        bG.drawString(gameEngine.getPlayerLives() + "", Window.WIDTH/2, 30);
         bG.dispose();
 
         Graphics2D g2d = (Graphics2D) g;

@@ -21,9 +21,9 @@ public class GameEngine {
         Image image;
         for (int r = 0; r < map.length; r++) {
             for (int c = 0; c < map[r].length; c++) {
-                boolean floating = Tile.isFloatingTile(map[r][c]);
+                boolean floatingPlatform = Tile.isPlatform(map[r][c]);
                 image = Assets.getTileImage(map[r][c]);
-                if (image != null) tiles.add(new Tile(c * Tile.WIDTH, r * Tile.HEIGHT, floating, image));
+                if (image != null) tiles.add(new Tile(c * Tile.WIDTH, r * Tile.HEIGHT, floatingPlatform, image));
                 else if (map[r][c] == Tile.ENEMY_ID) enemies.add(new Enemy(c * Tile.WIDTH, r * Tile.HEIGHT));
                 else if (map[r][c] == Tile.PLAYER_ID) this.player = new Player(c * Tile.WIDTH, r * Tile.HEIGHT);
             }
@@ -45,7 +45,7 @@ public class GameEngine {
 
                 enemy.chasePlayer(player, map);
                 enemy.update();
-                move(enemy);
+//                move(enemy);
             }
         }
 
@@ -64,14 +64,15 @@ public class GameEngine {
                 continue;
             }
 
-            //todo change it to match the bullet size exectly or resize the image and Bullet.width/height
+            //todo change it to match the bullet size exactly or resize the image and Bullet.width/height
+            // the hitbox is the correct size should use it instead, but does not mater since we using bullet y
             int bCol = (int) (bullet.x / Tile.WIDTH);
             int bRow = (int) (bullet.y / Tile.HEIGHT);
 
             if (bRow >= 0 && bRow < map.length && bCol >= 0 && bCol < map[0].length) {
                 short tileId = map[bRow][bCol];
                 if (Tile.isSolid(tileId)) {
-                    if (Tile.isFloatingTile(tileId)) {
+                    if (Tile.isPlatform(tileId)) {
                         if (bullet.y <= bRow * Tile.HEIGHT + Tile.FLOATING_HEIGHT) {
                             bullet.alive = false;
                             continue;
@@ -156,7 +157,7 @@ public class GameEngine {
                 short tileId = map[r][targetCol];
                 if (Tile.isSolid(tileId)) {
                     double tileTop = r * Tile.HEIGHT;
-                    double tileBottom = tileTop + (Tile.isFloatingTile(tileId) ? Tile.FLOATING_HEIGHT : Tile.HEIGHT);
+                    double tileBottom = tileTop + (Tile.isPlatform(tileId) ? Tile.FLOATING_HEIGHT : Tile.HEIGHT);
 
                     if (topY < tileBottom && bottomY > tileTop) {
                         if (entity.velocityX > 0) entity.rightCollision = true;
@@ -191,12 +192,12 @@ public class GameEngine {
                         double tileTop = floorRow * Tile.HEIGHT;
 
                         double tileBottom;
-                        if (Tile.isFloatingTile(tileId)) tileBottom = tileTop + Tile.FLOATING_HEIGHT;
+                        if (Tile.isPlatform(tileId)) tileBottom = tileTop + Tile.FLOATING_HEIGHT;
                         else tileBottom = tileTop + Tile.HEIGHT;
 
                         if (bottomY >= tileTop && bottomY <= tileBottom) {
                             if (Tile.isMushroom(tileId)) {
-                                //todo it can't be highter than 16 or -16 because of the maxVelocityY of Enemy
+                                //warning, it can't be higher than 16 or -16 because of the maxVelocityY of Enemy
                                 entity.velocityY = -16;
                                 entity.velocityX = 0;
                                 break;
@@ -217,7 +218,7 @@ public class GameEngine {
                         double tileTop = ceilRow * Tile.HEIGHT;
 
                         double tileBottom;
-                        if (Tile.isFloatingTile(tileId)) tileBottom = tileTop + Tile.FLOATING_HEIGHT;
+                        if (Tile.isPlatform(tileId)) tileBottom = tileTop + Tile.FLOATING_HEIGHT;
                         else tileBottom = tileTop + Tile.HEIGHT;
 
                         if (topY <= tileBottom && topY >= tileTop) {
@@ -240,7 +241,7 @@ public class GameEngine {
 
             if (player.hitbox.intersects(enemy.hitbox)) {
                 player.lives--;
-                player.canBeHitIn = 60;
+                player.canBeHitIn = 40;
 
                 double playerCenterX = player.x + player.width / 2.0;
                 double enemyCenterX = enemy.x + enemy.width / 2.0;

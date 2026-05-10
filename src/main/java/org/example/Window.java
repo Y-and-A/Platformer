@@ -54,6 +54,7 @@ public class Window {
             }
         }
         else {
+            new PlaySound("song");
             cardLayout.show(mainPanel, scene);
             mainPanel.requestFocusInWindow();
 

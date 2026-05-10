@@ -2,10 +2,9 @@ package org.example;
 
 import java.awt.*;
 
-//TODO change the name "floating tile" it's confusing, it's just a smaller tile...
 public class Tile extends GameObject {
     Image image;
-    boolean floating;
+    boolean platform;
 
     public static final int WIDTH = 50;
     public static final int HEIGHT = 50;
@@ -15,16 +14,16 @@ public class Tile extends GameObject {
     public static final int PLAYER_ID = 99;
 
 
-    public Tile(double x, double y, boolean floating, Image image) {
+    public Tile(double x, double y, boolean platform, Image image) {
         super(x, y);
 
-        this.floating = floating;
+        this.platform = platform;
         width = WIDTH;
-        height = floating ? FLOATING_HEIGHT : HEIGHT;
+        height = platform ? FLOATING_HEIGHT : HEIGHT;
         this.image = image;
     }
 
-    public static boolean isFloatingTile(int tileId) {
+    public static boolean isPlatform(int tileId) {
         return tileId >= 21 && tileId <= 24;
     }
 
