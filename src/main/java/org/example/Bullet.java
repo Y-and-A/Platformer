@@ -13,7 +13,7 @@ public class Bullet extends Entity {
         // MAGIC NUMBERS IN ORDER TO ALIGN BULLET TO PLAYER HAND
         super((player.facingDirection == Direction.LEFT) ? player.x : player.x + 15, player.y + 21);
         this.hitbox.setSize(16, 16);//actual bullet size
-        new PlaySound("shot");
+//        new SoundManager(); //fixme bla
         this.width = BULLET_IMG_WIDTH;
         this.height = BULLET_IMG_HEIGHT;
 

@@ -45,7 +45,7 @@ public class GameEngine {
 
                 enemy.chasePlayer(player, map);
                 enemy.update();
-//                move(enemy);
+                move(enemy);
             }
         }
 

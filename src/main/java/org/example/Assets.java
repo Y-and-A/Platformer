@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 public class Assets {
     public static Image playerLeft, playerRight, playerFront, playerUp;
@@ -18,8 +19,24 @@ public class Assets {
     private static Image tileSpecial1, tileSpecial2,tileSpecial3, tileFullGrassUp, tileFullGrassLeft,tileFullGrassThrough;
     public static Image jumpMushroom;
 
+    public static File[] soundSongs;
+    public static File soundIntro, soundShot, soundSilencedShot;
+
+    private static final Random random = new Random();
+
     public static void loadAll() {
         try {
+            // Sounds
+            soundSongs = new File[4];
+            soundSongs[0] = new File("src/main/resources/sound/song1.wav");
+            soundSongs[1] = new File("src/main/resources/sound/song2.wav");
+            soundSongs[2] = new File("src/main/resources/sound/song3.wav");
+            soundSongs[3] = new File("src/main/resources/sound/song4.wav");
+
+            soundIntro = new File("src/main/resources/sound/intro.wav");
+            soundShot = new File("src/main/resources/sound/nonSilencedShot.wav");
+            soundSilencedShot = new File("src/main/resources/sound/silencedShot.wav");
+
             // Player
             playerLeft = ImageIO.read(new File("src/main/resources/player/player-facingLeft.png"));
             playerRight = ImageIO.read(new File("src/main/resources/player/player-facingRight.png"));
@@ -63,7 +80,6 @@ public class Assets {
             tileFullGrassLeft = ImageIO.read(new File("src/main/resources/tiles/fullGrassLeft.png"));
             tileFullGrassThrough = ImageIO.read(new File("src/main/resources/tiles/fullGrassThrough.png"));
             jumpMushroom =  ImageIO.read(new File("src/main/resources/jumpMushroom.png"));
-
         } catch (IOException e) {
             System.err.println("Failed to load assets");
         }
@@ -97,5 +113,10 @@ public class Assets {
             case 66 -> jumpMushroom;
             default -> null;
         };
+    }
+
+    public static File getRandomSong() {
+        int index = random.nextInt(soundSongs.length);
+        return soundSongs[index];
     }
 }

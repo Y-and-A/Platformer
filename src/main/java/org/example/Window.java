@@ -1,5 +1,7 @@
 package org.example;
 
+import org.w3c.dom.ls.LSOutput;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -16,6 +18,7 @@ public class Window {
     private static final JPanel mainPanel = new JPanel();
 
     private static GamePanel gamePanel = null;
+    private static final SoundManager soundManager = new SoundManager();
 
 
     public Window() {
@@ -29,12 +32,17 @@ public class Window {
         mainPanel.add(createLevelSelectorScreen(), SCENE_LEVEL_SELECTOR);
         mainPanel.add(createHowToScreen(), SCENE_HOW_TO);
 
+
         window.add(mainPanel);
+        System.out.println("Playing intro for the first time");
+        soundManager.play(SoundManager.Sound.INTRO);
+
         window.setVisible(true);
     }
 
     public static void changeScene(String scene) {
         if (scene.startsWith(LEVEL_PREFIX)) {
+            System.out.println("Changing scene to level x");
             try {
                 int level = Integer.parseInt(scene.substring(LEVEL_PREFIX.length()));
 
@@ -47,14 +55,18 @@ public class Window {
                 mainPanel.add(gamePanel, scene);
 
                 gamePanel.startGame();
+                System.out.println("Playing song");
+                soundManager.play(SoundManager.Sound.SONG);
+
                 cardLayout.show(mainPanel, scene);
                 gamePanel.requestFocusInWindow();
             } catch (NumberFormatException e) {
                 System.err.println("Critical error: Tried to load an invalid level number from string: " + scene);
             }
-        }
-        else {
-            new PlaySound("song");
+        } else {
+            System.out.println("Changing scene to anything but level");
+            System.out.println("Playing intro");
+            soundManager.play(SoundManager.Sound.INTRO);
             cardLayout.show(mainPanel, scene);
             mainPanel.requestFocusInWindow();
 
