@@ -289,8 +289,23 @@ public class GameEngine {
     }
 
     public void shotBullet() {
-        soundManager.play(SoundManager.Sound.SHOT);
-        pendingBullets.add(new Bullet(player));
+        //todo - fine-tuning
+        if (player.canShootIn<=0){
+            if (player.currentAmmo>1){
+                soundManager.play(SoundManager.Sound.SHOT);
+                pendingBullets.add(new Bullet(player));
+                player.currentAmmo--;
+                player.canShootIn = player.shoutingCooldown;
+            } else if (player.currentAmmo==1) {
+                soundManager.play(SoundManager.Sound.LAST_SHOT);
+                pendingBullets.add(new Bullet(player));
+                player.currentAmmo=player.maxAmmo;
+                player.canShootIn = player.reloadSpeed;
+            }
+        }//debug and fine-tuning
+//        else{
+//            System.out.println("cooldown: "+player.canShootIn);
+//        }
     }
 
     public void draw(Graphics g) {

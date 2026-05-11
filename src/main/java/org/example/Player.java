@@ -5,7 +5,12 @@ import java.awt.event.KeyEvent;
 
 public class Player extends Entity {
     public Direction facingDirection = Direction.RIGHT;
-    int[] lastSolidPos =new int[2];
+    int[] lastSolidPos = new int[2];
+    public int maxAmmo = 6;
+    public int currentAmmo = 6;
+    public int shoutingCooldown = 200;
+    public int reloadSpeed =700;
+    public int canShootIn=shoutingCooldown;
 
     public Player(int x, int y) {
         super(x, y - 1, 49, 70);
@@ -23,10 +28,11 @@ public class Player extends Entity {
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
-        if (onFloor){
-            lastSolidPos[0]= (int) x;
-            lastSolidPos[1]= (int) y;
+        if (onFloor) {
+            lastSolidPos[0] = (int) x;
+            lastSolidPos[1] = (int) y;
         }
+        canShootIn-=10;
         super.update();
 
         if (keys[KeyEvent.VK_RIGHT] || keys[KeyEvent.VK_D]) {
@@ -57,8 +63,8 @@ public class Player extends Entity {
         if (y > Window.HEIGHT) {
             x = lastSolidPos[0];
             y = lastSolidPos[1];
-            velocityX=0;
-            velocityY=0;
+            velocityX = 0;
+            velocityY = 0;
             lives--;
         }
     }

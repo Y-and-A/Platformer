@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class SoundManager {
-    public enum Sound {NULL, SHOT, INTRO, SONG, JUMP, DEATH, KILL, LEVEL_COMPLETE}
+    public enum Sound {NULL, SHOT,LAST_SHOT, INTRO, SONG, JUMP, DEATH, KILL, LEVEL_COMPLETE}
 
     private static File file;
     private Clip loopClip;
@@ -28,6 +28,11 @@ public class SoundManager {
             case SHOT -> {
                 file = Assets.soundSilencedShot;
                 nowPlaying = Sound.SHOT;
+            }
+            case LAST_SHOT -> {
+                file = Assets.soundShot;
+                nowPlaying = Sound.LAST_SHOT;
+
             }
         }
 
