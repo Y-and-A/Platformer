@@ -2,8 +2,7 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
-
-import static org.example.SoundManager.Sound.*;
+import java.awt.image.BufferedImage;
 
 public class Window {
     public static final int WIDTH = 1300;
@@ -20,7 +19,6 @@ public class Window {
     private static GamePanel gamePanel = null;
     private static final SoundManager soundManager = new SoundManager();
 
-
     public Window() {
         JFrame window = new JFrame("Platformer");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -34,15 +32,13 @@ public class Window {
 
 
         window.add(mainPanel);
-        System.out.println("Playing intro for the first time");
-        soundManager.play(INTRO);
+        soundManager.play(Sound.INTRO);
 
         window.setVisible(true);
     }
 
     public static void changeScene(String scene) {
         if (scene.startsWith(LEVEL_PREFIX)) {
-            System.out.println("Changing scene to level x");
             try {
                 int level = Integer.parseInt(scene.substring(LEVEL_PREFIX.length()));
 
@@ -55,8 +51,7 @@ public class Window {
                 mainPanel.add(gamePanel, scene);
 
                 gamePanel.startGame();
-                System.out.println("Playing song");
-                soundManager.play(SONG);
+                soundManager.play(Sound.SONG);
 
                 cardLayout.show(mainPanel, scene);
                 gamePanel.requestFocusInWindow();
@@ -64,9 +59,7 @@ public class Window {
                 System.err.println("Critical error: Tried to load an invalid level number from string: " + scene);
             }
         } else {
-            System.out.println("Changing scene to anything but level");
-            System.out.println("Playing intro");
-            soundManager.play(INTRO);
+            soundManager.play(Sound.INTRO);
             cardLayout.show(mainPanel, scene);
             mainPanel.requestFocusInWindow();
 
@@ -114,10 +107,31 @@ public class Window {
     }
 
     private JPanel createHowToScreen() {
-        JPanel panel = new JPanel();
-        panel.setBackground(Color.CYAN);
+        JPanel panel = new JPanel() {
+            private final BufferedImage image = (BufferedImage) Assets.screenHowTo;
 
-        panel.add(new JLabel("how to text"));
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+                g2d.setColor(new Color(139, 204, 232)); // same color as the image background
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+
+                double scaleX = (double) getWidth() / image.getWidth();
+                double scaleY = (double) getHeight() / image.getHeight();
+                double scale = Math.min(scaleX, scaleY);
+
+                int scaledWidth = (int) (image.getWidth() * scale);
+                int scaledHeight = (int) (image.getHeight() * scale);
+                int offsetX = (getWidth() - scaledWidth) / 2;
+                int offsetY = (getHeight() - scaledHeight) / 2;
+
+                g2d.drawImage(image, offsetX, offsetY, scaledWidth, scaledHeight, this);
+            }
+        };
+
+        panel.setLayout(new FlowLayout());
 
         JButton backButton = new JButton("Back");
         backButton.setFocusable(false);

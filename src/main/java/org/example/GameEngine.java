@@ -106,10 +106,10 @@ public class GameEngine {
         }
 
         if (!player.alive) {
-            soundManager.play(SoundManager.Sound.DEATH);
+            soundManager.play(Sound.DEATH);
             Window.changeScene("Title screen");
         } else if (enemies.isEmpty())  {
-            soundManager.play(SoundManager.Sound.LEVEL_COMPLETE);
+            soundManager.play(Sound.LEVEL_COMPLETE);
             Window.changeScene("Title screen");
         }
 
@@ -213,7 +213,7 @@ public class GameEngine {
                                 //warning, it can't be higher than 18 or -18 because of the maxVelocityY of Enemy
                                 entity.velocityY = -18;
                                 entity.velocityX = 0;
-                                soundManager.play(SoundManager.Sound.SHROOM_JUMP);
+                                soundManager.play(Sound.SHROOM_JUMP);
                                 break;
                             }
                             entity.onFloor = true;
@@ -255,7 +255,7 @@ public class GameEngine {
 
             if (player.hitbox.intersects(enemy.hitbox)) {
                 player.lives--;
-                soundManager.play(SoundManager.Sound.PLAYER_HURT);
+                soundManager.play(Sound.PLAYER_HURT);
                 player.canBeHitIn = 40;
 
                 double playerCenterX = player.x + player.width / 2.0;
@@ -305,20 +305,17 @@ public class GameEngine {
         //todo - fine-tuning
         if (player.canShootIn <= 0) {
             if (player.currentAmmo > 1) {
-                soundManager.play(SoundManager.Sound.SHOT);
+                soundManager.play(Sound.SHOT);
                 pendingBullets.add(new Bullet(player));
                 player.currentAmmo--;
                 player.canShootIn = player.shoutingCooldown;
             } else if (player.currentAmmo == 1) {
-                soundManager.play(SoundManager.Sound.LAST_SHOT);
+                soundManager.play(Sound.LAST_SHOT);
                 pendingBullets.add(new Bullet(player));
                 player.currentAmmo = player.maxAmmo;
                 player.canShootIn = player.reloadSpeed;
             }
-        }//debug and fine-tuning
-//        else{
-//            System.out.println("cooldown: "+player.canShootIn);
-//        }
+        }
     }
 
     public void draw(Graphics g) {

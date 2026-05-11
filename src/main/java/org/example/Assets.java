@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.Random;
 
 public class Assets {
+    public static Image screenHowTo;
+
     public static Image playerLeft, playerRight, playerFront, playerUp;
     public static Image enemyLeft, enemyRight, enemyFront, enemyBack;
     public static Image bulletLeft, bulletRight;
@@ -30,9 +32,12 @@ public class Assets {
 
     public static void loadAll() {
         try {
-            // Sounds:
+            // -- SCREENS -- //
+            //TODO create a screenImages folder in resources to containe this one and the other up-comming images
+            screenHowTo = ImageIO.read(new File("src/main/resources/how-to.png"));
 
-            //songs
+            // -- SOUNDS -- //
+            // Songs
             soundSongs = new File[4];
             soundSongs[0] = new File("src/main/resources/sound/song1.wav");
             soundSongs[1] = new File("src/main/resources/sound/song2.wav");
@@ -40,30 +45,30 @@ public class Assets {
             soundSongs[3] = new File("src/main/resources/sound/song4.wav");
             soundIntro = new File("src/main/resources/sound/intro.wav");
 
-            //shots
+            // Shots
             soundShot = new File("src/main/resources/sound/nonSilencedShot.wav");
             soundSilencedShot = new File("src/main/resources/sound/silencedShot.wav");
 
-            //player gets hurt
+            // Player gets hurt
             hurt = new File[2];
             hurt[0] =  new File("src/main/resources/sound/hurt1.wav");
             hurt[1] =  new File("src/main/resources/sound/hurt2.wav");
-            //death
+
+            // Death
             deathSounds = new File[3];
             deathSounds[0] = new File("src/main/resources/sound/death1.wav");
             deathSounds[1] = new File("src/main/resources/sound/death2.wav");
             deathSounds[2] = new File("src/main/resources/sound/death3.wav");
 
-            //level passed
+            // Level passed
             levelPassed = new File[2];
             levelPassed[0]=new File("src/main/resources/sound/levelPassed1.wav");
             levelPassed[1]=new File("src/main/resources/sound/levelPassed2.wav");
 
-            //bounce pad
+            // Bounce pad
             shroomJump = new File("src/main/resources/sound/jump2.wav");
 
-            //images:
-
+            // -- IMAGES -- //
             // Player
             playerLeft = ImageIO.read(new File("src/main/resources/player/player-facingLeft.png"));
             playerRight = ImageIO.read(new File("src/main/resources/player/player-facingRight.png"));
