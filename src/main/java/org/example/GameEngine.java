@@ -98,10 +98,21 @@ public class GameEngine {
             }
         }
 
-        synchronized (bullets) { bullets.removeIf(bullet -> !bullet.alive); }
-        synchronized (enemies) { enemies.removeIf(enemy -> !enemy.alive); }
+        synchronized (bullets) {
+            bullets.removeIf(bullet -> !bullet.alive);
+        }
+        synchronized (enemies) {
+            enemies.removeIf(enemy -> !enemy.alive);
+        }
 
-        if (!player.alive || enemies.isEmpty()) Window.changeScene("Title screen");
+        if (!player.alive) {
+            soundManager.play(SoundManager.Sound.DEATH);
+            Window.changeScene("Title screen");
+        } else if (enemies.isEmpty())  {
+            soundManager.play(SoundManager.Sound.LEVEL_COMPLETE);
+            Window.changeScene("Title screen");
+        }
+
     }
 
     public void move(Entity entity) {
@@ -199,9 +210,10 @@ public class GameEngine {
 
                         if (bottomY >= tileTop && bottomY <= tileBottom) {
                             if (Tile.isMushroom(tileId)) {
-                                //warning, it can't be higher than 16 or -16 because of the maxVelocityY of Enemy
-                                entity.velocityY = -16;
+                                //warning, it can't be higher than 18 or -18 because of the maxVelocityY of Enemy
+                                entity.velocityY = -18;
                                 entity.velocityX = 0;
+                                soundManager.play(SoundManager.Sound.SHROOM_JUMP);
                                 break;
                             }
                             entity.onFloor = true;
@@ -243,6 +255,7 @@ public class GameEngine {
 
             if (player.hitbox.intersects(enemy.hitbox)) {
                 player.lives--;
+                soundManager.play(SoundManager.Sound.PLAYER_HURT);
                 player.canBeHitIn = 40;
 
                 double playerCenterX = player.x + player.width / 2.0;
@@ -290,16 +303,16 @@ public class GameEngine {
 
     public void shotBullet() {
         //todo - fine-tuning
-        if (player.canShootIn<=0){
-            if (player.currentAmmo>1){
+        if (player.canShootIn <= 0) {
+            if (player.currentAmmo > 1) {
                 soundManager.play(SoundManager.Sound.SHOT);
                 pendingBullets.add(new Bullet(player));
                 player.currentAmmo--;
                 player.canShootIn = player.shoutingCooldown;
-            } else if (player.currentAmmo==1) {
+            } else if (player.currentAmmo == 1) {
                 soundManager.play(SoundManager.Sound.LAST_SHOT);
                 pendingBullets.add(new Bullet(player));
-                player.currentAmmo=player.maxAmmo;
+                player.currentAmmo = player.maxAmmo;
                 player.canShootIn = player.reloadSpeed;
             }
         }//debug and fine-tuning
@@ -311,8 +324,12 @@ public class GameEngine {
     public void draw(Graphics g) {
         for (Tile tile : tiles) tile.draw(g);
 
-        synchronized (enemies) { for (Enemy enemy : enemies) enemy.draw(g); }
-        synchronized (bullets) { for (Bullet bullet : bullets) bullet.draw(g); }
+        synchronized (enemies) {
+            for (Enemy enemy : enemies) enemy.draw(g);
+        }
+        synchronized (bullets) {
+            for (Bullet bullet : bullets) bullet.draw(g);
+        }
 
         this.player.draw(g);
     }

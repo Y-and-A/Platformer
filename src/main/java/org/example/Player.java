@@ -18,7 +18,7 @@ public class Player extends Entity {
         lives = 5;
         jumpForce = 14.0;
         maxVelocityX = 7.0;
-        maxVelocityY = 16.0;
+        maxVelocityY = 18.0;
         wallJumpForce = 6.0;
         movementForce = 2;
         hitForceX = 17;
@@ -66,6 +66,7 @@ public class Player extends Entity {
             velocityX = 0;
             velocityY = 0;
             lives--;
+
         }
     }
 
