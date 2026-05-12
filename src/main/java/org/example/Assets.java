@@ -34,7 +34,7 @@ public class Assets {
         try {
             // -- SCREENS -- //
             //TODO create a screenImages folder in resources to containe this one and the other up-comming images
-            screenHowTo = ImageIO.read(new File("src/main/resources/how-to.png"));
+//            screenHowTo = ImageIO.read(new File("src/main/resources/how-to.png"));
 
             // -- SOUNDS -- //
             // Songs
