@@ -6,11 +6,12 @@ import java.awt.event.KeyEvent;
 public class Player extends Entity {
     public Direction facingDirection = Direction.RIGHT;
     int[] lastSolidPos = new int[2];
-    public int maxAmmo = 6;
-    public int currentAmmo = 6;
-    public int shoutingCooldown = 200;
-    public int reloadSpeed =700;
-    public int canShootIn=shoutingCooldown;
+
+    public final int MAX_AMMO = 60;
+    public final int FIRE_INTERVAL = 200;
+    public final int RELOAD_SPEED = 700;
+    public int currentAmmo = MAX_AMMO;
+    public int canShootIn = FIRE_INTERVAL;
 
     public Player(int x, int y) {
         super(x, y - 1, 49, 70);
@@ -32,7 +33,8 @@ public class Player extends Entity {
             lastSolidPos[0] = (int) x;
             lastSolidPos[1] = (int) y;
         }
-        canShootIn-=10;
+
+        canShootIn -= 10;
         super.update();
 
         if (keys[KeyEvent.VK_RIGHT] || keys[KeyEvent.VK_D]) {
@@ -66,7 +68,6 @@ public class Player extends Entity {
             velocityX = 0;
             velocityY = 0;
             lives--;
-
         }
     }
 

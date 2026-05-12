@@ -20,7 +20,7 @@ public abstract class Entity extends GameObject {
     protected double hitForceX;
     protected double hitForceY;
 
-    protected int lives;
+    protected int lives = 1;
 
     public boolean alive = true;
     protected boolean onFloor;

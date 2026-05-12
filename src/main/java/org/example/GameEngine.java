@@ -8,7 +8,7 @@ public class GameEngine {
     private Player player;
 
     private final ArrayList<Tile> tiles = new ArrayList<>();
-    public final ArrayList<Enemy> enemies = new ArrayList<>();
+    private final ArrayList<Enemy> enemies = new ArrayList<>();
 
     private final ArrayList<Bullet> bullets = new ArrayList<>();
     private final ConcurrentLinkedQueue<Bullet> pendingBullets = new ConcurrentLinkedQueue<>();
@@ -57,7 +57,7 @@ public class GameEngine {
             }
         }
 
-        for (Bullet bullet : bullets) {
+        bulletLoop: for (Bullet bullet : bullets) {
             bullet.update();
             if (!bullet.alive) continue;
 
@@ -66,22 +66,28 @@ public class GameEngine {
                 continue;
             }
 
-            //todo change it to match the bullet size exactly or resize the image and Bullet.width/height
-            // the hitbox is the correct size should use it instead, but does not mater since we using bullet y
-            int bCol = (int) (bullet.x / Tile.WIDTH);
-            int bRow = (int) (bullet.y / Tile.HEIGHT);
+            Rectangle bRect = bullet.getHitbox();
 
-            if (bRow >= 0 && bRow < map.length && bCol >= 0 && bCol < map[0].length) {
-                short tileId = map[bRow][bCol];
-                if (Tile.isSolid(tileId)) {
-                    if (Tile.isPlatform(tileId)) {
-                        if (bullet.y <= bRow * Tile.HEIGHT + Tile.FLOATING_HEIGHT) {
+            int startCol = Math.max(0, bRect.x / Tile.WIDTH);
+            int endCol = Math.min(map[0].length - 1, (bRect.x + bRect.width) / Tile.WIDTH);
+            int startRow = Math.max(0, bRect.y / Tile.HEIGHT);
+            int endRow = Math.min(map.length - 1, (bRect.y + bRect.height) / Tile.HEIGHT);
+
+            for (int r = startRow; r <= endRow; r++) {
+                for (int c = startCol; c <= endCol; c++) {
+                    short tileId = map[r][c];
+
+                    if (Tile.isSolid(tileId)) {
+                        if (Tile.isPlatform(tileId)) {
+                            if (bRect.y <= r * Tile.HEIGHT + Tile.PLATFORM_HEIGHT &&
+                                    bRect.y + bRect.height >= r * Tile.HEIGHT) {
+                                bullet.alive = false;
+                                continue bulletLoop;
+                            }
+                        } else {
                             bullet.alive = false;
-                            continue;
+                            continue bulletLoop;
                         }
-                    } else {
-                        bullet.alive = false;
-                        continue;
                     }
                 }
             }
@@ -108,7 +114,7 @@ public class GameEngine {
         if (!player.alive) {
             soundManager.play(Sound.DEATH);
             Window.changeScene("Title screen");
-        } else if (enemies.isEmpty())  {
+        } else if (enemies.isEmpty()) {
             soundManager.play(Sound.LEVEL_COMPLETE);
             Window.changeScene("Title screen");
         }
@@ -170,7 +176,7 @@ public class GameEngine {
                 short tileId = map[r][targetCol];
                 if (Tile.isSolid(tileId)) {
                     double tileTop = r * Tile.HEIGHT;
-                    double tileBottom = tileTop + (Tile.isPlatform(tileId) ? Tile.FLOATING_HEIGHT : Tile.HEIGHT);
+                    double tileBottom = tileTop + (Tile.isPlatform(tileId) ? Tile.PLATFORM_HEIGHT : Tile.HEIGHT);
 
                     if (topY < tileBottom && bottomY > tileTop) {
                         if (entity.velocityX > 0) entity.rightCollision = true;
@@ -205,7 +211,7 @@ public class GameEngine {
                         double tileTop = floorRow * Tile.HEIGHT;
 
                         double tileBottom;
-                        if (Tile.isPlatform(tileId)) tileBottom = tileTop + Tile.FLOATING_HEIGHT;
+                        if (Tile.isPlatform(tileId)) tileBottom = tileTop + Tile.PLATFORM_HEIGHT;
                         else tileBottom = tileTop + Tile.HEIGHT;
 
                         if (bottomY >= tileTop && bottomY <= tileBottom) {
@@ -232,7 +238,7 @@ public class GameEngine {
                         double tileTop = ceilRow * Tile.HEIGHT;
 
                         double tileBottom;
-                        if (Tile.isPlatform(tileId)) tileBottom = tileTop + Tile.FLOATING_HEIGHT;
+                        if (Tile.isPlatform(tileId)) tileBottom = tileTop + Tile.PLATFORM_HEIGHT;
                         else tileBottom = tileTop + Tile.HEIGHT;
 
                         if (topY <= tileBottom && topY >= tileTop) {
@@ -308,12 +314,12 @@ public class GameEngine {
                 soundManager.play(Sound.SHOT);
                 pendingBullets.add(new Bullet(player));
                 player.currentAmmo--;
-                player.canShootIn = player.shoutingCooldown;
+                player.canShootIn = player.FIRE_INTERVAL;
             } else if (player.currentAmmo == 1) {
                 soundManager.play(Sound.LAST_SHOT);
                 pendingBullets.add(new Bullet(player));
-                player.currentAmmo = player.maxAmmo;
-                player.canShootIn = player.reloadSpeed;
+                player.currentAmmo = player.MAX_AMMO;
+                player.canShootIn = player.RELOAD_SPEED;
             }
         }
     }

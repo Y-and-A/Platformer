@@ -5,26 +5,25 @@ import java.awt.*;
 public class Bullet extends Entity {
     private static final int BULLET_IMG_WIDTH = 50;
     private static final int BULLET_IMG_HEIGHT = 50;
-
-    double velocityX;
-    double velocityY;
-    double bulletVelocity = 8.5;
+    private static final int HITBOX_WIDTH = 16;
+    private static final int HITBOX_HEIGHT = 16;
 
     public Bullet(Player player) {
         // MAGIC NUMBERS IN ORDER TO ALIGN BULLET TO PLAYER HAND
-        super((player.facingDirection == Direction.LEFT) ? player.x : player.x + 15, player.y + 21);
+        super(
+                (int) ((player.facingDirection == Direction.LEFT) ? player.x : player.x + 15),
+                (int) (player.y + 21),
+                HITBOX_WIDTH,
+                HITBOX_HEIGHT
+        );
 
-        this.hitbox.setSize(16, 16);//actual bullet size
-//        new SoundManager(); //fixme bla
-
-        this.width = BULLET_IMG_WIDTH;
-        this.height = BULLET_IMG_HEIGHT;
+        movementForce = 8.5;
 
         if (player.facingDirection == Direction.LEFT) {
-            this.velocityX = -bulletVelocity;
+            this.velocityX = -movementForce;
             image = Assets.bulletLeft;
         } else if (player.facingDirection == Direction.RIGHT) {
-            this.velocityX = bulletVelocity;
+            this.velocityX = movementForce;
             image = Assets.bulletRight;
         }
     }
@@ -39,6 +38,12 @@ public class Bullet extends Entity {
 
     @Override
     public void draw(Graphics g) {
-        g.drawImage(image, (int) x, (int) y, width, height, null);
+        int offsetX = (BULLET_IMG_WIDTH - HITBOX_WIDTH) / 2;
+        int offsetY = (BULLET_IMG_HEIGHT - HITBOX_HEIGHT) / 2;
+
+        int xPos = (int) x - offsetX;
+        int yPos = (int) y - offsetY;
+
+        g.drawImage(image, xPos, yPos, BULLET_IMG_WIDTH, BULLET_IMG_HEIGHT, null);
     }
 }

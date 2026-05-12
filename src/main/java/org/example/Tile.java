@@ -8,7 +8,7 @@ public class Tile extends GameObject {
 
     public static final int WIDTH = 50;
     public static final int HEIGHT = 50;
-    public static final int FLOATING_HEIGHT = 20;
+    public static final int PLATFORM_HEIGHT = 20;
 
     public static final int ENEMY_ID = 90;
     public static final int PLAYER_ID = 99;
@@ -19,7 +19,7 @@ public class Tile extends GameObject {
 
         this.platform = platform;
         width = WIDTH;
-        height = platform ? FLOATING_HEIGHT : HEIGHT;
+        height = platform ? PLATFORM_HEIGHT : HEIGHT;
         this.image = image;
     }
 
