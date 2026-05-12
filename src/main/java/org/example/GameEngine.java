@@ -1,11 +1,13 @@
 package org.example;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class GameEngine {
     private Player player;
+    private boolean paused = false;
 
     private final ArrayList<Tile> tiles = new ArrayList<>();
     private final ArrayList<Enemy> enemies = new ArrayList<>();
@@ -33,6 +35,9 @@ public class GameEngine {
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
+        if (keys[KeyEvent.VK_P]&&!prevKeys[KeyEvent.VK_P]) paused=!paused;
+        if (paused) return;
+
         player.update(keys, prevKeys);
         move(player);
         checkEnemyDamage(player);
