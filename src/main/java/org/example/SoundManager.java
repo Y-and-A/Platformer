@@ -40,6 +40,21 @@ public class SoundManager {
             throw new RuntimeException(e);
         }
     }
+    //for debug purposes
+    public void testSound(File file){
+        if (file.exists()) {
+            try{
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
+                loopClip = AudioSystem.getClip();
+                loopClip.open(audioStream);
+                loopClip.loop( 0);
+                loopClip.setFramePosition(0);
+                loopClip.start();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     public void stop() {
         if (loopClip != null) loopClip.stop();

@@ -5,7 +5,6 @@ import java.awt.event.KeyEvent;
 
 public class Player extends Entity {
     public Direction facingDirection = Direction.RIGHT;
-//    int[] lastSolidPos = new int[2];
     Point lastSolidPos;
 
     public final int MAX_AMMO = 6;

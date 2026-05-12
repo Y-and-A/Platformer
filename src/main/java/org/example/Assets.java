@@ -62,7 +62,7 @@ public class Assets {
 
             // Level passed
             levelPassed = new File[2];
-            levelPassed[0]=new File("src/main/resources/sound/levelPassed1.wav");
+            levelPassed[0]=new File("src/main/resources/sound/levelPaseed1_2.wav");
             levelPassed[1]=new File("src/main/resources/sound/levelPassed2.wav");
 
             // Bounce pad

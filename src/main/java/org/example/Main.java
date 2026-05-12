@@ -4,7 +4,14 @@ public class Main {
     public static void main(String[] args) {
         Assets.loadAll();
         new Window();
-        SoundManager soundManager = new SoundManager();
-//    soundManager.play(Sound.LAST_SHOT);
+        //for debuging sound
+//        SoundManager soundManager = new SoundManager();
+//    soundManager.testSound(Assets.levelPassed[0]);
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//        soundManager.testSound(Assets.levelPassed[1]);
     }
 }
