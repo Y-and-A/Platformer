@@ -17,6 +17,7 @@ public class Window {
     private static final JPanel mainPanel = new JPanel();
 
     private static GamePanel gamePanel = null;
+    private static TitleScreen titleScreenPanel;
     private static final SoundManager soundManager = new SoundManager();
 
     public Window() {
@@ -26,12 +27,19 @@ public class Window {
         window.setLocationRelativeTo(null);
 
         mainPanel.setLayout(cardLayout);
-        mainPanel.add(createTitleScreen(), SCENE_TITLE);
+        titleScreenPanel = new TitleScreen(
+                () -> changeScene(SCENE_LEVEL_SELECTOR),
+                () -> changeScene(SCENE_HOW_TO)
+        );
+
+        mainPanel.add(titleScreenPanel, SCENE_TITLE);
         mainPanel.add(createLevelSelectorScreen(), SCENE_LEVEL_SELECTOR);
         mainPanel.add(createHowToScreen(), SCENE_HOW_TO);
 
 
         window.add(mainPanel);
+
+        titleScreenPanel.resetAnimation();
         soundManager.play(Sound.INTRO);
 
         window.setVisible(true);
@@ -63,6 +71,10 @@ public class Window {
             cardLayout.show(mainPanel, scene);
             mainPanel.requestFocusInWindow();
 
+            if (scene.equals(SCENE_TITLE)) {
+                titleScreenPanel.resetAnimation();
+            }
+
             if (gamePanel != null) {
                 gamePanel.stopGame();
                 mainPanel.remove(gamePanel);
@@ -71,29 +83,10 @@ public class Window {
         }
     }
 
-    private JPanel createTitleScreen() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.GRAY);
-
-        JButton selectLevelButton = new JButton("Select Level");
-        selectLevelButton.setFocusable(false);
-        selectLevelButton.setPreferredSize(new Dimension(120, 30));
-        selectLevelButton.addActionListener(e -> changeScene(SCENE_LEVEL_SELECTOR));
-        panel.add(selectLevelButton);
-
-        JButton howToButton = new JButton("How To");
-        howToButton.setFocusable(false);
-        howToButton.setPreferredSize(new Dimension(120, 30));
-        howToButton.addActionListener(e -> changeScene(SCENE_HOW_TO));
-        panel.add(howToButton);
-
-        return panel;
-    }
-
     private JPanel createLevelSelectorScreen() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(3, 3, 10, 10));
-        panel.setBackground(Color.DARK_GRAY);
+        panel.setBackground(new Color(210, 180, 140)); // Match the desert sand color
 
         for (int i = 0; i < 9; i++) {
             JButton levelButton = new LevelButton(i);
@@ -102,6 +95,11 @@ public class Window {
             levelButton.addActionListener(e -> changeScene(LEVEL_PREFIX + finalI));
             panel.add(levelButton);
         }
+
+        // Add a back button for the level selector
+        WesternButton backButton = new WesternButton("Back to Menu");
+        backButton.addActionListener(e -> changeScene(SCENE_TITLE));
+        panel.add(backButton);
 
         return panel;
     }
@@ -133,7 +131,7 @@ public class Window {
 
         panel.setLayout(new FlowLayout());
 
-        JButton backButton = new JButton("Back");
+        WesternButton backButton = new WesternButton("Back");
         backButton.setFocusable(false);
         backButton.addActionListener(e -> changeScene(SCENE_TITLE));
         panel.add(backButton);
