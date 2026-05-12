@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class GameEngine {
+    private GamePanel gamePanel;
+
     private Player player;
-    private boolean paused = false;
+    boolean paused = false;
 
     private final ArrayList<Tile> tiles = new ArrayList<>();
     private final ArrayList<Enemy> enemies = new ArrayList<>();
@@ -20,9 +22,6 @@ public class GameEngine {
 
     private final SoundManager soundManager = new SoundManager();
 
-    public void setPaused(boolean paused){
-        this.paused=paused;
-    }
     public GameEngine(short[][] map) {
         this.map = map;
 
@@ -39,7 +38,6 @@ public class GameEngine {
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
-        if (keys[KeyEvent.VK_P]&&!prevKeys[KeyEvent.VK_P]) paused=!paused;
         if (paused) return;
 
         player.update(keys, prevKeys);
@@ -66,7 +64,8 @@ public class GameEngine {
             }
         }
 
-        bulletLoop: for (Bullet bullet : bullets) {
+        bulletLoop:
+        for (Bullet bullet : bullets) {
             bullet.update();
             if (!bullet.alive) continue;
 

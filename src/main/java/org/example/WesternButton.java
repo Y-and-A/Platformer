@@ -19,6 +19,7 @@ public class WesternButton extends JButton {
         // Remove default Swing button styling
         setFocusPainted(false);
         setContentAreaFilled(false);
+        setFocusable(false);
         setOpaque(false);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
 

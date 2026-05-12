@@ -25,6 +25,8 @@ public class GamePanel extends JPanel implements Runnable {
         currentLevel = levelNum;
         map = Level.getLevel(currentLevel);
         gameEngine = new GameEngine(map);
+
+        setLayout(new BorderLayout());
         setFocusable(true);
 
         backBuffer = new BufferedImage(Window.WIDTH, Window.HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -35,9 +37,14 @@ public class GamePanel extends JPanel implements Runnable {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() < 256) keys[e.getKeyCode()] = true;
                 if (keys[KeyEvent.VK_P]) {
-                    pauseGame();
+                    if (gameEngine.paused) {
+                        resumeGame();
+                    } else {
+                        pauseGame();
+                    }
                 }
             }
+
 
             @Override
             public void keyReleased(KeyEvent e) {
@@ -123,7 +130,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void pauseGame() {
-        setLayout(new BorderLayout());
+        gameEngine.paused = true;
 
         buttonContainer = new JPanel(new GridBagLayout());
         buttonContainer.setOpaque(false);
@@ -131,17 +138,14 @@ public class GamePanel extends JPanel implements Runnable {
         WesternButton resume = new WesternButton("resume");
         resume.addActionListener(e -> resumeGame());
         resume.setPreferredSize(new Dimension(300, 50));
-        resume.setFocusable(false);
 
         WesternButton restart = new WesternButton("restart");
         restart.addActionListener(e -> Window.changeScene(Window.LEVEL_PREFIX + currentLevel));
         restart.setPreferredSize(new Dimension(300, 50));
-        restart.setFocusable(false);
 
         WesternButton returnToSelector = new WesternButton("return");
         returnToSelector.addActionListener(e -> Window.changeScene(Window.SCENE_LEVEL_SELECTOR));
         returnToSelector.setPreferredSize(new Dimension(300, 50));
-        returnToSelector.setFocusable(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -153,7 +157,6 @@ public class GamePanel extends JPanel implements Runnable {
         gbc.gridy = 2;
         buttonContainer.add(returnToSelector, gbc);
 
-
         add(buttonContainer, BorderLayout.CENTER);
 
         revalidate();
@@ -161,10 +164,10 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void resumeGame() {
+        gameEngine.paused =false;
         this.remove(buttonContainer);
         revalidate();
         repaint();
-        gameEngine.setPaused(false);
     }
 
     @Override
