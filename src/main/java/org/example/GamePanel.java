@@ -38,6 +38,7 @@ public class GamePanel extends JPanel implements Runnable {
                 if (e.getKeyCode() < 256) keys[e.getKeyCode()] = false;
             }
         });
+
         addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {

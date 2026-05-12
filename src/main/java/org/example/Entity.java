@@ -39,11 +39,6 @@ public abstract class Entity extends GameObject {
         this.hitbox = new Rectangle(x, y, width, height);
     }
 
-    public Entity(double x, double y) {
-        super(x, y);
-        this.hitbox = new Rectangle((int) x, (int) y, 0, 0);
-    }
-
     public void updateHitbox() {
         this.hitbox.setLocation((int) x, (int) y);
     }

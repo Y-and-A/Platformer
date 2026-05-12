@@ -84,36 +84,52 @@ public class Window {
     }
 
     private JPanel createLevelSelectorScreen() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(3, 3, 10, 10));
-        panel.setBackground(new Color(210, 180, 140)); // Match the desert sand color
+        JPanel wrapperPanel = new JPanel() {
+            @Override
+            public boolean isOptimizedDrawingEnabled() {
+                return false;
+            }
+        };
+
+        wrapperPanel.setLayout(new OverlayLayout(wrapperPanel));
+
+        JPanel buttonLayer = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        buttonLayer.setOpaque(false);
+
+        WesternButton backButton = new WesternButton("Back");
+        backButton.setPreferredSize(new Dimension(140, 50));
+        backButton.addActionListener(e -> changeScene(SCENE_TITLE));
+        buttonLayer.add(backButton);
+
+        JPanel gridPanel = new JPanel(new GridLayout(3, 3, 10, 10));
+        gridPanel.setBackground(new Color(210, 180, 140));
+
+        gridPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
 
         for (int i = 0; i < 9; i++) {
             JButton levelButton = new LevelButton(i);
-
             final int finalI = i;
             levelButton.addActionListener(e -> changeScene(LEVEL_PREFIX + finalI));
-            panel.add(levelButton);
+            gridPanel.add(levelButton);
         }
 
-        // Add a back button for the level selector
-        WesternButton backButton = new WesternButton("Back to Menu");
-        backButton.addActionListener(e -> changeScene(SCENE_TITLE));
-        panel.add(backButton);
+        wrapperPanel.add(buttonLayer);
+        wrapperPanel.add(gridPanel);
 
-        return panel;
+        return wrapperPanel;
     }
 
     private JPanel createHowToScreen() {
-        JPanel panel = new JPanel() {
+        JPanel panel = new JPanel(new BorderLayout()) {
             private final BufferedImage image = (BufferedImage) Assets.screenHowTo;
 
             @Override
             protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-                g2d.setColor(new Color(139, 204, 232)); // same color as the image background
+                g2d.setColor(new Color(139, 204, 232));
                 g2d.fillRect(0, 0, getWidth(), getHeight());
 
                 double scaleX = (double) getWidth() / image.getWidth();
@@ -129,12 +145,15 @@ public class Window {
             }
         };
 
-        panel.setLayout(new FlowLayout());
+        JPanel topContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 20));
+        topContainer.setOpaque(false); // Let the background paint correctly behind it
 
         WesternButton backButton = new WesternButton("Back");
-        backButton.setFocusable(false);
+        backButton.setPreferredSize(new Dimension(140, 50));
         backButton.addActionListener(e -> changeScene(SCENE_TITLE));
-        panel.add(backButton);
+
+        topContainer.add(backButton);
+        panel.add(topContainer, BorderLayout.NORTH);
 
         return panel;
     }

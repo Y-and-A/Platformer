@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Random;
 
 public class Assets {
-    public static Image screenHowTo;
+    public static Image screenHowTo, thumbleweed;
 
     public static Image playerLeft, playerRight, playerFront, playerUp;
     public static Image enemyLeft, enemyRight, enemyFront, enemyBack;
@@ -35,15 +35,17 @@ public class Assets {
             // -- SCREENS -- //
             //TODO create a screenImages folder in resources to containe this one and the other up-comming images
             screenHowTo = ImageIO.read(new File("src/main/resources/how-to.png"));
+            thumbleweed = ImageIO.read(new File("src/main/resources/tumbleweed.png"));
 
             // -- SOUNDS -- //
             // Songs
-            soundSongs = new File[4];
+            soundSongs = new File[5];
             soundSongs[0] = new File("src/main/resources/sound/song1.wav");
             soundSongs[1] = new File("src/main/resources/sound/song2.wav");
             soundSongs[2] = new File("src/main/resources/sound/song3.wav");
             soundSongs[3] = new File("src/main/resources/sound/song4.wav");
-            soundIntro = new File("src/main/resources/sound/intro.wav");
+            soundSongs[4] = new File("src/main/resources/sound/song5.wav");
+            soundIntro = new File("src/main/resources/sound/song5.wav");
 
             // Shots
             soundShot = new File("src/main/resources/sound/nonSilencedShot.wav");

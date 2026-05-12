@@ -8,27 +8,23 @@ import java.util.Iterator;
 
 public class TitleScreen extends JPanel {
     private final Timer animTimer;
-    private int animState = 0; // 0: Tumbleweed rolling, 1: Player jumps, 2: Shooting, 3: Menu
+    private int animState = 0; // 0: Player walks, 1: Tumbleweed rolls, 2: Shooting, 3: Explosion
 
     // Animation variables
-    private double tumbleweedX, tumbleweedAngle;
-    private double playerX, playerY, playerVy;
+    private double tumbleweedX, tumbleweedY, tumbleweedAngle;
+    private double playerX, playerY;
     private double bulletX;
 
     // UI Elements
     private final JPanel buttonContainer;
-
-    // Particle System for the tumbleweed explosion (Extra trick!)
     private final ArrayList<Particle> particles = new ArrayList<>();
 
     public TitleScreen(Runnable onSelectLevel, Runnable onHowTo) {
         setLayout(new BorderLayout());
 
-        // Create the button container (invisible until state 3)
         buttonContainer = new JPanel(new GridBagLayout());
-        buttonContainer.setOpaque(false); // Transparent so we see the background
+        buttonContainer.setOpaque(false);
 
-        // Use our new WesternButtons
         WesternButton selectLevelBtn = new WesternButton("Select Level");
         selectLevelBtn.setPreferredSize(new Dimension(250, 60));
         selectLevelBtn.addActionListener(e -> onSelectLevel.run());
@@ -46,89 +42,92 @@ public class TitleScreen extends JPanel {
 
         add(buttonContainer, BorderLayout.CENTER);
 
-        // Runs at ~60 FPS (16ms)
+        // Timer still runs at ~60 FPS
         animTimer = new Timer(16, e -> updateAnimation());
     }
 
     public void resetAnimation() {
-        // Reset all positions
-        tumbleweedX = Window.WIDTH + 100;
+        buttonContainer.setVisible(false);
+        // Calculate exact Y positions so they sit on the sand.
+        // Sand starts at Window.HEIGHT - 150.
+        playerY = Window.HEIGHT - 150 - 70;      // 70 is player height
+        tumbleweedY = Window.HEIGHT - 150 - 60;  // 60 is tumbleweed height
+
+        // Player starts off-screen left
+        playerX = -100;
+
+        // Tumbleweed starts way off-screen right
+        tumbleweedX = Window.WIDTH + 200;
         tumbleweedAngle = 0;
 
-        playerX = Window.WIDTH / 4.0;
-        playerY = Window.HEIGHT + 100; // Start below screen
-        playerVy = -20; // Upward jump force
+        // Hide bullet initially
+        bulletX = -100;
 
-        bulletX = playerX + 40;
         animState = 0;
         particles.clear();
 
-        buttonContainer.setVisible(false);
         animTimer.start();
         repaint();
     }
 
     private void updateAnimation() {
         if (animState == 0) {
-            // Tumbleweed rolling left
-            tumbleweedX -= 6;
-            tumbleweedAngle -= 0.15;
-
-            if (tumbleweedX < Window.WIDTH / 1.5) {
-                animState = 1; // Trigger player jump
+            // Player walks in from the left
+            playerX += 6;
+            if (playerX >= 200) { // Stops at x = 200
+                animState = 1;
             }
         }
         else if (animState == 1) {
-            tumbleweedX -= 6;
-            tumbleweedAngle -= 0.15;
+            buttonContainer.setVisible(true);
+            // Tumbleweed suddenly rolls in from the right
+            tumbleweedX -= 15;
+            tumbleweedAngle -= 0.4;
 
-            // Player physics
-            playerY += playerVy;
-            playerVy += 0.8; // Gravity
-
-            int groundLevel = Window.HEIGHT - 200;
-            if (playerY >= groundLevel) {
-                playerY = groundLevel;
-                animState = 2; // Trigger shooting
+            if (tumbleweedX <= Window.WIDTH / 2.0 + 100) {
+                // Tumbleweed reaches the target zone, player shoots!
+                bulletX = playerX + 45; // Start bullet at the gun barrel
+                animState = 2;
             }
         }
         else if (animState == 2) {
-            // Bullet moves fast to the right
-            bulletX += 25;
+            // Bullet moves extremely fast
+            bulletX += 45;
+
+            // Tumbleweed slows down a bit but keeps rolling for momentum
+            tumbleweedX -= 8;
+            tumbleweedAngle -= 0.2;
+
             if (bulletX >= tumbleweedX) {
-                // Collision! Create explosion particles
-                createExplosion(tumbleweedX, Window.HEIGHT - 170);
-                animState = 3; // Finished
+                // Pass the center of the tumbleweed to the explosion generator
+                createExplosion(tumbleweedX + 30, tumbleweedY + 30);
+                animState = 3;
             }
         }
         else if (animState == 3) {
-            // Update particles
+            // Handle particle physics
             Iterator<Particle> it = particles.iterator();
             while (it.hasNext()) {
                 Particle p = it.next();
                 p.x += p.vx;
                 p.y += p.vy;
-                p.vy += 0.5; // gravity for particles
+                p.vy += 0.8; // Gravity pulls particles down
                 p.life--;
                 if (p.life <= 0) it.remove();
             }
 
-            if (!buttonContainer.isVisible()) {
-                buttonContainer.setVisible(true);
-            }
-
-            // Stop timer once particles are gone to save CPU
+            // Stop timer to save CPU once dust settles
             if (particles.isEmpty()) {
                 animTimer.stop();
             }
         }
-        repaint(); // Tell Swing to redraw the panel
+        repaint();
     }
 
     private void createExplosion(double x, double y) {
-        for (int i = 0; i < 15; i++) {
-            double vx = (Math.random() - 0.5) * 15;
-            double vy = (Math.random() - 1) * 15;
+        for (int i = 0; i < 25; i++) {
+            double vx = (Math.random() - 0.5) * 25;
+            double vy = (Math.random() - 1) * 20;
             particles.add(new Particle(x, y, vx, vy, (int)(Math.random() * 20 + 20)));
         }
     }
@@ -140,49 +139,44 @@ public class TitleScreen extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
         // 1. Draw Desert Background
-        g2d.setColor(new Color(135, 206, 235)); // Sky blue
+        g2d.setColor(new Color(135, 206, 235));
         g2d.fillRect(0, 0, getWidth(), getHeight() - 150);
 
-        g2d.setColor(new Color(210, 180, 140)); // Sand/Ground
+        g2d.setColor(new Color(210, 180, 140));
         g2d.fillRect(0, getHeight() - 150, getWidth(), 150);
 
-        // 2. Draw Tumbleweed
-        if (animState < 3) {
-            // We use AffineTransform to rotate around the center of the tumbleweed
+        // 2. Draw Player (always drawn once animation starts)
+        g2d.drawImage(Assets.playerRight, (int) playerX, (int) playerY, 49, 70, null);
+
+        // 3. Draw Tumbleweed (states 1 and 2)
+        if (animState >= 1 && animState <= 2) {
             AffineTransform old = g2d.getTransform();
-            g2d.translate(tumbleweedX, getHeight() - 170);
+            // Translate to the center of the tumbleweed (x + 30, y + 30) for perfect rotation
+            g2d.translate(tumbleweedX + 30, tumbleweedY + 30);
             g2d.rotate(tumbleweedAngle);
 
-            // NOTE: Replace this with g2d.drawImage(Assets.tumbleweed, -30, -30, 60, 60, null);
-            g2d.setColor(new Color(139, 115, 85));
-            g2d.fillOval(-30, -30, 60, 60);
+            // Draw image relative to the new translated center
+            g2d.drawImage(Assets.thumbleweed, -30, -30, 60, 60, null);
 
             g2d.setTransform(old);
         }
 
-        // 3. Draw Player
-        if (animState >= 1) {
-            // NOTE: Replace with g2d.drawImage(Assets.playerShoot, (int)playerX, (int)playerY, 49, 70, null);
-            g2d.setColor(Color.DARK_GRAY);
-            g2d.fillRect((int)playerX, (int)playerY, 49, 70);
-        }
-
-        // 4. Draw Bullet
+        // 4. Draw Bullet (state 2 only)
         if (animState == 2) {
             g2d.setColor(Color.BLACK);
-            g2d.fillOval((int)bulletX, (int)playerY + 25, 12, 12);
+            // Adjusted bullet Y position to match gun height better
+            g2d.fillOval((int)bulletX, (int)playerY + 28, 12, 12);
         }
 
-        // 5. Draw Particles
+        // 5. Draw Particles (state 3)
         if (animState == 3) {
-            g2d.setColor(new Color(139, 115, 85)); // Tumbleweed color
+            g2d.setColor(new Color(139, 115, 85));
             for (Particle p : particles) {
                 g2d.fillRect((int)p.x, (int)p.y, 8, 8);
             }
         }
     }
 
-    // Inner class for particle physics
     private static class Particle {
         double x, y, vx, vy;
         int life;
