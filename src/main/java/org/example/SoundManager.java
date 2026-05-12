@@ -12,7 +12,8 @@ public class SoundManager {
     public void play(Sound sound) {
         if (sound.equals(Sound.INTRO) && nowPlaying.equals(Sound.INTRO)) return;
 
-        if (sound != Sound.SHOT) stop();
+        //todo create a shouldStop(Sound sound) method in this class
+        if (sound != Sound.SHOT && sound != Sound.SHROOM_JUMP) stop(); // stop songs only
 
         nowPlaying = sound;
 
@@ -21,21 +22,19 @@ public class SoundManager {
             case INTRO -> file = Assets.soundIntro;
             case SHOT -> file = Assets.soundSilencedShot;
             case LAST_SHOT -> file = Assets.soundShot;
-            case DEATH -> file = Assets.getRandomDeath();
+            case DEATH -> file = Assets.getRandomDeathSound();
             case SHROOM_JUMP -> file = Assets.shroomJump;
-            case LEVEL_COMPLETE -> file = Assets.getRandomLevelPassed();
-            case PLAYER_HURT -> file = Assets.getRandomHurt();
+            case LEVEL_COMPLETE -> file = Assets.soundLevelPassed;
+            case PLAYER_HURT -> file = Assets.getRandomHurtSound();
         }
 
         try {
-            if (file.exists()) {
                 AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
                 loopClip = AudioSystem.getClip();
                 loopClip.open(audioStream);
                 loopClip.loop(sound.equals(Sound.SONG) ? -1 : 0);
                 loopClip.setFramePosition(0);
                 loopClip.start();
-            }
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             throw new RuntimeException(e);
         }

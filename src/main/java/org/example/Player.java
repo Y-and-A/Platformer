@@ -15,7 +15,7 @@ public class Player extends Entity {
 
     public Player(int x, int y) {
         super(x, y - 1, 49, 70);
-        lastSolidPos = new Point(x,y);
+        lastSolidPos = new Point(x, y);
 
         lives = 5;
         jumpForce = 14.0;
@@ -31,10 +31,10 @@ public class Player extends Entity {
 
     public void update(boolean[] keys, boolean[] prevKeys) {
         if (onFloor) {
-            lastSolidPos.setLocation((int)x,(int)y);
+            lastSolidPos.setLocation((int) x, (int) y);
         }
 
-        canShootIn -= 5;
+        canShootIn -= 10;
         super.update();
 
         if (keys[KeyEvent.VK_RIGHT] || keys[KeyEvent.VK_D]) {
@@ -64,7 +64,7 @@ public class Player extends Entity {
 
         if (y > Window.HEIGHT) {
             lives--;
-            if (lives>0){
+            if (lives > 0) {
                 x = lastSolidPos.x;
                 y = lastSolidPos.y;
                 velocityX = 0;

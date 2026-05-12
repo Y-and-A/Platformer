@@ -12,7 +12,7 @@ public class Bullet extends Entity {
         // MAGIC NUMBERS IN ORDER TO ALIGN BULLET TO PLAYER HAND
         super(
                 (int) ((player.facingDirection == Direction.LEFT) ? player.x : player.x + 15),
-                (int) (player.y + 21),
+                (int) (player.y + 32),
                 HITBOX_WIDTH,
                 HITBOX_HEIGHT
         );

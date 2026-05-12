@@ -12,21 +12,18 @@ public class Assets {
     public static Image playerLeft, playerRight, playerFront, playerUp;
     public static Image enemyLeft, enemyRight, enemyFront, enemyBack;
     public static Image bulletLeft, bulletRight;
+    public static Image jumpMushroom;
 
     private static Image tileRightTop, tileMiddleTop, tileLeftTop;
     private static Image tileLeftMiddle, tileMiddleMiddle, tileRightMiddle;
     private static Image tileLeftBottom, tileMiddleBottom, tileRightBottom;
     private static Image tileFloatingLeft, tileFloatingMiddle, tileFloatingRight, tileFloatingSingle;
     private static Image tileOnly1, tileOnly2, tileOnly3, tileOnly4;
-    private static Image tileSpecial1, tileSpecial2, tileSpecial3, tileFullGrassUp, tileFullGrassLeft, tileFullGrassThrough;
-    public static Image jumpMushroom;
+    private static Image tileSpecial1, tileSpecial2, tileSpecial3;
+    private static Image tileFullGrassUp, tileFullGrassLeft, tileFullGrassThrough;
 
-    public static File[] soundSongs;
-    public static File[] deathSounds;
-    public static File[] levelPassed;
-    public static File[] hurt;
-    public static File soundIntro, soundShot, soundSilencedShot;
-    public static File shroomJump;
+    public static File[] soundSongs, soundHurt, deathSounds;
+    public static File soundIntro, soundShot, soundSilencedShot, soundLevelPassed, shroomJump;
 
     private static final Random random = new Random();
 
@@ -52,9 +49,9 @@ public class Assets {
             soundSilencedShot = new File("src/main/resources/sound/silencedShot.wav");
 
             // Player gets hurt
-            hurt = new File[2];
-            hurt[0] =  new File("src/main/resources/sound/hurt1.wav");
-            hurt[1] =  new File("src/main/resources/sound/hurt2.wav");
+            soundHurt = new File[2];
+            soundHurt[0] = new File("src/main/resources/sound/hurt1.wav");
+            soundHurt[1] = new File("src/main/resources/sound/hurt2.wav");
 
             // Death
             deathSounds = new File[3];
@@ -63,9 +60,7 @@ public class Assets {
             deathSounds[2] = new File("src/main/resources/sound/death3.wav");
 
             // Level passed
-            levelPassed = new File[2];
-            levelPassed[0]=new File("src/main/resources/sound/levelPaseed1_2.wav");
-            levelPassed[1]=new File("src/main/resources/sound/levelPassed2.wav");
+            soundLevelPassed = new File("src/main/resources/sound/levelPassed2.wav");
 
             // Bounce pad
             shroomJump = new File("src/main/resources/sound/jump2.wav");
@@ -152,16 +147,13 @@ public class Assets {
         return soundSongs[index];
     }
 
-    public static File getRandomDeath() {
+    public static File getRandomDeathSound() {
         int index = random.nextInt(deathSounds.length);
         return deathSounds[index];
     }
-    public static File getRandomLevelPassed(){
-        int index = random.nextInt(levelPassed.length);
-        return levelPassed[index];
-    }
-    public static File getRandomHurt(){
-        int index = random.nextInt(hurt.length);
-        return hurt[index];
+
+    public static File getRandomHurtSound() {
+        int index = random.nextInt(soundHurt.length);
+        return soundHurt[index];
     }
 }
