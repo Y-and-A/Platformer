@@ -1,5 +1,6 @@
 package org.example;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -19,6 +20,9 @@ public class GameEngine {
 
     private final SoundManager soundManager = new SoundManager();
 
+    public void setPaused(boolean paused){
+        this.paused=paused;
+    }
     public GameEngine(short[][] map) {
         this.map = map;
 

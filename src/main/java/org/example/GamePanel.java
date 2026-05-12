@@ -11,6 +11,8 @@ import java.awt.image.BufferedImage;
 public class GamePanel extends JPanel implements Runnable {
     private final GameEngine gameEngine;
     private Thread gameThread;
+    private JPanel buttonContainer;
+    private final int currentLevel;
 
     short[][] map;
 
@@ -20,7 +22,8 @@ public class GamePanel extends JPanel implements Runnable {
     private final BufferedImage backBuffer;
 
     public GamePanel(int levelNum) {
-        map = Level.getLevel(levelNum);
+        currentLevel = levelNum;
+        map = Level.getLevel(currentLevel);
         gameEngine = new GameEngine(map);
         setFocusable(true);
 
@@ -31,6 +34,9 @@ public class GamePanel extends JPanel implements Runnable {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() < 256) keys[e.getKeyCode()] = true;
+                if (keys[KeyEvent.VK_P]) {
+                    pauseGame();
+                }
             }
 
             @Override
@@ -116,6 +122,51 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    public void pauseGame() {
+        setLayout(new BorderLayout());
+
+        buttonContainer = new JPanel(new GridBagLayout());
+        buttonContainer.setOpaque(false);
+
+        WesternButton resume = new WesternButton("resume");
+        resume.addActionListener(e -> resumeGame());
+        resume.setPreferredSize(new Dimension(300, 50));
+        resume.setFocusable(false);
+
+        WesternButton restart = new WesternButton("restart");
+        restart.addActionListener(e -> Window.changeScene(Window.LEVEL_PREFIX + currentLevel));
+        restart.setPreferredSize(new Dimension(300, 50));
+        restart.setFocusable(false);
+
+        WesternButton returnToSelector = new WesternButton("return");
+        returnToSelector.addActionListener(e -> Window.changeScene(Window.SCENE_LEVEL_SELECTOR));
+        returnToSelector.setPreferredSize(new Dimension(300, 50));
+        returnToSelector.setFocusable(false);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(10, 0, 10, 0);
+        buttonContainer.add(resume, gbc);
+        gbc.gridy = 1;
+        buttonContainer.add(restart, gbc);
+        gbc.gridy = 2;
+        buttonContainer.add(returnToSelector, gbc);
+
+
+        add(buttonContainer, BorderLayout.CENTER);
+
+        revalidate();
+        repaint();
+    }
+
+    public void resumeGame() {
+        this.remove(buttonContainer);
+        revalidate();
+        repaint();
+        gameEngine.setPaused(false);
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -129,7 +180,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         bG.setColor(Color.red);
         bG.setFont(new Font("David", Font.BOLD, 30));
-        bG.drawString(gameEngine.getPlayerLives() + "", Window.WIDTH/2, 30);
+        bG.drawString(gameEngine.getPlayerLives() + "", Window.WIDTH / 2, 30);
         bG.dispose();
 
         Graphics2D g2d = (Graphics2D) g;

@@ -8,10 +8,10 @@ public class Window {
     public static final int WIDTH = 1300;
     public static final int HEIGHT = 800;
 
-    private static final String SCENE_TITLE = "TITLE_SCREEN";
+    static final String SCENE_TITLE = "TITLE_SCREEN";
     private static final String SCENE_HOW_TO = "HOW_TO";
     protected static final String SCENE_LEVEL_SELECTOR = "SELECT_LEVEL";
-    private static final String LEVEL_PREFIX = "LEVEL_";
+    static final String LEVEL_PREFIX = "LEVEL_";
 
     private static final CardLayout cardLayout = new CardLayout();
     private static final JPanel mainPanel = new JPanel();
@@ -104,7 +104,7 @@ public class Window {
         JPanel gridPanel = new JPanel(new GridLayout(3, 3, 10, 10));
         gridPanel.setBackground(new Color(210, 180, 140));
 
-        gridPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
+        gridPanel.setBorder(BorderFactory.createEmptyBorder(70, 10, 10, 10));
 
         for (int i = 0; i < 9; i++) {
             JButton levelButton = new LevelButton(i);
