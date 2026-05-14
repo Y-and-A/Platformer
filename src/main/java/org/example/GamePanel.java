@@ -70,15 +70,7 @@ public class GamePanel extends JPanel implements Runnable {
         });
     }
 
-    public void startGame() {
-        gameThread = new Thread(this);
-        gameThread.start();
-    }
-
-    public void stopGame() {
-        gameThread = null;
-    }
-
+    @SuppressWarnings("BusyWait")
     @Override
     public void run() {
         // High-resolution timer for extreme accuracy
@@ -120,6 +112,15 @@ public class GamePanel extends JPanel implements Runnable {
                 }
             }
         }
+    }
+
+    public void startGame() {
+        gameThread = new Thread(this);
+        gameThread.start();
+    }
+
+    public void stopGame() {
+        gameThread = null;
     }
 
     public void pauseGame() {
