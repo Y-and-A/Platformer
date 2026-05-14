@@ -55,12 +55,12 @@ public class GamePanel extends JPanel implements Runnable {
         addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                gameEngine.shotBullet();
+
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-
+                gameEngine.shotBullet();
             }
 
             @Override
@@ -98,12 +98,15 @@ public class GamePanel extends JPanel implements Runnable {
 
         double deltaAccumulator = 0;
 
+        boolean shouldRender;
         while (gameThread != null) {
             long now = System.nanoTime();
             // Calculate how much real time passed since the last loop iteration
             // and add it to the accumulator as a fraction of a "tick".
             deltaAccumulator += (now - lastTime) / TIME_PER_TICK_NS;
             lastTime = now;
+
+            shouldRender = false;
 
             // If a full tick (or multiple) has accumulated, update the game logic!
             while (deltaAccumulator >= 1) {
@@ -112,19 +115,17 @@ public class GamePanel extends JPanel implements Runnable {
                 gameEngine.update(keys, prevKeys);
                 System.arraycopy(keys, 0, prevKeys, 0, keys.length);
                 deltaAccumulator--; // Consume one logical tick
+                shouldRender = true; // render only if the game actualy updated
             }
 
-            // Render the screen as fast as possible
-            repaint();
-
-            // Optional: Give the CPU a tiny break to prevent 100% core utilization.
-            // Even if this sleep overshoots on Windows, the math above guarantees
-            // our game logic catches up flawlessly on the next iteration.
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
+            if (shouldRender) repaint();
+            else {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
             }
         }
     }

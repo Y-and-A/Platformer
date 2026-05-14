@@ -3,61 +3,103 @@ package org.example;
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SoundManager {
-    private static File file;
-    private Clip loopClip;
-    private Sound nowPlaying = Sound.NULL;
+    private final Map<Sound, Clip> soundCache = new HashMap<>();
+    private final Map<String, Clip> dynamicCache = new HashMap<>();
+
+    private Clip backgroundMusicClip;
+    private Sound currentMusicType = Sound.NULL;
+
+    public SoundManager() {
+        preloadStandardSounds();
+    }
+
+    private void preloadStandardSounds() {
+        loadToCach(Sound.SHOT, Assets.soundSilencedShot);
+        loadToCach(Sound.LAST_SHOT, Assets.soundShot);
+        loadToCach(Sound.SHROOM_JUMP, Assets.shroomJump);
+        loadToCach(Sound.LEVEL_COMPLETE, Assets.soundLevelPassed);
+    }
+
+    private void loadToCach(Sound sound, File file) {
+        try {
+            AudioInputStream stream = AudioSystem.getAudioInputStream(file);
+            Clip clip = AudioSystem.getClip();
+            clip.open(stream);
+            soundCache.put(sound, clip);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            System.err.println("Failed to load sound: " + sound);
+        }
+    }
 
     public void play(Sound sound) {
-        if (sound.equals(Sound.INTRO) && nowPlaying.equals(Sound.INTRO)) return;
-
-        //todo create a shouldStop(Sound sound) method in this class
-        if (sound != Sound.SHOT && sound != Sound.SHROOM_JUMP) stop(); // stop songs only
-
-        nowPlaying = sound;
-
-        switch (sound) {
-            case SONG -> file = Assets.getRandomSong();
-            case INTRO -> file = Assets.soundIntro;
-            case SHOT -> file = Assets.soundSilencedShot;
-            case LAST_SHOT -> file = Assets.soundShot;
-            case DEATH -> file = Assets.getRandomDeathSound();
-            case SHROOM_JUMP -> file = Assets.shroomJump;
-            case LEVEL_COMPLETE -> file = Assets.soundLevelPassed;
-            case PLAYER_HURT -> file = Assets.getRandomHurtSound();
+        if (sound == Sound.SONG || sound == Sound.INTRO) {
+            handleMusic(sound);
+            return;
         }
 
-        try {
-                AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
-                loopClip = AudioSystem.getClip();
-                loopClip.open(audioStream);
-                loopClip.loop(sound.equals(Sound.SONG) ? -1 : 0);
-                loopClip.setFramePosition(0);
-                loopClip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            throw new RuntimeException(e);
+        if (sound == Sound.PLAYER_HURT || sound == Sound.DEATH) {
+            playDynamicSound(sound);
+            return;
+        }
+
+        Clip clip = soundCache.get(sound);
+        if (clip != null) {
+            if (clip.isRunning()) clip.stop();
+            clip.setFramePosition(0);
+            clip.start();
         }
     }
 
-    /* for debug purposes
-    public void testSound(File file) {
-        if (file.exists()) {
+    private void handleMusic(Sound sound) {
+        if (currentMusicType == sound && backgroundMusicClip != null && backgroundMusicClip.isRunning()) return;
+
+        stopMusic();
+
+        File musicFile = (sound == Sound.INTRO) ? Assets.soundIntro : Assets.getRandomSong();
+        try {
+            AudioInputStream stream = AudioSystem.getAudioInputStream(musicFile);
+            backgroundMusicClip = AudioSystem.getClip();
+            backgroundMusicClip.open(stream);
+
+            // loop
+            backgroundMusicClip.loop(Clip.LOOP_CONTINUOUSLY);
+            backgroundMusicClip.start();
+            currentMusicType = sound;
+        } catch (Exception e) {
+            System.err.println("Failed to play music: " + sound);
+        }
+    }
+
+    private void playDynamicSound(Sound sound) {
+        File file = (sound == Sound.DEATH) ? Assets.getRandomDeathSound() : Assets.getRandomHurtSound();
+        String path = file.getAbsolutePath();
+
+        if (!dynamicCache.containsKey(path)) {
             try {
-                AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
-                loopClip = AudioSystem.getClip();
-                loopClip.open(audioStream);
-                loopClip.loop(0);
-                loopClip.setFramePosition(0);
-                loopClip.start();
+                AudioInputStream stream = AudioSystem.getAudioInputStream(file);
+                Clip clip = AudioSystem.getClip();
+                clip.open(stream);
+                dynamicCache.put(path, clip);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                System.err.println("Failed to play dynamic sound: " + sound);
+                return;
             }
         }
-    }
-     */
 
-    public void stop() {
-        if (loopClip != null) loopClip.stop();
+        Clip clip = dynamicCache.get(path);
+        clip.setFramePosition(0);
+        clip.start();
+    }
+
+    public void stopMusic() {
+        if (backgroundMusicClip != null) {
+            backgroundMusicClip.stop();
+            backgroundMusicClip.close();
+        }
+        currentMusicType = Sound.NULL;
     }
 }
