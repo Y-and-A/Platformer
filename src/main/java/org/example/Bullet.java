@@ -11,7 +11,7 @@ public class Bullet extends Entity {
     public Bullet(Player player) {
         // MAGIC NUMBERS IN ORDER TO ALIGN BULLET TO PLAYER HAND
         super(
-                (int) ((player.facingDirection == Direction.LEFT) ? player.x : player.x + 15),
+                (int) ((player.shootDirection == Direction.LEFT) ? player.x : player.x + 15),
                 (int) (player.y + 32),
                 HITBOX_WIDTH,
                 HITBOX_HEIGHT
@@ -19,10 +19,10 @@ public class Bullet extends Entity {
 
         movementForce = 8.5;
 
-        if (player.facingDirection == Direction.LEFT) {
+        if (player.shootDirection == Direction.LEFT) {
             this.velocityX = -movementForce;
             image = Assets.bulletLeft;
-        } else if (player.facingDirection == Direction.RIGHT) {
+        } else if (player.shootDirection == Direction.RIGHT) {
             this.velocityX = movementForce;
             image = Assets.bulletRight;
         }

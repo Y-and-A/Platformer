@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 
 public class Player extends Entity {
     public Direction facingDirection = Direction.RIGHT;
+    public Direction shootDirection = Direction.RIGHT;
     Point lastSolidPos;
 
     public final int MAX_AMMO = 6;
@@ -41,11 +42,13 @@ public class Player extends Entity {
             this.velocityX += movementForce;
             image = Assets.playerRight;
             facingDirection = Direction.RIGHT;
+            shootDirection = Direction.RIGHT;
         }
         if (keys[KeyEvent.VK_LEFT] || keys[KeyEvent.VK_A]) {
             this.velocityX -= movementForce;
             image = Assets.playerLeft;
             facingDirection = Direction.LEFT;
+            shootDirection = Direction.LEFT;
         }
 
         boolean jumpKeyPressed = keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_SPACE] || keys[KeyEvent.VK_W];
@@ -59,7 +62,7 @@ public class Player extends Entity {
         if (!jumpKeyPressed && jumpKeyPrev && this.velocityY < 0) {
             this.velocityY *= 0.5;
             facingDirection = Direction.DOWN;
-            image = Assets.playerFront;
+//            image = Assets.playerFront;
         }
 
         if (y > Window.HEIGHT) {
