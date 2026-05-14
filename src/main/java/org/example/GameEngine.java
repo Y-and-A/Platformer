@@ -7,22 +7,21 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class GameEngine {
-    private GamePanel gamePanel;
+    private final GamePanel gamePanel;
+    boolean paused = false;
+    private boolean isGameOver = false;
 
     private Player player;
-    boolean paused = false;
-
     private final ArrayList<Tile> tiles = new ArrayList<>();
     private final ArrayList<Enemy> enemies = new ArrayList<>();
-
     private final ArrayList<Bullet> bullets = new ArrayList<>();
     private final ConcurrentLinkedQueue<Bullet> pendingBullets = new ConcurrentLinkedQueue<>();
-
     private final short[][] map;
 
     private final SoundManager soundManager = new SoundManager();
 
-    public GameEngine(short[][] map) {
+    public GameEngine(short[][] map, GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
         this.map = map;
 
         Image image;
@@ -38,7 +37,12 @@ public class GameEngine {
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
-        if (paused) return;
+        if (keys[KeyEvent.VK_P] && !prevKeys[KeyEvent.VK_P]) {
+            if (paused) gamePanel.resumeGame();
+            else gamePanel.pauseGame();
+        }
+
+        if (paused || isGameOver) return;
 
         player.update(keys, prevKeys);
         move(player);
@@ -119,12 +123,11 @@ public class GameEngine {
             enemies.removeIf(enemy -> !enemy.alive);
         }
 
-        if (!player.alive) {
-            soundManager.play(Sound.DEATH);
-            Window.changeScene("Title screen");
-        } else if (enemies.isEmpty()) {
-            soundManager.play(Sound.LEVEL_COMPLETE);
-            Window.changeScene("Title screen");
+        if (!player.alive || enemies.isEmpty()) {
+            isGameOver = true;
+            soundManager.play((!player.alive) ? Sound.DEATH : Sound.LEVEL_COMPLETE);
+            gamePanel.stopGame();
+            Window.changeScene(Window.SCENE_TITLE);
         }
 
     }

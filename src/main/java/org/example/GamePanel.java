@@ -24,7 +24,7 @@ public class GamePanel extends JPanel implements Runnable {
     public GamePanel(int levelNum) {
         currentLevel = levelNum;
         map = Level.getLevel(currentLevel);
-        gameEngine = new GameEngine(map);
+        gameEngine = new GameEngine(map, this);
 
         setLayout(new BorderLayout());
         setFocusable(true);
@@ -36,15 +36,7 @@ public class GamePanel extends JPanel implements Runnable {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() < 256) keys[e.getKeyCode()] = true;
-                if (keys[KeyEvent.VK_P]) {
-                    if (gameEngine.paused) {
-                        resumeGame();
-                    } else {
-                        pauseGame();
-                    }
-                }
             }
-
 
             @Override
             public void keyReleased(KeyEvent e) {
