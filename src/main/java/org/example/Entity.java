@@ -15,7 +15,6 @@ public abstract class Entity extends GameObject {
     protected double maxVelocityY;
     protected double movementForce;
     protected double jumpForce;
-    protected double wallJumpForce;
 
     protected double hitForceX;
     protected double hitForceY;
@@ -31,7 +30,7 @@ public abstract class Entity extends GameObject {
 
     public int canBeHitIn;
 
-    protected Rectangle hitbox;//todo put in game obgect so tile can use it, so you can fix bullet cillision
+    protected Rectangle hitbox;//todo put in game object so tile can use it, so you can fix bullet collision
 
 
     protected Entity(int x, int y, int width, int height) {

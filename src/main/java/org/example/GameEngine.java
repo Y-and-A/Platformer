@@ -10,6 +10,8 @@ public class GameEngine {
     private final GamePanel gamePanel;
     boolean paused = false;
     private boolean isGameOver = false;
+    private boolean playerIsDead;
+    private boolean allEnemiesAreDead;
 
     private Player player;
     private final ArrayList<Tile> tiles = new ArrayList<>();
@@ -42,7 +44,9 @@ public class GameEngine {
             else gamePanel.pauseGame();
         }
 
-        if (paused || isGameOver) return;
+        if (paused) return;
+        if (playerIsDead) gamePanel.gameOver();
+        if (allEnemiesAreDead) gamePanel.levelComplete();
 
         player.update(keys, prevKeys);
         move(player);
@@ -123,12 +127,18 @@ public class GameEngine {
             enemies.removeIf(enemy -> !enemy.alive);
         }
 
-        if (!player.alive || enemies.isEmpty()) {
-            isGameOver = true;
-            soundManager.play((!player.alive) ? Sound.DEATH : Sound.LEVEL_COMPLETE);
-            gamePanel.stopGame();
-            Window.changeScene(Window.SCENE_TITLE);
+        if (!player.alive){
+            playerIsDead = true;
+            soundManager.play((Sound.DEATH));
+//            gamePanel.stopGame();
         }
+        if (enemies.isEmpty()){
+            allEnemiesAreDead = true;
+            soundManager.play(Sound.LEVEL_COMPLETE);
+//            gamePanel.stopGame();
+        }
+//            Window.changeScene(Window.SCENE_TITLE);
+
 
     }
 

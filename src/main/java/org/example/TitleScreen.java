@@ -8,6 +8,7 @@ import java.util.Iterator;
 
 public class TitleScreen extends JPanel {
     private final Timer animTimer;
+    private final int PLAYER_WALKS=0,TUMBLEWEED_ROLLS=1,SHOOTING=2,EXPLOSION=3;
     private int animState = 0; // 0: Player walks, 1: Tumbleweed rolls, 2: Shooting, 3: Explosion
 
     // Animation variables
@@ -63,7 +64,7 @@ public class TitleScreen extends JPanel {
         // Hide bullet initially
         bulletX = -100;
 
-        animState = 0;
+        animState = PLAYER_WALKS;
         particles.clear();
 
         animTimer.start();
@@ -71,14 +72,14 @@ public class TitleScreen extends JPanel {
     }
 
     private void updateAnimation() {
-        if (animState == 0) {
+        if (animState == PLAYER_WALKS) {
             // Player walks in from the left
             playerX += 6;
             if (playerX >= 200) { // Stops at x = 200
-                animState = 1;
+                animState = TUMBLEWEED_ROLLS;
             }
         }
-        else if (animState == 1) {
+        else if (animState == TUMBLEWEED_ROLLS) {
             buttonContainer.setVisible(true);
             // Tumbleweed suddenly rolls in from the right
             tumbleweedX -= 15;
@@ -87,10 +88,10 @@ public class TitleScreen extends JPanel {
             if (tumbleweedX <= Window.WIDTH / 2.0 + 100) {
                 // Tumbleweed reaches the target zone, player shoots!
                 bulletX = playerX + 45; // Start bullet at the gun barrel
-                animState = 2;
+                animState = SHOOTING;
             }
         }
-        else if (animState == 2) {
+        else if (animState == SHOOTING) {
             // Bullet moves extremely fast
             bulletX += 45;
 
@@ -101,10 +102,10 @@ public class TitleScreen extends JPanel {
             if (bulletX >= tumbleweedX) {
                 // Pass the center of the tumbleweed to the explosion generator
                 createExplosion(tumbleweedX + 30, tumbleweedY + 30);
-                animState = 3;
+                animState = EXPLOSION;
             }
         }
-        else if (animState == 3) {
+        else if (animState == EXPLOSION) {
             // Handle particle physics
             Iterator<Particle> it = particles.iterator();
             while (it.hasNext()) {
@@ -149,27 +150,27 @@ public class TitleScreen extends JPanel {
         g2d.drawImage(Assets.playerRight, (int) playerX, (int) playerY, 49, 70, null);
 
         // 3. Draw Tumbleweed (states 1 and 2)
-        if (animState >= 1 && animState <= 2) {
+        if (animState ==TUMBLEWEED_ROLLS || animState ==SHOOTING) {
             AffineTransform old = g2d.getTransform();
             // Translate to the center of the tumbleweed (x + 30, y + 30) for perfect rotation
             g2d.translate(tumbleweedX + 30, tumbleweedY + 30);
             g2d.rotate(tumbleweedAngle);
 
             // Draw image relative to the new translated center
-            g2d.drawImage(Assets.thumbleweed, -30, -30, 60, 60, null);
+            g2d.drawImage(Assets.tumbleweed, -30, -30, 60, 60, null);
 
             g2d.setTransform(old);
         }
 
         // 4. Draw Bullet (state 2 only)
-        if (animState == 2) {
+        if (animState == TUMBLEWEED_ROLLS) {
             g2d.setColor(Color.BLACK);
             // Adjusted bullet Y position to match gun height better
             g2d.fillOval((int)bulletX, (int)playerY + 28, 12, 12);
         }
 
         // 5. Draw Particles (state 3)
-        if (animState == 3) {
+        if (animState == EXPLOSION) {
             g2d.setColor(new Color(139, 115, 85));
             for (Particle p : particles) {
                 g2d.fillRect((int)p.x, (int)p.y, 8, 8);

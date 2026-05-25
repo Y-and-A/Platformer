@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Random;
 
 public class Assets {
-    public static Image screenHowTo, thumbleweed;
+    public static Image screenHowTo, tumbleweed;
 
     public static Image playerLeft, playerRight, playerFront, playerUp;
     public static Image enemyLeft, enemyRight, enemyFront, enemyBack;
@@ -30,9 +30,9 @@ public class Assets {
     public static void loadAll() {
         try {
             // -- SCREENS -- //
-            //TODO create a screenImages folder in resources to containe this one and the other up-comming images
+            //TODO create a screenImages folder in resources to contain this one and the other up-coming images
             screenHowTo = ImageIO.read(new File("src/main/resources/how-to.png"));
-            thumbleweed = ImageIO.read(new File("src/main/resources/tumbleweed.png"));
+            tumbleweed = ImageIO.read(new File("src/main/resources/tumbleweed.png"));
 
             // -- SOUNDS -- //
             // Songs

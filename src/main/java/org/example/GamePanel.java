@@ -36,6 +36,7 @@ public class GamePanel extends JPanel implements Runnable {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() < 256) keys[e.getKeyCode()] = true;
+                if (e.getKeyCode()==KeyEvent.VK_Q) levelComplete();
             }
 
             @Override
@@ -158,42 +159,102 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void resumeGame() {
-        gameEngine.paused =false;
+        gameEngine.paused = false;
         this.remove(buttonContainer);
         revalidate();
         repaint();
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    public void gameOver() {
+        gameEngine.paused = true;
+        buttonContainer = new JPanel(new GridBagLayout());
+        buttonContainer.setOpaque(false);
 
-        Graphics2D bG = backBuffer.createGraphics();
+        WesternButton resume = new WesternButton("retry");
+        resume.addActionListener(e -> Window.changeScene(Window.LEVEL_PREFIX + currentLevel));
+        resume.setPreferredSize(new Dimension(300, 50));
 
-        bG.setColor(Color.decode("#87CEEB")); //blue
-        bG.fillRect(0, 0, Window.WIDTH, Window.HEIGHT);
+        WesternButton returnToSelector = new WesternButton("return");
+        returnToSelector.addActionListener(e -> Window.changeScene(Window.SCENE_LEVEL_SELECTOR));
+        returnToSelector.setPreferredSize(new Dimension(300, 50));
 
-        gameEngine.draw(bG);//draws the image on the backBuffer
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(10, 0, 10, 0);
+        buttonContainer.add(resume, gbc);
+        gbc.gridy = 1;
+        buttonContainer.add(returnToSelector, gbc);
 
-        bG.setColor(Color.red);
-        bG.setFont(new Font("David", Font.BOLD, 30));
-        bG.drawString(gameEngine.getPlayerLives() + "", Window.WIDTH / 2, 30);
-        bG.dispose();
+        add(buttonContainer, BorderLayout.CENTER);
 
-        Graphics2D g2d = (Graphics2D) g;
-        int windowWidth = getWidth();
-        int windowHeight = getHeight();
-
-        double scaleX = (double) windowWidth / Window.WIDTH;
-        double scaleY = (double) windowHeight / Window.HEIGHT;
-        double scale = Math.min(scaleX, scaleY);
-
-        int scaledWidth = (int) (Window.WIDTH * scale);
-        int scaledHeight = (int) (Window.HEIGHT * scale);
-        int offsetX = (windowWidth - scaledWidth) / 2;
-        int offsetY = (windowHeight - scaledHeight) / 2;
-
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        g2d.drawImage(backBuffer, offsetX, offsetY, scaledWidth, scaledHeight, null);
+        revalidate();
+        repaint();
     }
+
+    public void levelComplete(){
+        gameEngine.paused = true;
+        buttonContainer = new JPanel(new GridBagLayout());
+        buttonContainer.setOpaque(false);
+
+        WesternButton resume = new WesternButton("main menu");
+        resume.addActionListener(e ->  Window.changeScene(Window.SCENE_TITLE));
+        resume.setPreferredSize(new Dimension(300, 50));
+
+        WesternButton restart = new WesternButton("levels");
+        restart.addActionListener(e ->  Window.changeScene(Window.SCENE_LEVEL_SELECTOR));
+        restart.setPreferredSize(new Dimension(300, 50));
+
+        WesternButton returnToSelector = new WesternButton("next level");
+        returnToSelector.addActionListener(e -> Window.changeScene(Window.LEVEL_PREFIX + (currentLevel+1)));
+        returnToSelector.setPreferredSize(new Dimension(300, 50));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(10, 0, 10, 0);
+        buttonContainer.add(resume, gbc);
+        gbc.gridy = 1;
+        buttonContainer.add(restart, gbc);
+        gbc.gridy = 2;
+        buttonContainer.add(returnToSelector, gbc);
+
+        add(buttonContainer, BorderLayout.CENTER);
+
+        revalidate();
+        repaint();
+    }
+
+@Override
+protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
+
+    Graphics2D bG = backBuffer.createGraphics();
+
+    bG.setColor(Color.decode("#87CEEB")); //blue
+    bG.fillRect(0, 0, Window.WIDTH, Window.HEIGHT);
+
+    gameEngine.draw(bG);//draws the image on the backBuffer
+
+    bG.setColor(Color.red);
+    bG.setFont(new Font("David", Font.BOLD, 30));
+    bG.drawString(gameEngine.getPlayerLives() + "", Window.WIDTH / 2, 30);
+    bG.dispose();
+
+    Graphics2D g2d = (Graphics2D) g;
+    int windowWidth = getWidth();
+    int windowHeight = getHeight();
+
+    double scaleX = (double) windowWidth / Window.WIDTH;
+    double scaleY = (double) windowHeight / Window.HEIGHT;
+    double scale = Math.min(scaleX, scaleY);
+
+    int scaledWidth = (int) (Window.WIDTH * scale);
+    int scaledHeight = (int) (Window.HEIGHT * scale);
+    int offsetX = (windowWidth - scaledWidth) / 2;
+    int offsetY = (windowHeight - scaledHeight) / 2;
+
+    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+    g2d.drawImage(backBuffer, offsetX, offsetY, scaledWidth, scaledHeight, null);
+}
 }

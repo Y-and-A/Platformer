@@ -22,7 +22,6 @@ public class Player extends Entity {
         jumpForce = 14.0;
         maxVelocityX = 7.0;
         maxVelocityY = 18.0;
-        wallJumpForce = 6.0;
         movementForce = 2;
         hitForceX = 17;
         hitForceY = 10;
