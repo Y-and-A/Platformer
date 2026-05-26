@@ -128,6 +128,7 @@ public class GamePanel extends JPanel implements Runnable {
         gameEngine.paused = true;
 
         buttonContainer = new JPanel(new GridBagLayout());
+//        buttonContainer.setBackground(new Color(255, 3, 3, 120));
         buttonContainer.setOpaque(false);
 
         WesternButton resume = new WesternButton("resume");
@@ -234,11 +235,29 @@ protected void paintComponent(Graphics g) {
     bG.setColor(Color.decode("#87CEEB")); //blue
     bG.fillRect(0, 0, Window.WIDTH, Window.HEIGHT);
 
-    gameEngine.draw(bG);//draws the image on the backBuffer
+    gameEngine.draw(bG);
 
     bG.setColor(Color.red);
     bG.setFont(new Font("David", Font.BOLD, 30));
-    bG.drawString(gameEngine.getPlayerLives() + "", Window.WIDTH / 2, 30);
+    int currentHeath = gameEngine.getPlayerLives();
+    int offset = 0;
+
+    for (int i = 0; i < currentHeath; i++) {
+        bG.drawImage(Assets.Heart,Window.WIDTH/2-25 + offset,10,50,50,null);
+        if (i % 2 == 0) {
+            offset += (offset < 0) ? -60 : 60;
+        } else offset*=-1;
+    }
+
+
+    bG.setColor(Color.BLACK);
+    offset = 15;
+    int currentAmmo =gameEngine.getPlayerAmmo();
+    for (int i = 0; i < currentAmmo; i++) {
+        bG.drawImage(Assets.bulletUp,offset,10,50,50,null);
+        offset+=15;
+    }
+
     bG.dispose();
 
     Graphics2D g2d = (Graphics2D) g;

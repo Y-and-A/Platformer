@@ -72,6 +72,7 @@ public class Player extends Entity {
                 velocityX = 0;
                 velocityY = 0;
             }
+            else lives=0;
         }
     }
 

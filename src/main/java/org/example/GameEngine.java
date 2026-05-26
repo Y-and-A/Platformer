@@ -12,6 +12,7 @@ public class GameEngine {
     private boolean isGameOver = false;
     private boolean playerIsDead;
     private boolean allEnemiesAreDead;
+    private boolean playerIsReloading;
 
     private Player player;
     private final ArrayList<Tile> tiles = new ArrayList<>();
@@ -327,10 +328,18 @@ public class GameEngine {
     public int getPlayerLives() {
         return player.lives;
     }
+    public int getPlayerAmmo(){
+        return player.currentAmmo;
+    }
 
     public void shotBullet() {
         //todo - fine-tuning
         if (player.canShootIn <= 0) {
+            if (playerIsReloading){
+                player.currentAmmo = player.MAX_AMMO;
+                playerIsReloading=false;
+            }
+
             if (player.currentAmmo > 1) {
                 soundManager.play(Sound.SHOT);
                 pendingBullets.add(new Bullet(player));
@@ -339,7 +348,8 @@ public class GameEngine {
             } else if (player.currentAmmo == 1) {
                 soundManager.play(Sound.LAST_SHOT);
                 pendingBullets.add(new Bullet(player));
-                player.currentAmmo = player.MAX_AMMO;
+                playerIsReloading = true;
+                player.currentAmmo = 0;
                 player.canShootIn = player.RELOAD_SPEED;
             }
         }

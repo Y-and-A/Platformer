@@ -11,8 +11,9 @@ public class Assets {
 
     public static Image playerLeft, playerRight, playerFront, playerUp;
     public static Image enemyLeft, enemyRight, enemyFront, enemyBack;
-    public static Image bulletLeft, bulletRight;
+    public static Image bulletLeft, bulletRight,bulletUp;
     public static Image jumpMushroom;
+    public static Image Heart;
 
     private static Image tileRightTop, tileMiddleTop, tileLeftTop;
     private static Image tileLeftMiddle, tileMiddleMiddle, tileRightMiddle;
@@ -71,6 +72,7 @@ public class Assets {
             playerRight = ImageIO.read(new File("src/main/resources/player/player-facingRight.png"));
             playerFront = ImageIO.read(new File("src/main/resources/player/player-front.png"));
             playerUp = ImageIO.read(new File("src/main/resources/player/player-facingUp.png"));
+            Heart = ImageIO.read(new File("src/main/resources/Heart.png"));
 
             // Enemy
             enemyLeft = ImageIO.read(new File("src/main/resources/enemy/left.png"));
@@ -81,6 +83,7 @@ public class Assets {
             // Bullets
             bulletLeft = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallLeft.png"));
             bulletRight = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallRight.png"));
+            bulletUp = ImageIO.read(new File("src/main/resources/Bullets/PistolAmmoSmallUp.png"));
 
             // Tiles
             tileRightTop = ImageIO.read(new File("src/main/resources/tiles/rightTop.png"));
