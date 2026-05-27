@@ -131,14 +131,11 @@ public class GameEngine {
         if (!player.alive){
             playerIsDead = true;
             soundManager.play((Sound.DEATH));
-//            gamePanel.stopGame();
         }
         if (enemies.isEmpty()){
             allEnemiesAreDead = true;
             soundManager.play(Sound.LEVEL_COMPLETE);
-//            gamePanel.stopGame();
         }
-//            Window.changeScene(Window.SCENE_TITLE);
 
 
     }
@@ -333,7 +330,6 @@ public class GameEngine {
     }
 
     public void shotBullet() {
-        //todo - fine-tuning
         if (player.canShootIn <= 0) {
             if (playerIsReloading){
                 player.currentAmmo = player.MAX_AMMO;

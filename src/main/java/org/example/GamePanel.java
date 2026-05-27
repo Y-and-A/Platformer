@@ -36,7 +36,6 @@ public class GamePanel extends JPanel implements Runnable {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() < 256) keys[e.getKeyCode()] = true;
-                if (e.getKeyCode()==KeyEvent.VK_Q) levelComplete();
             }
 
             @Override
@@ -207,7 +206,10 @@ public class GamePanel extends JPanel implements Runnable {
         restart.setPreferredSize(new Dimension(300, 50));
 
         WesternButton returnToSelector = new WesternButton("next level");
-        returnToSelector.addActionListener(e -> Window.changeScene(Window.LEVEL_PREFIX + (currentLevel+1)));
+        int level = currentLevel+1;
+        if (level>8) level=1;
+        int finalLevel = level;
+        returnToSelector.addActionListener(e -> Window.changeScene(Window.LEVEL_PREFIX + finalLevel));
         returnToSelector.setPreferredSize(new Dimension(300, 50));
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -243,7 +245,7 @@ protected void paintComponent(Graphics g) {
     int offset = 0;
 
     for (int i = 0; i < currentHeath; i++) {
-        bG.drawImage(Assets.Heart,Window.WIDTH/2-25 + offset,10,50,50,null);
+        bG.drawImage(Assets.heart,Window.WIDTH/2-25 + offset,10,50,50,null);
         if (i % 2 == 0) {
             offset += (offset < 0) ? -60 : 60;
         } else offset*=-1;

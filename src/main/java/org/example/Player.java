@@ -61,7 +61,6 @@ public class Player extends Entity {
         if (!jumpKeyPressed && jumpKeyPrev && this.velocityY < 0) {
             this.velocityY *= 0.5;
             facingDirection = Direction.DOWN;
-//            image = Assets.playerFront;
         }
 
         if (y > Window.HEIGHT) {

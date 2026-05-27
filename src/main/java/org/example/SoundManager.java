@@ -65,7 +65,6 @@ public class SoundManager {
             backgroundMusicClip = AudioSystem.getClip();
             backgroundMusicClip.open(stream);
 
-            // loop
             backgroundMusicClip.loop(Clip.LOOP_CONTINUOUSLY);
             backgroundMusicClip.start();
             currentMusicType = sound;

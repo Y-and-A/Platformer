@@ -13,7 +13,7 @@ public class Assets {
     public static Image enemyLeft, enemyRight, enemyFront, enemyBack;
     public static Image bulletLeft, bulletRight,bulletUp;
     public static Image jumpMushroom;
-    public static Image Heart;
+    public static Image heart;
 
     private static Image tileRightTop, tileMiddleTop, tileLeftTop;
     private static Image tileLeftMiddle, tileMiddleMiddle, tileRightMiddle;
@@ -72,7 +72,7 @@ public class Assets {
             playerRight = ImageIO.read(new File("src/main/resources/player/player-facingRight.png"));
             playerFront = ImageIO.read(new File("src/main/resources/player/player-front.png"));
             playerUp = ImageIO.read(new File("src/main/resources/player/player-facingUp.png"));
-            Heart = ImageIO.read(new File("src/main/resources/Heart.png"));
+            heart = ImageIO.read(new File("src/main/resources/player/heart.png"));
 
             // Enemy
             enemyLeft = ImageIO.read(new File("src/main/resources/enemy/left.png"));
@@ -109,7 +109,7 @@ public class Assets {
             tileFullGrassUp = ImageIO.read(new File("src/main/resources/tiles/fullGrassUp.png"));
             tileFullGrassLeft = ImageIO.read(new File("src/main/resources/tiles/fullGrassLeft.png"));
             tileFullGrassThrough = ImageIO.read(new File("src/main/resources/tiles/fullGrassThrough.png"));
-            jumpMushroom = ImageIO.read(new File("src/main/resources/jumpMushroom.png"));
+            jumpMushroom = ImageIO.read(new File("src/main/resources/tiles/jumpMushroom.png"));
         } catch (IOException e) {
             System.err.println("Failed to load assets");
         }
