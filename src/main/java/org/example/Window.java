@@ -9,8 +9,8 @@ public class Window {
     public static final int HEIGHT = 800;
 
     static final String SCENE_TITLE = "TITLE_SCREEN";
-    private static final String SCENE_HOW_TO = "HOW_TO";
-    protected static final String SCENE_LEVEL_SELECTOR = "SELECT_LEVEL";
+    static final String SCENE_HOW_TO = "HOW_TO";
+    static final String SCENE_LEVEL_SELECTOR = "SELECT_LEVEL";
     static final String LEVEL_PREFIX = "LEVEL_";
 
     private static final CardLayout cardLayout = new CardLayout();
@@ -27,16 +27,11 @@ public class Window {
         window.setLocationRelativeTo(null);
 
         mainPanel.setLayout(cardLayout);
-        titleScreenPanel = new TitleScreen(
-                () -> changeScene(SCENE_LEVEL_SELECTOR),
-                () -> changeScene(SCENE_HOW_TO)
-        );
+        titleScreenPanel = new TitleScreen();
 
         mainPanel.add(titleScreenPanel, SCENE_TITLE);
         mainPanel.add(createLevelSelectorScreen(), SCENE_LEVEL_SELECTOR);
         mainPanel.add(createHowToScreen(), SCENE_HOW_TO);
-
-
         window.add(mainPanel);
 
         titleScreenPanel.resetAnimation();
@@ -71,9 +66,8 @@ public class Window {
             cardLayout.show(mainPanel, scene);
             mainPanel.requestFocusInWindow();
 
-            if (scene.equals(SCENE_TITLE)) {
-                titleScreenPanel.resetAnimation();
-            }
+            //if you want the anim to play everytime user visits the title screen
+//            if (scene.equals(SCENE_TITLE)) {titleScreenPanel.resetAnimation();}
 
             if (gamePanel != null) {
                 gamePanel.stopGame();

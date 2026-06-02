@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class GameEngine {
     private final GamePanel gamePanel;
     boolean paused = false;
-    private boolean isGameOver = false;
     private boolean playerIsDead;
     private boolean allEnemiesAreDead;
     private boolean playerIsReloading;
@@ -128,11 +127,11 @@ public class GameEngine {
             enemies.removeIf(enemy -> !enemy.alive);
         }
 
-        if (!player.alive){
+        if (!player.alive) {
             playerIsDead = true;
             soundManager.play((Sound.DEATH));
         }
-        if (enemies.isEmpty()){
+        if (enemies.isEmpty()) {
             allEnemiesAreDead = true;
             soundManager.play(Sound.LEVEL_COMPLETE);
         }
@@ -325,15 +324,16 @@ public class GameEngine {
     public int getPlayerLives() {
         return player.lives;
     }
-    public int getPlayerAmmo(){
+
+    public int getPlayerAmmo() {
         return player.currentAmmo;
     }
 
     public void shotBullet() {
         if (player.canShootIn <= 0) {
-            if (playerIsReloading){
+            if (playerIsReloading) {
                 player.currentAmmo = player.MAX_AMMO;
-                playerIsReloading=false;
+                playerIsReloading = false;
             }
 
             if (player.currentAmmo > 1) {

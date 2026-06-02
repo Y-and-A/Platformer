@@ -30,9 +30,7 @@ public class Player extends Entity {
     }
 
     public void update(boolean[] keys, boolean[] prevKeys) {
-        if (onFloor) {
-            lastSolidPos.setLocation((int) x, (int) y);
-        }
+        if (onFloor) lastSolidPos.setLocation((int) x, (int) y);
 
         canShootIn -= 10;
         super.update();
@@ -70,8 +68,7 @@ public class Player extends Entity {
                 y = lastSolidPos.y;
                 velocityX = 0;
                 velocityY = 0;
-            }
-            else lives=0;
+            } else lives = 0;
         }
     }
 

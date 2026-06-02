@@ -6,9 +6,12 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import static org.example.Window.SCENE_HOW_TO;
+import static org.example.Window.SCENE_LEVEL_SELECTOR;
+
 public class TitleScreen extends JPanel {
     private final Timer animTimer;
-    private final int PLAYER_WALKS=0,TUMBLEWEED_ROLLS=1,SHOOTING=2,EXPLOSION=3;
+    private final int PLAYER_WALKS = 0, TUMBLEWEED_ROLLS = 1, SHOOTING = 2, EXPLOSION = 3;
     private int animState = 0; // 0: Player walks, 1: Tumbleweed rolls, 2: Shooting, 3: Explosion
 
     // Animation variables
@@ -20,7 +23,7 @@ public class TitleScreen extends JPanel {
     private final JPanel buttonContainer;
     private final ArrayList<Particle> particles = new ArrayList<>();
 
-    public TitleScreen(Runnable onSelectLevel, Runnable onHowTo) {
+    public TitleScreen() {
         setLayout(new BorderLayout());
 
         buttonContainer = new JPanel(new GridBagLayout());
@@ -28,14 +31,16 @@ public class TitleScreen extends JPanel {
 
         WesternButton selectLevelBtn = new WesternButton("Select Level");
         selectLevelBtn.setPreferredSize(new Dimension(250, 60));
-        selectLevelBtn.addActionListener(e -> onSelectLevel.run());
+        selectLevelBtn.addActionListener(e -> Window.changeScene(SCENE_LEVEL_SELECTOR));
 
         WesternButton howToBtn = new WesternButton("How To Play");
         howToBtn.setPreferredSize(new Dimension(250, 60));
-        howToBtn.addActionListener(e -> onHowTo.run());
+        howToBtn.addActionListener(e -> Window.changeScene(SCENE_HOW_TO));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; gbc.gridy = 0; gbc.insets = new Insets(10, 0, 10, 0);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(10, 0, 10, 0);
         buttonContainer.add(selectLevelBtn, gbc);
 
         gbc.gridy = 1;
@@ -78,8 +83,7 @@ public class TitleScreen extends JPanel {
             if (playerX >= 200) { // Stops at x = 200
                 animState = TUMBLEWEED_ROLLS;
             }
-        }
-        else if (animState == TUMBLEWEED_ROLLS) {
+        } else if (animState == TUMBLEWEED_ROLLS) {
             buttonContainer.setVisible(true);
             // Tumbleweed suddenly rolls in from the right
             tumbleweedX -= 15;
@@ -90,8 +94,7 @@ public class TitleScreen extends JPanel {
                 bulletX = playerX + 45; // Start bullet at the gun barrel
                 animState = SHOOTING;
             }
-        }
-        else if (animState == SHOOTING) {
+        } else if (animState == SHOOTING) {
             // Bullet moves extremely fast
             bulletX += 45;
 
@@ -104,8 +107,7 @@ public class TitleScreen extends JPanel {
                 createExplosion(tumbleweedX + 30, tumbleweedY + 30);
                 animState = EXPLOSION;
             }
-        }
-        else if (animState == EXPLOSION) {
+        } else if (animState == EXPLOSION) {
             // Handle particle physics
             Iterator<Particle> it = particles.iterator();
             while (it.hasNext()) {
@@ -129,7 +131,7 @@ public class TitleScreen extends JPanel {
         for (int i = 0; i < 25; i++) {
             double vx = (Math.random() - 0.5) * 25;
             double vy = (Math.random() - 1) * 20;
-            particles.add(new Particle(x, y, vx, vy, (int)(Math.random() * 20 + 20)));
+            particles.add(new Particle(x, y, vx, vy, (int) (Math.random() * 20 + 20)));
         }
     }
 
@@ -150,7 +152,7 @@ public class TitleScreen extends JPanel {
         g2d.drawImage(Assets.playerRight, (int) playerX, (int) playerY, 49, 70, null);
 
         // 3. Draw Tumbleweed (states 1 and 2)
-        if (animState ==TUMBLEWEED_ROLLS || animState ==SHOOTING) {
+        if (animState == TUMBLEWEED_ROLLS || animState == SHOOTING) {
             AffineTransform old = g2d.getTransform();
             // Translate to the center of the tumbleweed (x + 30, y + 30) for perfect rotation
             g2d.translate(tumbleweedX + 30, tumbleweedY + 30);
@@ -166,14 +168,14 @@ public class TitleScreen extends JPanel {
         if (animState == TUMBLEWEED_ROLLS) {
             g2d.setColor(Color.BLACK);
             // Adjusted bullet Y position to match gun height better
-            g2d.fillOval((int)bulletX, (int)playerY + 28, 12, 12);
+            g2d.fillOval((int) bulletX, (int) playerY + 28, 12, 12);
         }
 
         // 5. Draw Particles (state 3)
         if (animState == EXPLOSION) {
             g2d.setColor(new Color(139, 115, 85));
             for (Particle p : particles) {
-                g2d.fillRect((int)p.x, (int)p.y, 8, 8);
+                g2d.fillRect((int) p.x, (int) p.y, 8, 8);
             }
         }
     }
@@ -181,8 +183,13 @@ public class TitleScreen extends JPanel {
     private static class Particle {
         double x, y, vx, vy;
         int life;
+
         Particle(double x, double y, double vx, double vy, int life) {
-            this.x = x; this.y = y; this.vx = vx; this.vy = vy; this.life = life;
+            this.x = x;
+            this.y = y;
+            this.vx = vx;
+            this.vy = vy;
+            this.life = life;
         }
     }
 }

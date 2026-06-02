@@ -73,10 +73,8 @@ public class GamePanel extends JPanel implements Runnable {
     @SuppressWarnings("BusyWait")
     @Override
     public void run() {
-        // High-resolution timer for extreme accuracy
         long lastTime = System.nanoTime();
 
-        // Target 60 Updates (Ticks) Per Second
         final double TICKS_PER_SECOND = 60.0;
         final double TIME_PER_TICK_NS = 1000000000.0 / TICKS_PER_SECOND;
 
@@ -85,21 +83,18 @@ public class GamePanel extends JPanel implements Runnable {
         boolean shouldRender;
         while (gameThread != null) {
             long now = System.nanoTime();
-            // Calculate how much real time passed since the last loop iteration
-            // and add it to the accumulator as a fraction of a "tick".
             deltaAccumulator += (now - lastTime) / TIME_PER_TICK_NS;
             lastTime = now;
 
             shouldRender = false;
 
-            // If a full tick (or multiple) has accumulated, update the game logic!
             while (deltaAccumulator >= 1) {
                 if (gameThread == null) break;
 
                 gameEngine.update(keys, prevKeys);
                 System.arraycopy(keys, 0, prevKeys, 0, keys.length);
-                deltaAccumulator--; // Consume one logical tick
-                shouldRender = true; // render only if the game actualy updated
+                deltaAccumulator--;
+                shouldRender = true;
             }
 
             if (shouldRender) repaint();
@@ -127,7 +122,6 @@ public class GamePanel extends JPanel implements Runnable {
         gameEngine.paused = true;
 
         buttonContainer = new JPanel(new GridBagLayout());
-//        buttonContainer.setBackground(new Color(255, 3, 3, 120));
         buttonContainer.setOpaque(false);
 
         WesternButton resume = new WesternButton("resume");
@@ -239,8 +233,6 @@ protected void paintComponent(Graphics g) {
 
     gameEngine.draw(bG);
 
-    bG.setColor(Color.red);
-    bG.setFont(new Font("David", Font.BOLD, 30));
     int currentHeath = gameEngine.getPlayerLives();
     int offset = 0;
 
@@ -252,7 +244,6 @@ protected void paintComponent(Graphics g) {
     }
 
 
-    bG.setColor(Color.BLACK);
     offset = 15;
     int currentAmmo =gameEngine.getPlayerAmmo();
     for (int i = 0; i < currentAmmo; i++) {

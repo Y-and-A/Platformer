@@ -7,16 +7,18 @@ public abstract class GameObject {
     protected double y;
     protected int width;
     protected int height;
-    protected GameObject(double x,double y){
+
+    protected GameObject(double x, double y) {
         this.x = x;
         this.y = y;
     }
-    protected GameObject(int x,int y,int width,int height) {
+
+    protected GameObject(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
     }
 
-        abstract public void draw(Graphics g);
+    abstract public void draw(Graphics g);
 }
